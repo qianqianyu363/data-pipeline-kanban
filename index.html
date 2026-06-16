@@ -281,11 +281,11 @@ function populateSelect(id, opts){
 
 async function loadTaskData(){
   try{
-    const r = await fetch("./_tasks.json?_t="+Date.now());
+    const r = await fetch("./tasks.json?_t="+Date.now());
     if(r.ok){ DATA.tasks = await r.json(); }
   }catch(e){}
   try{
-    const r = await fetch("./_settlement.json?_t="+Date.now());
+    const r = await fetch("./settlement.json?_t="+Date.now());
     if(r.ok){
       const s = await r.json();
       DATA.settlements = s.rows ? s.rows.filter(x => x.月份 && x.月份 !== "合计" && x.结算金额) : [];
