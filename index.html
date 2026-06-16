@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据采集加工全链路看板</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+/* ============ CSS Variables ============ */
+:root {
+  --color-red: #E74C3C; --color-red-bg: #FDEDEC;
+  --color-orange: #F39C12; --color-orange-bg: #FEF5E7;
+  --color-yellow: #F1C40F; --color-yellow-bg: #FEF9E7;
+  --color-green: #2ECC71; --color-green-bg: #EAFAF1;
+  --color-blue: #3498DB; --color-blue-bg: #EBF5FB;
+  --color-purple: #9B59B6; --color-purple-bg: #F4ECF7;
+  --color-dark: #2C3E50;
+  --color-gray: #95A5A6;
+  --color-light-gray: #ECF0F1;
+  --color-bg: #F5F7FA;
+  --color-card: #FFFFFF;
+  --color-text: #2C3E50;
+  --color-text-light: #7F8C8D;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--color-bg);
+  color:var(--color-text);
+  line-height:1.6;
+  padding:20px;
+  min-height:100vh;
+}
+.container{max-width:1440px;margin:0 auto}
+
+/* ============ Header ============ */
+.header{
+  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+  color:#fff;border-radius:var(--radius-lg);
+  padding:28px 36px;margin-bottom:24px;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  flex-wrap:wrap;gap:12px;box-shadow:var(--shadow-lg);
+  position:relative;overflow:hidden
+}
+.header::after{
+  content:'';position:absolute;top:-50%;right:-10%;
+  width:400px;height:400px;
+  background:radial-gradient(circle,rgba(52,152,219,0.15) 0%,transparent 70%);
+  border-radius:50%
+}
+.header-left{position:relative;z-index:1}
+.header-title{font-size:1.8rem;font-weight:700;letter-spacing:2px;margin-bottom:4px}
+.header-title span{color:#3498DB}
+.header-subtitle{font-size:0.85rem;color:rgba(255,255,255,0.7);letter-spacing:1px}
+.header-right{position:relative;z-index:1;text-align:right;font-size:0.85rem;color:rgba(255,255,255,0.8)}
+.header-badge{
+  display:inline-block;
+  background:rgba(46,204,113,0.2);
+  border:1px solid rgba(46,204,113,0.4);
+  padding:4px 14px;border-radius:20px;font-size:0.75rem;margin-top:6px;color:#2ECC71
+}
+.data-source{
+  display:inline-block;
+  background:rgba(52,152,219,0.2);
+  border:1px solid rgba(52,152,219,0.4);
+  padding:4px 14px;border-radius:20px;font-size:0.75rem;margin-top:6px;margin-left:6px;color:#85C1E9
+}
+
+/* ============ KPI ============ */
+.kpi-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;margin-bottom:24px
+}
+.kpi-card{
+  background:var(--color-card);border-radius:var(--radius-md);
+  padding:20px 24px;box-shadow:var(--shadow-sm);
+  transition:transform 0.2s,box-shadow 0.2s;cursor:default;
+  position:relative;overflow:hidden
+}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
+.kpi-card.red::before{background:var(--color-red)}
+.kpi-card.orange::before{background:var(--color-orange)}
+.kpi-card.green::before{background:var(--color-green)}
+.kpi-card.blue::before{background:var(--color-blue)}
+.kpi-card.purple::before{background:var(--color-purple)}
+.kpi-card.yellow::before{background:var(--color-yellow)}
+.kpi-label{font-size:0.8rem;color:var(--color-text-light);margin-bottom:6px;font-weight:500}
+.kpi-value{font-size:2rem;font-weight:700;line-height:1.2}
+.kpi-value.red{color:var(--color-red)}
+.kpi-value.orange{color:var(--color-orange)}
+.kpi-value.green{color:var(--color-green)}
+.kpi-value.blue{color:var(--color-blue)}
+.kpi-value.purple{color:var(--color-purple)}
+.kpi-sub{font-size:0.75rem;color:var(--color-text-light);margin-top:4px;display:flex;align-items:center;gap:6px}
+.kpi-trend-up{color:var(--color-green)}
+.kpi-trend-down{color:var(--color-red)}
+.kpi-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:2.5rem;opacity:0.10}
+
+/* ============ Section Layout ============ */
+.section-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;margin-bottom:24px
+}
+@media(max-width:1000px){.section-row{grid-template-columns:1fr}}
+
+.section-title{
+  font-size:1rem;font-weight:600;margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+  padding-bottom:10px;border-bottom:2px solid var(--color-light-gray)
+}
+.section-title .dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+.dot.red{background:var(--color-red)}
+.dot.orange{background:var(--color-orange)}
+.dot.yellow{background:var(--color-yellow)}
+.dot.green{background:var(--color-green)}
+.dot.blue{background:var(--color-blue)}
+.dot.purple{background:var(--color-purple)}
+
+.card{
+  background:var(--color-card);border-radius:var(--radius-md);
+  padding:20px;box-shadow:var(--shadow-sm);transition:box-shadow 0.2s
+}
+.card:hover{box-shadow:var(--shadow-md)}
+.card.chart-card{height:100%}
+.chart-container{width:100%;height:280px}
+.chart-container-sm{height:240px}
+.chart-container-lg{height:320px}
+.full-width{margin-bottom:24px}
+
+/* ============ Alert ============ */
+.alert-section{
+  background:var(--color-card);border-radius:var(--radius-md);
+  padding:24px;box-shadow:var(--shadow-sm);margin-bottom:24px;
+  border-left:4px solid var(--color-red)
+}
+.alert-title{
+  display:flex;align-items:center;gap:8px;
+  font-size:1rem;font-weight:600;color:var(--color-red);margin-bottom:16px
+}
+.alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:800px){.alert-grid{grid-template-columns:1fr}}
+.alert-item{
+  background:#f8f9fa;border-radius:var(--radius-sm);
+  padding:14px 18px;display:flex;align-items:flex-start;gap:12px
+}
+.alert-p0{border-left:3px solid var(--color-red)}
+.alert-p1{border-left:3px solid var(--color-orange)}
+.alert-priority{
+  font-size:0.7rem;font-weight:700;padding:2px 8px;
+  border-radius:10px;white-space:nowrap;flex-shrink:0;margin-top:1px
+}
+.alert-p0 .alert-priority{background:var(--color-red-bg);color:var(--color-red)}
+.alert-p1 .alert-priority{background:var(--color-orange-bg);color:var(--color-orange)}
+.alert-content{flex:1}
+.alert-problem{font-weight:600;font-size:0.9rem;margin-bottom:2px}
+.alert-action{font-size:0.8rem;color:var(--color-text-light)}
+
+/* ============ Button Bar ============ */
+.toolbar{
+  display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;
+  align-items:center
+}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 18px;border:none;border-radius:var(--radius-sm);
+  font-size:0.8rem;font-weight:600;cursor:pointer;
+  transition:all 0.2s;font-family:var(--font)
+}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.btn-primary{background:var(--color-blue);color:#fff}
+.btn-success{background:var(--color-green);color:#fff}
+.btn-warning{background:var(--color-orange);color:#fff}
+.btn-outline{background:transparent;border:1px solid var(--color-gray);color:var(--color-text)}
+.btn-sm{padding:5px 12px;font-size:0.75rem}
+.btn-danger{background:var(--color-red);color:#fff}
+.hidden{display:none!important}
+
+/* ============ Footer ============ */
+.footer{text-align:center;padding:20px;color:var(--color-text-light);font-size:0.75rem}
+
+/* ============ Animations ============ */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeInUp 0.5s ease forwards;opacity:0}
+.delay-1{animation-delay:0.1s}
+.delay-2{animation-delay:0.2s}
+.delay-3{animation-delay:0.3s}
+.delay-4{animation-delay:0.4s}
+
+/* ============ Panel Overlay ============ */
+.panel-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.4);z-index:98;display:none
+}
+.panel-overlay.open{display:block}
+
+.data-panel{
+  position:fixed;bottom:50%;right:50%;
+  transform:translate(50%,50%);
+  width:520px;max-width:90vw;max-height:80vh;
+  background:var(--color-card);border-radius:var(--radius-md);
+  box-shadow:var(--shadow-lg);z-index:99;
+  padding:24px;overflow-y:auto;display:none;
+  flex-direction:column
+}
+.data-panel.open{display:flex}
+.data-panel h3{font-size:1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.data-panel .close-btn{
+  position:absolute;top:14px;right:16px;
+  background:none;border:none;font-size:1.3rem;cursor:pointer;
+  color:var(--color-text-light);padding:4px
+}
+.data-panel textarea{
+  width:100%;min-height:240px;
+  font-family:'Courier New',monospace;font-size:0.75rem;
+  padding:12px;border:1px solid var(--color-light-gray);
+  border-radius:var(--radius-sm);resize:vertical
+}
+.data-panel .btn-group{display:flex;gap:8px;margin-top:12px}
+.data-panel button{
+  flex:1;padding:9px 16px;border:none;border-radius:var(--radius-sm);
+  font-size:0.8rem;cursor:pointer;font-weight:600;transition:opacity 0.2s;
+  font-family:var(--font)
+}
+.data-panel button:hover{opacity:0.85}
+.btn-apply{background:#3498DB;color:#fff}
+.btn-reset{background:var(--color-light-gray);color:var(--color-text)}
+.btn-export-data{background:#2ECC71;color:#fff}
+
+/* ============ CSV Import ============ */
+.csv-panel{
+  position:fixed;bottom:50%;right:50%;
+  transform:translate(50%,50%);
+  width:640px;max-width:90vw;max-height:85vh;
+  background:var(--color-card);border-radius:var(--radius-md);
+  box-shadow:var(--shadow-lg);z-index:99;
+  padding:24px;overflow-y:auto;display:none;
+  flex-direction:column
+}
+.csv-panel.open{display:flex}
+.csv-panel h3{font-size:1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.csv-panel .close-btn{
+  position:absolute;top:14px;right:16px;
+  background:none;border:none;font-size:1.3rem;cursor:pointer;
+  color:var(--color-text-light);padding:4px
+}
+.drop-zone{
+  border:2px dashed var(--color-light-gray);
+  border-radius:var(--radius-md);padding:40px 20px;
+  text-align:center;cursor:pointer;
+  transition:all 0.2s;margin-bottom:16px
+}
+.drop-zone:hover,.drop-zone.dragover{
+  border-color:var(--color-blue);
+  background:var(--color-blue-bg)
+}
+.drop-zone-icon{font-size:2.5rem;margin-bottom:8px}
+.drop-zone-text{font-size:0.85rem;color:var(--color-text-light)}
+.drop-zone-hint{font-size:0.75rem;color:var(--color-gray);margin-top:4px}
+
+.csv-preview{
+  max-height:200px;overflow:auto;
+  border:1px solid var(--color-light-gray);
+  border-radius:var(--radius-sm);margin:12px 0
+}
+.csv-preview table{width:100%;border-collapse:collapse;font-size:0.75rem}
+.csv-preview th,.csv-preview td{
+  padding:6px 10px;border:1px solid var(--color-light-gray);
+  text-align:left;white-space:nowrap
+}
+.csv-preview th{background:var(--color-light-gray);font-weight:600;position:sticky;top:0}
+.csv-preview tr:nth-child(even){background:#fafafa}
+
+.csv-mapping{margin:12px 0}
+.csv-mapping h4{font-size:0.85rem;margin-bottom:8px;color:var(--color-text-light)}
+.csv-mapping-item{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 0;font-size:0.8rem
+}
+.csv-mapping-item label{min-width:120px;font-weight:600}
+.csv-mapping-item select{
+  flex:1;padding:4px 8px;border:1px solid var(--color-light-gray);
+  border-radius:4px;font-size:0.75rem;font-family:var(--font)
+}
+
+.status-msg{
+  padding:10px 16px;border-radius:var(--radius-sm);
+  font-size:0.8rem;margin-bottom:12px;display:none
+}
+.status-msg.success{display:block;background:var(--color-green-bg);color:var(--color-green);border:1px solid rgba(46,204,113,0.3)}
+.status-msg.error{display:block;background:var(--color-red-bg);color:var(--color-red);border:1px solid rgba(231,76,60,0.3)}
+.status-msg.info{display:block;background:var(--color-blue-bg);color:var(--color-blue);border:1px solid rgba(52,152,219,0.3)}
+
+/* ============ Loading ============ */
+.loading-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(255,255,255,0.85);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:1000;transition:opacity 0.3s
+}
+.loading-overlay.hidden{opacity:0;pointer-events:none}
+.spinner{width:40px;height:40px;border:4px solid var(--color-light-gray);border-top-color:var(--color-blue);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:0.9rem;color:var(--color-text-light)}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Loading -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">⏳ 加载看板数据中...</div>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header class="header animate">
+    <div class="header-left">
+      <div class="header-title">📊 <span>数据采集加工</span>全链路看板</div>
+      <div class="header-subtitle">从需求下发 → 采集执行 → 数据加工 → 上线发布 → 结算成本 全流程监控</div>
+    </div>
+    <div class="header-right">
+      <div id="currentDate">—</div>
+      <div>
+        <span class="header-badge" id="dataStatusBadge">📡 data.json 加载中...</span>
+        <span class="data-source">🌐 GitHub Pages</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== TOOLBAR ========== -->
+  <div class="toolbar animate delay-1">
+    <button class="btn btn-primary" onclick="openPanel()">✏️ 编辑数据</button>
+    <button class="btn btn-warning" onclick="openCSV()">📥 导入CSV</button>
+    <button class="btn btn-success" onclick="exportDataJSON()">📤 导出 data.json</button>
+    <button class="btn btn-outline" onclick="resetToDefault()">↩️ 恢复默认</button>
+    <span id="dataInfo" style="font-size:0.75rem;color:var(--color-text-light);margin-left:auto">
+      💾 数据来源: <strong id="dataSourceLabel">data.json</strong>
+    </span>
+  </div>
+
+  <!-- ========== KPI ROW ========== -->
+  <div class="kpi-row animate delay-1" id="kpiContainer"></div>
+
+  <!-- ========== ROW 1 ========== -->
+  <div class="section-row animate delay-2">
+    <div class="card chart-card">
+      <div class="section-title"><span class="dot red"></span>环节 1 · 需求下发</div>
+      <div class="chart-container" id="chartDemandRelease"></div>
+    </div>
+    <div class="card chart-card">
+      <div class="section-title"><span class="dot orange"></span>环节 2 · 采集执行进度</div>
+      <div class="chart-container" id="chartCollection"></div>
+    </div>
+  </div>
+
+  <!-- ========== ROW 2 ========== -->
+  <div class="section-row animate delay-3">
+    <div class="card chart-card">
+      <div class="section-title"><span class="dot yellow"></span>环节 3 · 审核打回根因分析</div>
+      <div class="chart-container chart-container-sm" id="chartReviewReject"></div>
+    </div>
+    <div class="card chart-card">
+      <div class="section-title"><span class="dot green"></span>环节 4 · 上线闭环状态</div>
+      <div class="chart-container chart-container-sm" id="chartClosedStatus"></div>
+    </div>
+  </div>
+
+  <!-- ========== ROW 3 ========== -->
+  <div class="section-row animate delay-4">
+    <div class="card chart-card">
+      <div class="section-title"><span class="dot purple"></span>全链路健康度评分</div>
+      <div class="chart-container chart-container-lg" id="chartRadar"></div>
+    </div>
+    <div class="card chart-card">
+      <div class="section-title"><span class="dot blue"></span>结算与预算执行</div>
+      <div class="chart-container chart-container-lg" id="chartBudget"></div>
+    </div>
+  </div>
+
+  <!-- ========== ALERTS ========== -->
+  <div class="alert-section animate delay-4">
+    <div class="alert-title">🚨 关键预警与行动项</div>
+    <div class="alert-grid" id="alertContainer"></div>
+  </div>
+
+  <!-- ========== FOOTER ========== -->
+  <div class="footer">
+    数据采集加工全链路看板 · 数据来源于 <strong>data.json</strong> ·
+    更新后刷新页面即可看到最新数据 · Made with ❤️
+  </div>
+</div>
+
+<!-- ========== DATA EDITOR PANEL ========== -->
+<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+<div class="data-panel" id="dataPanel">
+  <button class="close-btn" onclick="closePanel()">✕</button>
+  <h3>✏️ 编辑看板数据</h3>
+  <p style="font-size:0.75rem;color:var(--color-text-light);margin-bottom:10px;">
+    修改下方 JSON 后点击「应用」预览效果。满意后点「导出 data.json」上传到 GitHub 即可永久生效。
+  </p>
+  <textarea id="dataEditor" spellcheck="false"></textarea>
+  <div class="btn-group">
+    <button class="btn-apply" onclick="applyDataEdit()">✅ 应用</button>
+    <button class="btn-reset" onclick="closePanel()">取消</button>
+    <button class="btn-export-data" onclick="exportDataJSON()">📤 导出 data.json</button>
+  </div>
+</div>
+
+<!-- ========== CSV IMPORT PANEL ========== -->
+<div class="panel-overlay" id="csvOverlay" onclick="closeCSV()"></div>
+<div class="csv-panel" id="csvPanel">
+  <button class="close-btn" onclick="closeCSV()">✕</button>
+  <h3>📥 从企微文档导入 CSV</h3>
+  <div class="status-msg" id="csvStatus"></div>
+
+  <div class="drop-zone" id="dropZone">
+    <div class="drop-zone-icon">📄</div>
+    <div class="drop-zone-text">拖拽 CSV 文件到这里，或点击选择文件</div>
+    <div class="drop-zone-hint">支持从企微文档导出的 CSV 文件</div>
+  </div>
+  <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+
+  <div id="csvPreviewArea" class="hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h4 style="font-size:0.85rem">📋 数据预览（前5行）</h4>
+      <span id="csvRowCount" style="font-size:0.75rem;color:var(--color-text-light)"></span>
+    </div>
+    <div class="csv-preview" id="csvPreview"></div>
+  </div>
+
+  <div id="csvMappingArea" class="hidden">
+    <h4>🔗 字段映射（自动匹配，可手动调整）</h4>
+    <div id="csvMapping" class="csv-mapping"></div>
+  </div>
+
+  <div class="btn-group" style="margin-top:12px">
+    <button class="btn-apply" id="csvApplyBtn" onclick="applyCSV()" disabled>🔄 导入并生成看板</button>
+    <button class="btn-reset" onclick="closeCSV()">取消</button>
+  </div>
+</div>
+
+<!-- ========== SCRIPT ========== -->
+<script>
+// =========================================================================
+// 📦 DATA — Embedded defaults (fallback if data.json can't be loaded)
+// =========================================================================
+const DEFAULT_DATA = {
+  monthlySummary: {
+    "3月": { demand: 32540, releaseTimeliness: 0.51, collected: 16595, completionRate: 0.51, collectTimeliness: 0.93 },
+    "4月": { demand: 40954, releaseTimeliness: 0.63, collected: 21682, completionRate: 0.53, collectTimeliness: 1.00 },
+    "5月": { demand: 44520, releaseTimeliness: 0.72, collected: 31609, completionRate: 0.71, collectTimeliness: 0.98 },
+    "6月": { demand: 38200, releaseTimeliness: 0.78, collected: 25212, completionRate: 0.66, collectTimeliness: 0.99 }
+  },
+  releaseMetrics: {
+    categories: ["需求发布及时率", "需求发布准确率", "需求发布覆盖率"],
+    current: [0.63, 0.71, 0.58],
+    target: [0.90, 0.90, 0.90]
+  },
+  projectCompletion: [
+    { name: "北京比价试点", rate: 0.82 },
+    { name: "河北价格采集", rate: 0.76 },
+    { name: "浙江商超数据", rate: 0.69 },
+    { name: "广东咬合试点", rate: 0.58 },
+    { name: "海南全品类",   rate: 0.85 },
+    { name: "1:3 需求",    rate: 0.464 },
+    { name: "价格更新",     rate: 0.71 },
+    { name: "全系列报价单", rate: 0.63 }
+  ],
+  rejectReasons: [
+    { name: "非常规材料", value: 142 },
+    { name: "参数错误",   value: 89  },
+    { name: "格式不符",   value: 56  },
+    { name: "数据缺失",   value: 41  },
+    { name: "其他",       value: 23  }
+  ],
+  closedStatus: { closed: 185, inProgress: 96, notStarted: 42 },
+  healthRadar: {
+    dimensions: ["需求下发", "采集执行", "数据加工", "上线发布", "供采试点", "结算成本"],
+    currentScore: [63, 53, 71, 68, 55, 42],
+    targetScore: [90, 90, 85, 85, 80, 80]
+  },
+  budgetMonthly: [
+    { month: "3月", actual: 126, target: 150, cumulativeTarget: 150 },
+    { month: "4月", actual: 148, target: 150, cumulativeTarget: 300 },
+    { month: "5月", actual: 135, target: 150, cumulativeTarget: 450 },
+    { month: "6月", actual: 92,  target: 150, cumulativeTarget: 600 }
+  ],
+  kpiCards: [
+    { label: "4月总需求量",     value: "40,954", unit: "条",   sub: "环比 +5.2%",   trend: "up",   color: "blue" },
+    { label: "采集完成数量",   value: "21,682", unit: "条",   sub: "完成率 53%",    trend: "up",   color: "orange" },
+    { label: "采集及时率",     value: "100%",   unit: "",     sub: "较上月 +7pp",   trend: "up",   color: "green" },
+    { label: "需求发布及时率", value: "63%",    unit: "",     sub: "较目标差 27pp", trend: "down", color: "red" },
+    { label: "审核打回率",     value: "12.3%",  unit: "",     sub: "较上月 -1.2pp", trend: "up",   color: "purple" }
+  ],
+  alerts: [
+    { priority: "P0", problem: "需求发布及时率仅 63%，远低于 90% 目标", action: "加强前置沟通机制，明确各环节责任人及时间节点" },
+    { priority: "P0", problem: "1:3 需求采集完成率仅 46.4%，低于警戒线", action: "专项攻坚，增配采集资源，每日跟进进度" },
+    { priority: "P1", problem: "预算执行率偏低（Q2累计 55%）", action: "优化排期，确保重点项目优先保障预算" },
+    { priority: "P1", problem: "闭环判定标准不统一，存在口径差异", action: "制定统一闭环标准文档，组织相关方培训" }
+  ]
+};
+
+// =========================================================================
+// 🌐 DATA LOADING
+// =========================================================================
+let currentData = null;
+let chartInstances = {};
+let csvRawData = null;
+
+function pct(v) { return (v * 100).toFixed(1) + "%"; }
+
+async function loadData() {
+  const loadingEl = document.getElementById("loadingOverlay");
+  const badge = document.getElementById("dataStatusBadge");
+  const label = document.getElementById("dataSourceLabel");
+
+  // Try data.json first
+  try {
+    const resp = await fetch("./data.json?_t=" + Date.now());
+    if (resp.ok) {
+      currentData = await resp.json();
+      badge.textContent = "✅ data.json 已加载";
+      badge.style.color = "#2ECC71";
+      label.textContent = "data.json（外部文件）";
+      renderAll(currentData);
+      loadingEl.classList.add("hidden");
+      return;
+    }
+  } catch(e) {
+    // fall through to localStorage
+  }
+
+  // Try localStorage
+  try {
+    const saved = localStorage.getItem("kanbanData");
+    if (saved) {
+      currentData = JSON.parse(saved);
+      badge.textContent = "📦 本地缓存数据";
+      badge.style.borderColor = "rgba(241,196,15,0.4)";
+      badge.style.color = "#F1C40F";
+      label.textContent = "localStorage 缓存";
+      renderAll(currentData);
+      loadingEl.classList.add("hidden");
+      return;
+    }
+  } catch(e) {}
+
+  // Fallback to defaults
+  currentData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  badge.textContent = "⚠️ 默认数据（离线模式）";
+  badge.style.borderColor = "rgba(243,156,18,0.4)";
+  badge.style.color = "#F39C12";
+  label.textContent = "内置默认数据";
+  renderAll(currentData);
+  loadingEl.classList.add("hidden");
+}
+
+// =========================================================================
+// 📊 CHARTS (same as before, all 7 charts)
+// =========================================================================
+
+// 1. KPI Cards
+function renderKPI(data) {
+  const container = document.getElementById("kpiContainer");
+  const iconMap = { blue: "📋", orange: "📥", green: "✅", red: "⚠️", purple: "🔄" };
+  container.innerHTML = data.kpiCards.map((k, i) => `
+    <div class="kpi-card ${k.color} animate" style="animation-delay:${i*0.1}s">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value ${k.color}">${k.value}<span style="font-size:0.7rem;font-weight:400;color:var(--color-text-light);margin-left:4px">${k.unit}</span></div>
+      <div class="kpi-sub">
+        <span class="kpi-trend-${k.trend==="up"?"up":"down"}">${k.trend==="up"?"↑":"↓"} ${k.sub}</span>
+      </div>
+      <div class="kpi-icon">${iconMap[k.color]||"📊"}</div>
+    </div>
+  `).join("");
+}
+
+function disposeChart(id) {
+  if (chartInstances[id]) { chartInstances[id].dispose(); delete chartInstances[id]; }
+}
+function initChart(id) {
+  disposeChart(id);
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const chart = echarts.init(el);
+  chartInstances[id] = chart;
+  const ro = new ResizeObserver(() => chart.resize());
+  ro.observe(el.parentElement);
+  return chart;
+}
+
+// 2. 需求下发
+function renderDemandRelease(data) {
+  const chart = initChart("chartDemandRelease");
+  if (!chart) return;
+  const d = data.releaseMetrics;
+  chart.setOption({
+    tooltip: { trigger: "axis", formatter: (p) => p.map(i => `${i.name}<br/>${i.seriesName}: ${(i.value*100).toFixed(1)}%`).join("<br/>") },
+    legend: { data: ["当前值", "目标值 (90%)"], bottom: 0, textStyle: { fontSize: 11 } },
+    grid: { top: 20, bottom: 40, left: 30, right: 20, containLabel: true },
+    xAxis: { type: "category", data: d.categories, axisLabel: { fontSize: 11 } },
+    yAxis: { type: "value", min: 0, max: 1, axisLabel: { formatter: (v) => pct(v), fontSize: 10 } },
+    series: [
+      { name: "当前值", type: "bar", data: d.current, itemStyle: { color: "#E74C3C", borderRadius: [4,4,0,0] }, label: { show: true, position: "top", formatter: (p) => pct(p.value), fontSize: 10, fontWeight: 600 }, barWidth: 30 },
+      { name: "目标值 (90%)", type: "bar", data: d.target, itemStyle: { color: "#BDC3C7", borderRadius: [4,4,0,0], opacity: 0.5 }, label: { show: true, position: "top", formatter: (p) => pct(p.value), fontSize: 10, color: "#95A5A6" }, barWidth: 30 },
+    ],
+  });
+}
+
+// 3. 采集执行
+function renderCollection(data) {
+  const chart = initChart("chartCollection");
+  if (!chart) return;
+  const d = data.projectCompletion;
+  const names = d.map(i => i.name).reverse();
+  const values = d.map(i => i.rate).reverse();
+  chart.setOption({
+    tooltip: { trigger: "axis", formatter: (p) => `${p[0].name}<br/>采集完成率: ${(p[0].value*100).toFixed(1)}%` },
+    grid: { top: 10, bottom: 10, left: 10, right: 40, containLabel: true },
+    xAxis: { type: "value", min: 0, max: 1, axisLabel: { formatter: (v) => pct(v), fontSize: 10 } },
+    yAxis: { type: "category", data: names, axisLabel: { fontSize: 10 } },
+    series: [
+      { type: "bar", data: values.map(v => ({ value: v, itemStyle: { color: v>=0.8?"#2ECC71":v>=0.6?"#F39C12":"#E74C3C", borderRadius: [0,4,4,0] } })), label: { show: true, position: "right", formatter: (p) => pct(p.value), fontSize: 10, fontWeight: 600 }, barWidth: 14 },
+      { type: "bar", data: [], markLine: { silent: true, symbol: "none", lineStyle: { type: "dashed", color: "#E74C3C", width: 2 }, label: { formatter: "目标 90%", position: "end", fontSize: 10, color: "#E74C3C" }, data: [{ xAxis: 0.9 }] } },
+    ],
+  });
+}
+
+// 4. 审核打回饼图
+function renderRejectPie(data) {
+  const chart = initChart("chartReviewReject");
+  if (!chart) return;
+  const d = data.rejectReasons;
+  const colors = ["#E74C3C","#F39C12","#F1C40F","#3498DB","#95A5A6"];
+  const total = d.reduce((s,i) => s+i.value, 0);
+  chart.setOption({
+    tooltip: { formatter: (p) => `<strong>${p.name}</strong><br/>数量: ${p.value} 条<br/>占比: ${((p.value/total)*100).toFixed(1)}%` },
+    legend: { orient: "vertical", right: 10, top: "center", textStyle: { fontSize: 10 }, itemWidth: 12, itemHeight: 12 },
+    series: [{ type: "pie", radius: ["30%","65%"], center: ["35%","50%"], avoidLabelOverlap: true, itemStyle: { borderRadius: 6, borderColor: "#fff", borderWidth: 2 }, label: { show: false }, emphasis: { label: { show: true, fontSize: 12, fontWeight: 600 } }, data: d.map((item,i) => ({ ...item, itemStyle: { color: colors[i%colors.length] } })) }],
+  });
+}
+
+// 5. 闭环状态
+function renderClosedStatus(data) {
+  const chart = initChart("chartClosedStatus");
+  if (!chart) return;
+  const d = data.closedStatus;
+  const items = [
+    { name: "✅ 已闭环",   value: d.closed, color: "#2ECC71" },
+    { name: "🔄 进行中",   value: d.inProgress, color: "#F39C12" },
+    { name: "⏳ 未启动",   value: d.notStarted, color: "#95A5A6" },
+  ];
+  chart.setOption({
+    tooltip: { trigger: "axis", formatter: (p) => `${p[0].name}<br/>数量: ${p[0].value} 条` },
+    grid: { top: 20, bottom: 20, left: 10, right: 30, containLabel: true },
+    xAxis: { type: "category", data: items.map(i=>i.name), axisLabel: { fontSize: 11 } },
+    yAxis: { type: "value", axisLabel: { fontSize: 10 } },
+    series: [{ type: "bar", data: items.map(i => ({ value: i.value, itemStyle: { color: i.color, borderRadius: [6,6,0,0] } })), label: { show: true, position: "top", fontSize: 12, fontWeight: 700 }, barWidth: 50 }],
+  });
+}
+
+// 6. 雷达图
+function renderRadar(data) {
+  const chart = initChart("chartRadar");
+  if (!chart) return;
+  const d = data.healthRadar;
+  chart.setOption({
+    tooltip: { trigger: "item", formatter: (p) => `<strong>${p.name}</strong><br/>${p.seriesName}: ${p.value}` },
+    legend: { data: ["当前得分","目标值"], bottom: 0, textStyle: { fontSize: 11 } },
+    radar: { indicator: d.dimensions.map(name => ({ name, max: 100 })), center: ["50%","48%"], radius: "60%", axisName: { fontSize: 11, fontWeight: 600, color: "#2C3E50" }, splitArea: { areaStyle: { color: ["rgba(52,152,219,0.02)","rgba(52,152,219,0.05)"] } } },
+    series: [{ type: "radar", data: [
+      { value: d.currentScore, name: "当前得分", areaStyle: { color: "rgba(231,76,60,0.25)" }, lineStyle: { color: "#E74C3C", width: 2 }, itemStyle: { color: "#E74C3C" } },
+      { value: d.targetScore, name: "目标值", areaStyle: { color: "rgba(46,204,113,0.10)" }, lineStyle: { color: "#2ECC71", width: 2, type: "dashed" }, itemStyle: { color: "#2ECC71" } },
+    ]}],
+  });
+}
+
+// 7. 预算组合图
+function renderBudget(data) {
+  const chart = initChart("chartBudget");
+  if (!chart) return;
+  const d = data.budgetMonthly;
+  chart.setOption({
+    tooltip: { trigger: "axis", formatter: (p) => p.map(i => `${i.seriesName}<br/>${i.axisValue}: ${i.value}${i.seriesName.includes("累计")?"":"万"}`).join("<br/>") },
+    legend: { data: ["月度结算金额","月度目标","累计目标"], bottom: 0, textStyle: { fontSize: 11 } },
+    grid: { top: 20, bottom: 40, left: 10, right: 50, containLabel: true },
+    xAxis: { type: "category", data: d.map(i=>i.month), axisLabel: { fontSize: 11 } },
+    yAxis: [
+      { type: "value", name: "金额（万元）", nameTextStyle: { fontSize: 10 }, axisLabel: { fontSize: 10 } },
+      { type: "value", name: "累计（万元）", nameTextStyle: { fontSize: 10 }, axisLabel: { fontSize: 10 } },
+    ],
+    series: [
+      { name: "月度结算金额", type: "bar", data: d.map(i=>i.actual), itemStyle: { color: "#3498DB", borderRadius: [4,4,0,0] }, label: { show: true, position: "top", formatter: (p)=>p.value+"万", fontSize: 10 } },
+      { name: "月度目标", type: "bar", data: d.map(i=>i.target), itemStyle: { color: "#BDC3C7", opacity: 0.4, borderRadius: [4,4,0,0] }, label: { show: true, position: "top", formatter: (p)=>p.value+"万", fontSize: 9, color: "#95A5A6" } },
+      { name: "累计目标", type: "line", yAxisIndex: 1, data: d.map(i=>i.cumulativeTarget), lineStyle: { color: "#E74C3C", width: 2, type: "dashed" }, itemStyle: { color: "#E74C3C" }, label: { show: true, formatter: (p)=>p.value+"万", fontSize: 10, color: "#E74C3C" }, symbol: "diamond", symbolSize: 10 },
+    ],
+  });
+}
+
+// 8. 预警
+function renderAlerts(data) {
+  document.getElementById("alertContainer").innerHTML = data.alerts.map(a => `
+    <div class="alert-item alert-${a.priority.toLowerCase()}">
+      <span class="alert-priority">${a.priority}</span>
+      <div class="alert-content">
+        <div class="alert-problem">${a.problem}</div>
+        <div class="alert-action">💡 建议：${a.action}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderAll(data) {
+  if (!data) return;
+  renderKPI(data);
+  renderDemandRelease(data);
+  renderCollection(data);
+  renderRejectPie(data);
+  renderClosedStatus(data);
+  renderRadar(data);
+  renderBudget(data);
+  renderAlerts(data);
+}
+
+// =========================================================================
+// 📝 DATA EDITOR PANEL
+// =========================================================================
+function openPanel() {
+  document.getElementById("dataEditor").value = JSON.stringify(currentData, null, 2);
+  document.getElementById("dataPanel").classList.add("open");
+  document.getElementById("panelOverlay").classList.add("open");
+}
+function closePanel() {
+  document.getElementById("dataPanel").classList.remove("open");
+  document.getElementById("panelOverlay").classList.remove("open");
+}
+function applyDataEdit() {
+  try {
+    const parsed = JSON.parse(document.getElementById("dataEditor").value);
+    currentData = parsed;
+    localStorage.setItem("kanbanData", JSON.stringify(parsed));
+    renderAll(currentData);
+    document.getElementById("dataStatusBadge").textContent = "📦 已应用编辑（本地缓存）";
+    document.getElementById("dataStatusBadge").style.borderColor = "rgba(241,196,15,0.4)";
+    document.getElementById("dataStatusBadge").style.color = "#F1C40F";
+    document.getElementById("dataSourceLabel").textContent = "手动编辑（localStorage）";
+    closePanel();
+    showToast("✅ 数据已应用！点击「导出 data.json」上传到 GitHub 即可永久生效。", "success");
+  } catch(e) {
+    alert("JSON 格式错误：" + e.message);
+  }
+}
+function resetToDefault() {
+  if (!confirm("恢复默认数据？当前编辑会丢失。")) return;
+  currentData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  localStorage.removeItem("kanbanData");
+  renderAll(currentData);
+  document.getElementById("dataStatusBadge").textContent = "✅ 已恢复默认数据";
+  document.getElementById("dataStatusBadge").style.color = "#2ECC71";
+  document.getElementById("dataSourceLabel").textContent = "默认数据";
+}
+function exportDataJSON() {
+  const blob = new Blob([JSON.stringify(currentData, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "data.json";
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("📤 已导出 data.json，上传到 GitHub 替换原文件即可更新看板", "info");
+}
+
+// =========================================================================
+// 📥 CSV IMPORT
+// =========================================================================
+
+// Known field keywords for auto-mapping
+const FIELD_KEYWORDS = {
+  month: ["月份", "月", "月度", "月份"],
+  project: ["项目", "来源", "省份", "地区", "需求来源", "项目名称", "试点"],
+  demandType: ["需求类型", "类型", "采集类型", "类别"],
+  demandQty: ["下发数量", "需求量", "需求数量", "数量", "总量"],
+  releaseTimeliness: ["需求发布及时率", "及时率", "发布及时率"],
+  releaseAccuracy: ["需求发布准确率", "准确率", "发布准确率"],
+  releaseCoverage: ["需求发布覆盖率", "覆盖率", "发布覆盖率"],
+  collectedQty: ["实际采集完成数量", "采集完成数", "完成数", "采集数量", "实际采集"],
+  completionRate: ["采集完成率", "完成率"],
+  collectTimeliness: ["采集及时率", "采集按时率"],
+  rejectReason: ["审核打回根因", "根因", "打回原因", "审核根因", "退回原因"],
+  closedStatus: ["是否采集闭环", "闭环状态", "闭环", "是否闭环"],
+  budgetAmount: ["结算金额", "金额", "预算", "结算"],
+};
+
+function findField(header, fieldMap) {
+  const h = header.trim();
+  const keys = Object.keys(FIELD_KEYWORDS);
+  for (const key of keys) {
+    if (FIELD_KEYWORDS[key].some(kw => h.includes(kw) || kw.includes(h))) {
+      return key;
+    }
+  }
+  return null;
+}
+
+function showCSVStatus(msg, type) {
+  const el = document.getElementById("csvStatus");
+  el.textContent = msg;
+  el.className = "status-msg " + type;
+}
+
+document.getElementById("dropZone").addEventListener("click", () => {
+  document.getElementById("csvFileInput").click();
+});
+document.getElementById("csvFileInput").addEventListener("change", (e) => {
+  if (e.target.files.length) handleCSVFile(e.target.files[0]);
+});
+document.getElementById("dropZone").addEventListener("dragover", (e) => {
+  e.preventDefault();
+  e.currentTarget.classList.add("dragover");
+});
+document.getElementById("dropZone").addEventListener("dragleave", (e) => {
+  e.preventDefault();
+  e.currentTarget.classList.remove("dragover");
+});
+document.getElementById("dropZone").addEventListener("drop", (e) => {
+  e.preventDefault();
+  e.currentTarget.classList.remove("dragover");
+  if (e.dataTransfer.files.length) handleCSVFile(e.dataTransfer.files[0]);
+});
+
+function handleCSVFile(file) {
+  if (!file.name.endsWith(".csv")) {
+    showCSVStatus("请选择 CSV 文件", "error");
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const csv = e.target.result;
+    const result = Papa.parse(csv, { header: true, skipEmptyLines: true });
+    if (result.errors.length) {
+      showCSVStatus("CSV 解析有警告，已尝试继续：" + result.errors[0].message, "info");
+    }
+    csvRawData = result;
+    showCSVStatus(`✅ 已解析 ${result.data.length} 行数据`, "success");
+
+    // Preview
+    const preview = document.getElementById("csvPreview");
+    const headers = result.meta.fields;
+    const rows = result.data.slice(0, 5);
+    let html = "<table><thead><tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr></thead><tbody>";
+    rows.forEach(row => {
+      html += "<tr>" + headers.map(h => `<td>${row[h]||""}</td>`).join("") + "</tr>";
+    });
+    html += "</tbody></table>";
+    preview.innerHTML = html;
+    document.getElementById("csvPreviewArea").classList.remove("hidden");
+    document.getElementById("csvRowCount").textContent = `共 ${result.data.length} 行，显示前 5 行`;
+
+    // Auto mapping
+    const mappingContainer = document.getElementById("csvMapping");
+    const fieldLabels = {
+      month: "月份", project: "项目/来源", demandType: "需求类型",
+      demandQty: "下发数量", releaseTimeliness: "发布及时率", releaseAccuracy: "发布准确率",
+      releaseCoverage: "发布覆盖率", collectedQty: "采集完成数", completionRate: "采集完成率",
+      collectTimeliness: "采集及时率", rejectReason: "打回根因", closedStatus: "闭环状态",
+      budgetAmount: "结算金额",
+    };
+    const needed = Object.keys(fieldLabels);
+    let mappingHTML = "";
+    needed.forEach(field => {
+      const matched = findField(field, headers);
+      mappingHTML += `
+        <div class="csv-mapping-item">
+          <label>${fieldLabels[field]}</label>
+          <select id="map_${field}">
+            <option value="">— 不导入 —</option>
+            ${headers.map(h => `<option value="${h}" ${matched===field?'selected':''}>${h}</option>`).join("")}
+          </select>
+        </div>
+      `;
+    });
+    mappingContainer.innerHTML = mappingHTML;
+    document.getElementById("csvMappingArea").classList.remove("hidden");
+    document.getElementById("csvApplyBtn").disabled = false;
+  };
+  reader.readAsText(file);
+}
+
+function getMapping() {
+  const map = {};
+  document.querySelectorAll("#csvMapping select").forEach(sel => {
+    const field = sel.id.replace("map_", "");
+    if (sel.value) map[field] = sel.value;
+  });
+  return map;
+}
+
+function applyCSV() {
+  if (!csvRawData) return;
+  const map = getMapping();
+  const rows = csvRawData.data;
+  const headers = csvRawData.meta.fields;
+
+  // Build aggregated data structure from CSV
+  // This is a best-effort conversion — user can fine-tune in editor
+  try {
+    const newData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+    // If we have month + demand columns, build monthlySummary
+    if (map.month && map.demandQty) {
+      const months = {};
+      rows.forEach(row => {
+        const m = row[map.month];
+        if (!m) return;
+        if (!months[m]) months[m] = { demand: 0, timelinessSum: 0, timelinessCount: 0, collected: 0, completionSum: 0, completionCount: 0, collectTimelinessSum: 0, collectTimelinessCount: 0 };
+        const demand = parseFloat(row[map.demandQty]) || 0;
+        months[m].demand += demand;
+        if (map.releaseTimeliness) {
+          const v = parseFloat(row[map.releaseTimeliness]);
+          if (!isNaN(v)) { months[m].timelinessSum += v; months[m].timelinessCount++; }
+        }
+        if (map.collectedQty) {
+          months[m].collected += parseFloat(row[map.collectedQty]) || 0;
+        }
+        if (map.completionRate) {
+          const v = parseFloat(row[map.completionRate]);
+          if (!isNaN(v)) { months[m].completionSum += v; months[m].completionCount++; }
+        }
+        if (map.collectTimeliness) {
+          const v = parseFloat(row[map.collectTimeliness]);
+          if (!isNaN(v)) { months[m].collectTimelinessSum += v; months[m].collectTimelinessCount++; }
+        }
+      });
+
+      const monthKeys = Object.keys(months).sort();
+      if (monthKeys.length) {
+        newData.monthlySummary = {};
+        monthKeys.forEach(m => {
+          const d = months[m];
+          newData.monthlySummary[m] = {
+            demand: d.demand,
+            releaseTimeliness: d.timelinessCount ? +(d.timelinessSum / d.timelinessCount).toFixed(2) : 0,
+            collected: d.collected,
+            completionRate: d.demand ? +((d.collected / d.demand)).toFixed(2) : 0,
+            collectTimeliness: d.collectTimelinessCount ? +(d.collectTimelinessSum / d.collectTimelinessCount).toFixed(2) : 0,
+          };
+        });
+      }
+    }
+
+    // Build projectCompletion from project/region column
+    if (map.project && map.completionRate) {
+      const projects = {};
+      rows.forEach(row => {
+        const p = row[map.project];
+        if (!p) return;
+        const rate = parseFloat(row[map.completionRate]);
+        if (isNaN(rate)) return;
+        if (!projects[p]) projects[p] = { sum: 0, count: 0 };
+        projects[p].sum += rate;
+        projects[p].count++;
+      });
+      newData.projectCompletion = Object.entries(projects).map(([name, d]) => ({
+        name, rate: +(d.sum / d.count).toFixed(3)
+      })).sort((a, b) => b.rate - a.rate);
+    }
+
+    // Build rejectReasons
+    if (map.rejectReason) {
+      const reasons = {};
+      rows.forEach(row => {
+        const r = row[map.rejectReason];
+        if (!r) return;
+        reasons[r] = (reasons[r] || 0) + 1;
+      });
+      const entries = Object.entries(reasons).sort((a, b) => b[1] - a[1]);
+      if (entries.length) {
+        newData.rejectReasons = entries.map(([name, value]) => ({ name, value }));
+      }
+    }
+
+    // Build closedStatus
+    if (map.closedStatus) {
+      let closed = 0, inProgress = 0, notStarted = 0;
+      rows.forEach(row => {
+        const val = (row[map.closedStatus] || "").trim();
+        if (val.includes("已闭环") || val.includes("是") || val.includes("完成")) closed++;
+        else if (val.includes("进行中") || val.includes("否")) inProgress++;
+        else notStarted++;
+      });
+      if (closed || inProgress || notStarted) {
+        newData.closedStatus = { closed, inProgress, notStarted };
+      }
+    }
+
+    // Recalculate KPI cards based on monthlySummary
+    const months = Object.keys(newData.monthlySummary);
+    if (months.length) {
+      const last2 = months.slice(-2);
+      const latest = months[months.length - 1];
+      const prev = months[months.length - 2];
+      const m = newData.monthlySummary;
+
+      if (last2.length >= 2) {
+        const latestM = m[last2[last2.length-1]];
+        const prevM = m[last2[last2.length-2]];
+        const demandChange = prevM.demand ? ((latestM.demand - prevM.demand) / prevM.demand * 100).toFixed(1) : 0;
+        const timelinessChange = ((latestM.releaseTimeliness - prevM.releaseTimeliness) * 100).toFixed(0);
+
+        newData.kpiCards = [
+          { label: `${latest}总需求量`, value: latestM.demand.toLocaleString(), unit: "条", sub: `环比 ${demandChange > 0 ? "+" : ""}${demandChange}%`, trend: demandChange >= 0 ? "up" : "down", color: "blue" },
+          { label: "采集完成数量", value: latestM.collected.toLocaleString(), unit: "条", sub: `完成率 ${(latestM.completionRate*100).toFixed(0)}%`, trend: "up", color: "orange" },
+          { label: "采集及时率", value: pct(latestM.collectTimeliness), unit: "", sub: `较上月 ${timelinessChange > 0 ? "+" : ""}${timelinessChange}pp`, trend: timelinessChange >= 0 ? "up" : "down", color: "green" },
+          { label: "需求发布及时率", value: pct(latestM.releaseTimeliness), unit: "", sub: `较目标差 ${(90 - latestM.releaseTimeliness*100).toFixed(0)}pp`, trend: "down", color: "red" },
+          { label: "审核打回率", value: "—", unit: "", sub: "导入后可在编辑器中调整", trend: "up", color: "purple" },
+        ];
+      }
+    }
+
+    currentData = newData;
+    localStorage.setItem("kanbanData", JSON.stringify(newData));
+    renderAll(currentData);
+    document.getElementById("dataStatusBadge").textContent = "📥 CSV 导入成功（本地缓存）";
+    document.getElementById("dataStatusBadge").style.borderColor = "rgba(46,204,113,0.4)";
+    document.getElementById("dataStatusBadge").style.color = "#2ECC71";
+    document.getElementById("dataSourceLabel").textContent = "CSV 导入 (localStorage)";
+    closeCSV();
+    showToast("✅ CSV 导入成功！检查数据后点击「导出 data.json」上传到 GitHub", "success");
+  } catch(e) {
+    showCSVStatus("导入处理出错：" + e.message, "error");
+  }
+}
+
+function openCSV() {
+  document.getElementById("csvPanel").classList.add("open");
+  document.getElementById("csvOverlay").classList.add("open");
+}
+function closeCSV() {
+  document.getElementById("csvPanel").classList.remove("open");
+  document.getElementById("csvOverlay").classList.remove("open");
+  document.getElementById("csvPreviewArea").classList.add("hidden");
+  document.getElementById("csvMappingArea").classList.add("hidden");
+  document.getElementById("csvApplyBtn").disabled = true;
+  document.getElementById("csvStatus").className = "status-msg";
+  document.getElementById("csvFileInput").value = "";
+  csvRawData = null;
+}
+
+// =========================================================================
+// 🔔 Toast
+// =========================================================================
+function showToast(msg, type) {
+  const el = document.createElement("div");
+  el.style.cssText = `
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    padding:12px 24px;border-radius:8px;font-size:0.85rem;font-weight:500;
+    z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    background: ${type==="success"?"#EAFAF1":type==="info"?"#EBF5FB":"#FDEDEC"};
+    color: ${type==="success"?"#2ECC71":type==="info"?"#3498DB":"#E74C3C"};
+    border: 1px solid ${type==="success"?"rgba(46,204,113,0.3)":type==="info"?"rgba(52,152,219,0.3)":"rgba(231,76,60,0.3)"};
+    animation: fadeInUp 0.3s ease;
+  `;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = "0"; el.style.transition = "opacity 0.3s"; setTimeout(() => el.remove(), 300); }, 4000);
+}
+
+// =========================================================================
+// 🚀 INIT
+// =========================================================================
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("currentDate").textContent =
+    new Date().toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" });
+  loadData();
+});
+</script>
+
+</body>
+</html>

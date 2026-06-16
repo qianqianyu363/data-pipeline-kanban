@@ -1,0 +1,8 @@
+# OS files
+Thumbs.db
+.DS_Store
+*.swp
+*.swo
+
+# Local overrides (user can create local data.json for testing)
+local/
