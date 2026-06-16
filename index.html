@@ -167,7 +167,211 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .d1{animation-delay:0.05s}.d2{animation-delay:0.1s}.d3{animation-delay:0.15s}.d4{animation-delay:0.2s}
 
 .empty-state{padding:30px;text-align:center;color:var(--tl);font-size:0.8rem}
+
+/* === Flow Cards === */
+.flow-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:1000px){.flow-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.flow-row{grid-template-columns:1fr}}
+.flow-card{background:var(--card);border-radius:var(--r-md);box-shadow:var(--shadow);overflow:hidden;transition:transform 0.15s}
+.flow-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-h)}
+.flow-card-header{padding:8px 12px;color:#fff;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:6px;letter-spacing:0.5px}
+.flow-card-body{padding:10px 14px}
+.flow-card-body .fm{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #f0f0f0;font-size:0.72rem}
+.flow-card-body .fm:last-child{border-bottom:none}
+.flow-card-body .fl{color:var(--tl);font-weight:500;display:flex;align-items:center;gap:3px}
+.flow-card-body .fv{font-weight:700;font-size:0.85rem;font-family:var(--font);letter-spacing:-0.3px}
+.flow-card-body .fv.good{color:#1e8449}
+.flow-card-body .fv.warn{color:#b7950b}
+.flow-card-body .fv.bad{color:var(--red)}
+.flow-card-body .fv.neutral{color:var(--blue)}
+
+/* Special Projects */
+.special-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:1000px){.special-row{grid-template-columns:1fr}}
+.special-card{background:var(--card);border-radius:var(--r-md);box-shadow:var(--shadow);overflow:hidden;transition:transform 0.15s}
+.special-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-h)}
+.special-header{padding:7px 12px;color:#fff;font-size:0.76rem;font-weight:600;display:flex;align-items:center;gap:6px}
+.special-body{padding:10px 14px;font-size:0.72rem}
+.special-metrics{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:6px}
+.special-metrics .sm-item{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #f5f5f5}
+.special-metrics .sm-item .sm-l{color:var(--tl)}
+.special-metrics .sm-item .sm-v{font-weight:600}
+.special-desc{color:var(--tl);font-size:0.68rem;margin-bottom:4px;line-height:1.6}
+
+/* Section titles */
+.sec-title{font-size:0.82rem;font-weight:600;margin-bottom:8px;color:var(--dark);display:flex;align-items:center;gap:6px}
+.sec-title .st-badge{font-size:0.6rem;font-weight:400;color:var(--tl);background:var(--lg);padding:1px 8px;border-radius:10px}
+
+/* Trend section */
+.trend-section{background:var(--card);border-radius:var(--r-md);padding:14px 16px;box-shadow:var(--shadow);margin-bottom:14px}
+.trend-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.trend-title{font-size:0.82rem;font-weight:600;color:var(--dark)}
+.trend-sub{font-size:0.62rem;color:var(--tl)}
+.tab-bar{display:flex;gap:4px}
+.tab-btn{padding:3px 12px;border-radius:12px;font-size:0.68rem;font-weight:600;cursor:pointer;border:none;background:var(--lg);color:var(--tl);font-family:var(--font);transition:all 0.12s}
+.tab-btn.on{color:#fff}
+.tab-btn.on.tb-flow{background:var(--red)}
+.tab-btn.on.tb-chart{background:var(--blue)}
+.tab-content{display:none}
+.tab-content.on{display:block}
+
+/* Health Radar */
+.health-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}
+@media(max-width:800px){.health-grid{grid-template-columns:1fr}}
+.chart-box-md{height:200px}
+
+/* Alert */
+.alert-action{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+@media(max-width:800px){.alert-action{grid-template-columns:1fr}}
+.alert-item{background:#f8f9fa;border-radius:var(--r-sm);padding:8px 12px;display:flex;align-items:flex-start;gap:8px}
+.alert-item.p0{border-left:3px solid var(--red)}
+.alert-item.p1{border-left:3px solid var(--orange)}
+.alert-tag{font-size:0.58rem;font-weight:700;padding:1px 5px;border-radius:5px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.alert-item.p0 .alert-tag{background:#FDEDEC;color:var(--red)}
+.alert-item.p1 .alert-tag{background:#FEF5E7;color:var(--orange)}
+.alert-text{flex:1;font-size:0.72rem}
+.alert-text .at-p{font-weight:600;margin-bottom:1px}
+.alert-text .at-a{color:var(--tl);font-size:0.65rem;margin-top:1px}
+.alert-text .at-owner{display:inline-block;background:#EBF5FB;color:#1a5276;padding:0 5px;border-radius:4px;font-size:0.6rem;margin-left:4px}
 </style>
+</head>
+<body>
+<div class="loading-overlay" id="loading">
+  <div class="spin"></div>
+  <div style="font-size:0.85rem;font-weight:600;margin-top:8px" id="dataBadge">加载中...</div>
+  <div style="font-size:0.7rem;color:var(--tl);margin-top:4px"><span id="srcLabel">💾 读取中</span></div>
+</div>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="header-title">📊 <span>需求下发登记</span>全链路看板</div>
+      <div class="header-sub">数据更新时间: <span id="curDate"></span></div>
+    </div>
+    <div class="header-right">
+      <span>数据状态: <span class="header-badge" id="dataInfo">⏳ 加载中</span></span>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button class="btn btn-outline btn-sm" onclick="openCSV()">📥 导入</button>
+    <button class="btn btn-outline btn-sm" onclick="openEditor()">✏️ 编辑</button>
+    <button class="btn btn-outline btn-sm" onclick="exportJSON()">📤 导出</button>
+    <button class="btn btn-outline btn-sm" onclick="resetData()">🔄 重置</button>
+    <span class="data-info" id="toolbarInfo">💾 内置数据</span>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <label>需求项</label>
+    <select id="fDemandItem" onchange="applyFilter()"></select>
+    <label>结算类型</label>
+    <select id="fSettleType" onchange="applyFilter()"></select>
+    <label>月份</label>
+    <select id="fMonth" onchange="applyFilter()"></select>
+    <span class="filter-count" id="filterCount">共 0 条</span>
+  </div>
+
+  <!-- ===== 看板 1：流程总览 ===== -->
+  <div style="margin-bottom:14px">
+    <div class="sec-title">📋 全链路流程总览 <span class="st-badge">看板 1 · 战略总览</span></div>
+    <!-- 第一层：主业务四环节 -->
+    <div id="flowRow" class="flow-row"></div>
+    <!-- 第二层：三大专项 -->
+    <div id="specialRow" class="special-row"></div>
+  </div>
+
+  <!-- ===== 看板 2：图表分析 ===== -->
+  <div class="trend-section">
+    <div class="trend-header">
+      <div>
+        <div class="trend-title">📈 数据量化分析</div>
+        <div class="trend-sub">看板 2 · 执行明细 · 独立于筛选条件，显示全部月份</div>
+      </div>
+      <div class="tab-bar">
+        <button class="tab-btn tb-flow on" onclick="switchAnalysisTab(this,'flow')">📊 流程分析</button>
+        <button class="tab-btn tb-chart" onclick="switchAnalysisTab(this,'chart')">💰 结算预算</button>
+      </div>
+    </div>
+    <div class="tab-content on" id="analysisFlow">
+      <!-- 采集执行详细分析（4个Tab） -->
+      <div id="collectionArea" style="margin-bottom:10px">
+        <div class="focus-tabs">
+          <button class="ftab ft-capacity on" onclick="switchTab(this,'cp')">📊 产能</button>
+          <button class="ftab ft-budget" onclick="switchTab(this,'bd')">💰 费用执行</button>
+          <button class="ftab ft-progress" onclick="switchTab(this,'pg')">📈 采集进度</button>
+          <button class="ftab ft-tasks" onclick="switchTab(this,'tl')">📋 任务清单</button>
+        </div>
+        <div class="fpanel on" id="fp_cp"></div>
+        <div class="fpanel" id="fp_bd"></div>
+        <div class="fpanel" id="fp_pg"></div>
+        <div class="fpanel" id="fp_tl"></div>
+      </div>
+      <!-- 月度趋势 -->
+      <div>
+        <div style="font-size:0.72rem;font-weight:600;margin-bottom:6px;color:var(--tl)">📈 月度趋势</div>
+        <div class="monthly-grid" id="trendGrid"></div>
+      </div>
+    </div>
+    <div class="tab-content" id="analysisChart">
+      <div class="health-grid">
+        <div class="chart-box-md" id="radarChart"></div>
+        <div class="chart-box-md" id="budgetTrendChart"></div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-box-sm" id="benchChart1"></div>
+        <div class="chart-box-sm" id="benchChart2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 预警行动区 ===== -->
+  <div class="alert-section" id="alertSec" style="display:none">
+    <div class="alert-title">🚨 预警与整改行动 <span class="st-badge" style="background:rgba(231,76,60,0.1);color:var(--red);margin-left:6px;font-size:0.6rem">面向领导 · 落地输出</span></div>
+    <div class="alert-action" id="alertGrid"></div>
+  </div>
+
+  <div class="footer">需求下发登记全链路看板 · 数据仅供内部参考</div>
+</div>
+
+<div class="panel-overlay" id="panelOv" onclick="closeEditor()"></div>
+<div class="panel-overlay" id="csvOv" onclick="closeCSV()"></div>
+
+<div class="editor-panel" id="editorPanel">
+  <button class="close-btn" onclick="closeEditor()">✕</button>
+  <h3>✏️ JSON 编辑器</h3>
+  <textarea id="editorText"></textarea>
+  <div class="btn-group">
+    <button class="btn-apply" onclick="applyEdit()">✅ 应用</button>
+    <button class="btn-rst" onclick="closeEditor()">取消</button>
+    <button class="btn-exp" onclick="exportJSON()">📤 导出 data.json</button>
+  </div>
+</div>
+
+<div class="csv-panel" id="csvPanel">
+  <button class="close-btn" onclick="closeCSV()">✕</button>
+  <h3>📥 导入 CSV/Excel</h3>
+  <div class="drop-zone" id="dropZone">
+    <div class="drop-zone-icon">📁</div>
+    <div class="drop-zone-text">点击选择或拖入 CSV/Excel 文件</div>
+  </div>
+  <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none">
+  <div class="status-msg" id="csvMsg"></div>
+  <div id="csvPreviewArea" class="hidden">
+    <div style="font-size:0.72rem;font-weight:600;margin-bottom:4px">预览</div>
+    <div class="csv-preview" id="csvPreview"></div>
+  </div>
+  <div id="csvMappingArea" class="hidden">
+    <div style="font-size:0.72rem;font-weight:600;margin-bottom:4px">字段映射</div>
+    <div class="csv-mapping" id="csvMapping"></div>
+  </div>
+  <div class="btn-group">
+    <button class="btn-apply" id="csvApplyBtn" onclick="applyCSV()" disabled>✅ 导入</button>
+    <button class="btn-rst" onclick="closeCSV()">取消</button>
+  </div>
+</div>
+
 <script id="dataEmbed" type="application/json">{
   "title": "需求下发登记全链路看板",
   "updateDate": "2026-06-16",
@@ -677,93 +881,68 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   "stepConfig": {
     "需求下发": {
       "color": "#E74C3C",
+      "icon": "📋",
       "metrics": [
-        {
-          "key": "timelinessRate",
-          "label": "需求发布及时率",
-          "unit": "%"
-        },
-        {
-          "key": "totalDemand",
-          "label": "需求量",
-          "unit": "条"
-        },
-        {
-          "key": "passRate",
-          "label": "需求初审通过率",
-          "unit": "%"
-        },
-        {
-          "key": "problemRate",
-          "label": "需求问题率",
-          "unit": "%"
-        }
+        {"key":"timelinessRate","label":"需求发布及时率","unit":"%"},
+        {"key":"totalDemand","label":"需求量","unit":"条"},
+        {"key":"passRate","label":"需求初审通过率","unit":"%"},
+        {"key":"problemRate","label":"需求问题率","unit":"%"}
       ]
     },
     "采集执行": {
       "color": "#F39C12",
+      "icon": "🔧",
       "metrics": [
-        {
-          "key": "completionRate",
-          "label": "采集完成率",
-          "unit": "%"
-        },
-        {
-          "key": "collected",
-          "label": "实际采集完成",
-          "unit": "条"
-        },
-        {
-          "key": "feedbackRate",
-          "label": "材料反馈率",
-          "unit": "%"
-        },
-        {
-          "key": "verifyPassRate",
-          "label": "专家核实通过率",
-          "unit": "%"
-        }
-      ],
-      "focusTabs": [
-        "产能",
-        "费用执行",
-        "采集进度",
-        "任务清单"
+        {"key":"completionRate","label":"整体采集完成率","unit":"%"},
+        {"key":"collected","label":"实际采集完成","unit":"条"},
+        {"key":"feedbackRate","label":"材料反馈率","unit":"%"},
+        {"key":"verifyPassRate","label":"专家核实通过率","unit":"%"}
       ]
     },
-    "审核打回": {
+    "数据加工/审核": {
       "color": "#F1C40F",
+      "icon": "🔍",
       "metrics": [
-        {
-          "key": "rejectCount",
-          "label": "打回数量",
-          "unit": "条"
-        },
-        {
-          "key": "selfCorrect",
-          "label": "自行更正数",
-          "unit": "条"
-        },
-        {
-          "key": "accuracyRate",
-          "label": "需求准确率",
-          "unit": "%"
-        }
+        {"key":"rejectCount","label":"打回数量","unit":"条"},
+        {"key":"selfCorrect","label":"自行更正数","unit":"条"},
+        {"key":"accuracyRate","label":"需求准确率","unit":"%"},
+        {"key":"rejectRate","label":"专家打回率","unit":"%"}
       ]
     },
-    "闭环验证": {
+    "上线发布": {
       "color": "#2ECC71",
+      "icon": "🚀",
       "metrics": [
-        {
-          "key": "closedRate",
-          "label": "闭环率",
-          "unit": "%"
-        },
-        {
-          "key": "allClosedRate",
-          "label": "全部闭环率",
-          "unit": "%"
-        }
+        {"key":"closedRate","label":"上线闭环率","unit":"%"},
+        {"key":"allClosedRate","label":"全部闭环率","unit":"%"},
+        {"key":"totalDemand","label":"覆盖量","unit":"条"},
+        {"key":"timelinessRate","label":"上线及时率","unit":"%"}
+      ]
+    }
+  },
+  "specialProjects": {
+    "供采试点": {
+      "color": "#3498DB",
+      "desc": "外包试点项目（浙江/广东试点，外包咬合、付费匹配）",
+      "metrics": [
+        {"key":"pilotCompletion","label":"试点完成率","unit":"%"},
+        {"key":"pilotProgress","label":"试点进度","unit":"%"}
+      ]
+    },
+    "采购价更新": {
+      "color": "#9B59B6",
+      "desc": "月度大批量更新需求专项（分层外包梯队完成情况）",
+      "metrics": [
+        {"key":"updateDemand","label":"更新需求量","unit":"条"},
+        {"key":"updateCompletion","label":"更新完成率","unit":"%"}
+      ]
+    },
+    "结算与成本": {
+      "color": "#1ABC9C",
+      "desc": "外包、专家人力成本预算管控",
+      "metrics": [
+        {"key":"budgetRate","label":"预算执行率","unit":"%"},
+        {"key":"totalCost","label":"累计成本","unit":"万"}
       ]
     }
   },
@@ -853,6 +1032,24 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       79.3,
       100,
       0
+    ],
+    "上线及时率": [
+      25,
+      60,
+      100,
+      100
+    ],
+    "打回率": [
+      5.6,
+      10,
+      3,
+      0.6
+    ],
+    "成本执行率": [
+      8.6,
+      14.5,
+      18.2,
+      20.8
     ]
   }
 }</script>
@@ -873,17 +1070,35 @@ async function loadData(){
   const ld = document.getElementById("loading"), badge = document.getElementById("dataBadge"), src = document.getElementById("srcLabel");
   try{
     const r = await fetch("./data.json?_t="+Date.now());
-    if(r.ok){ DATA = await r.json(); badge.textContent="✅ data.json"; badge.style.color="#2ECC71"; src.textContent="💾 data.json"; init(); ld.classList.add("hide"); return; }
-  }catch(e){}
+    if(r.ok){ DATA = await r.json(); applyData(); return; }
+  }catch(e){ console.warn("fetch data.json 失败:", e); }
   try{
     const s = localStorage.getItem("kdata_v3");
-    if(s){ DATA = JSON.parse(s); badge.textContent="📦 缓存"; badge.style.color="#F1C40F"; src.textContent="💾 缓存"; init(); ld.classList.add("hide"); return; }
-  }catch(e){}
+    if(s){ DATA = JSON.parse(s); applyData("📦 缓存","#F1C40F","💾 缓存"); return; }
+  }catch(e){ console.warn("localStorage 失败:", e); }
   try{
     const el = document.getElementById("dataEmbed");
-    if(el){ DATA = JSON.parse(el.textContent); badge.textContent="📦 内置数据"; badge.style.color="#3498DB"; src.textContent="💾 内置"; init(); ld.classList.add("hide"); return; }
-  }catch(e){}
+    if(el){ DATA = JSON.parse(el.textContent); applyData("📦 内置数据","#3498DB","💾 内置"); return; }
+  }catch(e){ console.warn("内置数据解析失败:", e); }
   badge.textContent="⚠️ 无数据"; badge.style.color="#F39C12"; src.textContent="💾 无数据"; ld.classList.add("hide");
+}
+function applyData(badgeText, badgeColor, srcText){
+  const ld = document.getElementById("loading"), badge = document.getElementById("dataBadge"), src = document.getElementById("srcLabel");
+  if(badgeText){ badge.textContent=badgeText; badge.style.color=badgeColor; src.textContent=srcText; }
+  const di = document.getElementById("dataInfo");
+  if(di) di.textContent = (srcText||"💾 加载中")+" · "+(badgeText||"");
+  const ti = document.getElementById("toolbarInfo");
+  if(ti) ti.textContent = (srcText||"💾 内置数据")+" · "+(badgeText||"");
+  if(typeof echarts === 'undefined'){
+    badge.textContent="⚠️ ECharts 未加载"; badge.style.color="#E74C3C";
+    const msg = document.createElement("div");
+    msg.textContent="请检查网络连接，或刷新重试";
+    msg.style.cssText="font-size:0.85rem;color:var(--red);margin-top:8px";
+    document.querySelector("#loading").appendChild(msg);
+    return;
+  }
+  try{ init(); }catch(e){ console.error("渲染错误:", e); badge.textContent="⚠️ 渲染错误"; badge.style.color="#E74C3C"; src.textContent="❌ "+e.message; }
+  ld.classList.add("hide");
 }
 
 function init(){
@@ -963,7 +1178,8 @@ function calcMetrics(tasks){
     rejectCount, selfCorrect: selfCorrectSum,
     feedbackRate: totalCollected ? +((feedbackSum/totalCollected)*100).toFixed(1) : 0,
     verifyPassRate: feedbackSum ? +(((feedbackSum - rejectCount)/feedbackSum)*100).toFixed(1) : 0,
-    accuracyRate: 0,
+    accuracyRate: passCnt ? +(passSum/passCnt).toFixed(1) : 0,
+    rejectRate: verifySum ? +((rejectCount/verifySum)*100).toFixed(1) : 0,
     closedRate: hasClosed ? +(closedCount/hasClosed*100).toFixed(1) : 0,
     allClosedRate: n ? +(allClosedCount/n*100).toFixed(1) : 0,
   };
@@ -977,103 +1193,201 @@ function renderAll(){
   const tasks = getFilteredTasks();
   const m = calcMetrics(tasks);
   document.getElementById("filterCount").textContent = `共 ${tasks.length} 条`;
-  renderKPI(m);
-  renderSteps(tasks, m);
+  renderFlowKPIs(tasks, m);
+  renderSpecialProjects(tasks, m);
+  renderCollectionSection(tasks, m);
   renderMonthTrends();
+  renderAnalysisCharts(tasks, m);
   renderAlerts(tasks, m);
 }
 
-function renderKPI(m){
-  const cards = [
-    {l:"任务总数", v:m.n, u:"项", c:"blue"},
-    {l:"总需求量", v:m.totalDemand.toLocaleString(), u:"条", c:"blue"},
-    {l:"采集完成率", v:m.completionRate+"%", u:"", c:m.completionRate>=80?"green":"orange"},
-    {l:"发布及时率", v:m.timelinessRate+"%", u:"", c:m.timelinessRate>=80?"green":"red"},
-    {l:"初审通过率", v:m.passRate+"%", u:"", c:"green"},
-  ];
-  document.getElementById("kpiRow").innerHTML = cards.map((k,i) =>
-    `<div class="kpi-card ${k.c} anim" style="animation-delay:${i*0.04}s"><div class="kpi-label">${k.l}</div><div class="kpi-value ${k.c}">${k.v}<span style="font-size:0.6rem;font-weight:400;color:var(--tl);margin-left:2px">${k.u}</span></div></div>`
-  ).join("");
-}
-
-function renderSteps(tasks, m){
-  const area = document.getElementById("stepsArea");
+// === 看板 1：流程总览 — 四环节 KPI 卡片 ===
+function renderFlowKPIs(tasks, m){
   const sc = DATA.stepConfig;
+  if(!sc) return;
   let html = "";
-  let idx = 0;
   for(const [name, cfg] of Object.entries(sc)){
-    idx++;
-    const isCollect = name === "采集执行";
-    const delay = Math.min(idx+1, 4);
-
-    html += `<div class="step-section anim d${delay}"><div class="step-header" style="background:${cfg.color}">● ${name}<span class="s-count">${isCollect?'4个维度':cfg.metrics.length+'项指标'}</span></div><div class="step-body">`;
-
-    // Metrics badges
-    const badges = renderStepMetrics(name, m, cfg);
-    html += `<div class="metrics-row">${badges}</div>`;
-
-    if(isCollect){
-      // Overview mini charts
-      html += `<div class="chart-row" style="margin-bottom:2px"><div class="chart-box-sm" id="colOvChart1"></div><div class="chart-box-sm" id="colOvChart2"></div></div>`;
-      // Focus tabs
-      html += `<div style="border-top:1px solid var(--lg);margin-top:6px;padding-top:6px"><div class="focus-tabs">`;
-      html += `<button class="ftab ft-capacity on" onclick="switchTab(this,'cp')">📊 产能</button>`;
-      html += `<button class="ftab ft-budget" onclick="switchTab(this,'bd')">💰 费用执行</button>`;
-      html += `<button class="ftab ft-progress" onclick="switchTab(this,'pg')">📈 采集进度</button>`;
-      html += `<button class="ftab ft-tasks" onclick="switchTab(this,'tl')">📋 任务清单</button>`;
-      html += `</div>`;
-      html += `<div class="fpanel on" id="fp_cp"></div>`;
-      html += `<div class="fpanel" id="fp_bd"></div>`;
-      html += `<div class="fpanel" id="fp_pg"></div>`;
-      html += `<div class="fpanel" id="fp_tl"></div>`;
-      html += `</div>`;
-    } else if(name === "审核打回"){
-      html += `<div class="chart-row"><div class="chart-box-sm" id="stepChart${idx}_1"></div><div class="chart-box-sm" id="stepChart${idx}_2"></div></div>`;
-    } else if(name === "闭环验证"){
-      html += `<div class="chart-row"><div class="chart-box-sm" id="stepChart${idx}_1"></div><div class="chart-box-sm" id="stepChart${idx}_2"></div></div>`;
-    }
-    html += `</div></div>`;
+    const metricsHtml = cfg.metrics.map(mm => {
+      let raw = m[mm.key];
+      if(raw === undefined || raw === null) raw = "—";
+      else if(mm.unit === "%") raw = raw + "%";
+      else if(mm.key === "totalDemand" || mm.key === "collected") raw = Number(raw).toLocaleString();
+      else raw = raw + (mm.unit ? " "+mm.unit : "");
+      let cls = "";
+      if(["completionRate","timelinessRate","passRate","closedRate","allClosedRate"].includes(mm.key))
+        cls = m[mm.key] >= 80 ? "good" : m[mm.key] >= 60 ? "warn" : "bad";
+      if(mm.key === "problemRate") cls = m[mm.key] <= 5 ? "good" : m[mm.key] <= 15 ? "warn" : "bad";
+      if(mm.key === "rejectRate") cls = m[mm.key] <= 10 ? "good" : m[mm.key] <= 25 ? "warn" : "bad";
+      return `<div class="fm"><span class="fl">${mm.label}</span><span class="fv ${cls}">${raw}</span></div>`;
+    }).join("");
+    html += `<div class="flow-card"><div class="flow-card-header" style="background:${cfg.color}">${cfg.icon||''} ${name}</div><div class="flow-card-body">${metricsHtml}</div></div>`;
   }
-  area.innerHTML = html;
+  document.getElementById("flowRow").innerHTML = html;
+}
 
-  // Render charts
-  idx = 0;
-  for(const [name, cfg] of Object.entries(sc)){
-    idx++;
-    if(name === "采集执行"){
-      renderColOverview(m);
-      renderCapacityTab(tasks, m);
-      renderBudgetTab();
-      renderProgressTab(tasks, m);
-      renderTaskTable(tasks);
-    } else if(name === "审核打回"){
-      renderRejectChart(tasks, idx);
-    } else if(name === "闭环验证"){
-      renderClosedChart(tasks, m, idx);
-    }
+// === 看板 1：三大专项卡片 ===
+function renderSpecialProjects(tasks, m){
+  const sp = DATA.specialProjects;
+  if(!sp) return;
+  const pilotTasks = tasks.filter(t => t.source && (t.source.includes("试点")||t.name.includes("试点")));
+  const updateTasks = tasks.filter(t => t.settleType === "价格更新");
+  const pilotCol = pilotTasks.reduce((s,t) => s + num(t.collected), 0);
+  const pilotDem = pilotTasks.reduce((s,t) => s + num(t.demandQty), 0);
+  const updCol = updateTasks.reduce((s,t) => s + num(t.collected), 0);
+  const updDem = updateTasks.reduce((s,t) => s + num(t.demandQty), 0);
+  const s = DATA.settlements||[];
+  const totalAmt = s.reduce((x,y) => x + num(y.结算金额||y.amount), 0);
+  const budget = DATA.totalBudget||3900000;
+  m.pilotCompletion = pilotDem ? +((pilotCol/pilotDem)*100).toFixed(1) : 0;
+  m.pilotProgress = m.pilotCompletion;
+  m.updateCompletion = updDem ? +((updCol/updDem)*100).toFixed(1) : 0;
+  m.updateDemand = updDem;
+  m.budgetRate = budget ? +((totalAmt/budget)*100).toFixed(1) : 0;
+  m.totalCost = +(totalAmt/10000).toFixed(1);
+  let html = "";
+  for(const [name, cfg] of Object.entries(sp)){
+    const metricsHtml = cfg.metrics.map(mm => {
+      let raw = m[mm.key];
+      if(raw === undefined || raw === null) raw = "—";
+      else if(mm.unit === "%") raw = raw + "%";
+      else if(mm.key === "totalCost") raw = "¥" + raw + "万";
+      else raw = raw + (mm.unit ? " "+mm.unit : "");
+      return `<div class="sm-item"><span class="sm-l">${mm.label}</span><span class="sm-v">${raw}</span></div>`;
+    }).join("");
+    html += `<div class="special-card"><div class="special-header" style="background:${cfg.color}">● ${name}</div><div class="special-body"><div class="special-desc">${cfg.desc}</div><div class="special-metrics">${metricsHtml}</div></div></div>`;
+  }
+  document.getElementById("specialRow").innerHTML = html;
+}
+
+function renderCollectionSection(tasks, m){
+  renderColOverview(m);
+  renderCapacityTab(tasks, m);
+  renderBudgetTab();
+  renderProgressTab(tasks, m);
+  renderTaskTable(tasks);
+}
+
+// === 看板 2：图表分析 ===
+function renderAnalysisCharts(tasks, m){
+  renderRadarChart(tasks, m);
+  renderBudgetTrendChart();
+  renderBenchCharts(tasks, m);
+}
+function switchAnalysisTab(btn, id){
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("on"));
+  document.getElementById("analysis"+id.charAt(0).toUpperCase()+id.slice(1)).classList.add("on");
+}
+
+function renderRadarChart(tasks, m){
+  const c = initC("radarChart",200);
+  if(!c) return;
+  const dims = [
+    {name:"需求下发", max:100, val: Math.min(100, (m.timelinessRate*0.4 + m.passRate*0.3 + (100-m.problemRate)*0.3))},
+    {name:"采集执行", max:100, val: m.completionRate},
+    {name:"数据加工", max:100, val: Math.min(100, m.accuracyRate*0.6 + (100-(m.rejectRate||0))*0.4)},
+    {name:"上线发布", max:100, val: m.closedRate},
+    {name:"供采试点", max:100, val: m.pilotCompletion||0},
+    {name:"结算成本", max:100, val: Math.min(100, 100-(m.budgetRate||0))},
+  ];
+  const avg = dims.reduce((s,d)=>s+d.val,0)/dims.length;
+  c.setOption({
+    tooltip:{formatter:p=>`<strong>${p.name}</strong><br/>得分: ${p.value.toFixed(1)}`},
+    radar:{
+      indicator:dims.map(d=>({name:d.name+`\n${d.val.toFixed(0)}分`,max:d.max})),
+      radius:"60%",center:["50%","50%"],
+      axisName:{fontSize:9,color:"#2C3E50",fontWeight:600},
+      splitArea:{areaStyle:{color:["#F5F7FA","#ECF0F1"]}}
+    },
+    series:[{
+      type:"radar",data:[{value:dims.map(d=>d.val),name:"健康度"}],
+      areaStyle:{color:"rgba(52,152,219,0.2)"},
+      lineStyle:{color:"#3498DB",width:2},
+      itemStyle:{color:"#3498DB"},
+      label:{show:true,formatter:p=>p.value.toFixed(0),fontSize:8,fontWeight:600}
+    }]
+  });
+  // Add score overlay via HTML
+  const el = document.getElementById("radarChart");
+  if(el && !el.querySelector(".radar-score")){
+    const sc = document.createElement("div");
+    sc.className = "radar-score";
+    sc.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none";
+    sc.innerHTML = `<div style="font-size:1.6rem;font-weight:700;color:#3498DB">${avg.toFixed(0)}</div><div style="font-size:0.6rem;color:var(--tl)">综合健康度</div>`;
+    el.style.position = "relative";
+    el.appendChild(sc);
   }
 }
 
-function renderStepMetrics(name, m, cfg){
-  return cfg.metrics.map(mm => {
-    let val = m[mm.key];
-    if(val === undefined || val === null) val = "—";
-    else if(mm.unit === "%") val = val + "%";
-    else if(mm.key === "totalDemand" || mm.key === "collected") val = Number(val).toLocaleString() + mm.unit;
-    else if(mm.key === "feedbackRate" || mm.key === "verifyPassRate") val = val + "%";
-    else val = val + mm.unit;
-    let status = "info";
-    if(mm.key === "completionRate" || mm.key === "timelinessRate" || mm.key === "passRate") status = m[mm.key] >= 80 ? "good" : m[mm.key] >= 60 ? "warn" : "bad";
-    if(mm.key === "problemRate") status = m[mm.key] <= 5 ? "good" : m[mm.key] <= 15 ? "warn" : "bad";
-    return `<span class="metric-badge ${status}"><span class="ml">${mm.label}</span><span class="mv">${val}</span></span>`;
-  }).join("");
+function renderBudgetTrendChart(){
+  const c = initC("budgetTrendChart",200);
+  if(!c) return;
+  const months = ["1月","2月","3月","4月"];
+  const s = DATA.settlements||[];
+  const byMonth={};
+  s.forEach(x=>{ const m=x.月份||x.month; byMonth[m]=(byMonth[m]||0)+num(x.结算金额||x.amount); });
+  const vals = months.map(m => +(byMonth[m]/10000).toFixed(1)||0);
+  let cum = 0; const cumVals = vals.map(v => +(cum+=v).toFixed(1));
+  c.setOption({
+    tooltip:{trigger:"axis"},
+    legend:{data:["月度结算","累计预算"],bottom:0,textStyle:{fontSize:8}},
+    grid:{top:10,bottom:28,left:6,right:6,containLabel:true},
+    xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},
+    yAxis:{type:"value",axisLabel:{formatter:"{value}万",fontSize:7}},
+    series:[
+      {name:"月度结算",type:"bar",data:vals,itemStyle:{color:"#E74C3C",borderRadius:[4,4,0,0]},barWidth:16,label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:7}},
+      {name:"累计预算",type:"line",data:cumVals,smooth:true,symbol:"circle",symbolSize:4,lineStyle:{color:"#3498DB",width:2},itemStyle:{color:"#3498DB"},label:{show:true,formatter:p=>p.value+"万",fontSize:7}},
+    ]
+  });
+}
+
+function renderBenchCharts(tasks, m){
+  // 需求下发柱状对比图（当前值 vs 目标值）
+  const c1 = initC("benchChart1",160);
+  if(c1){
+    const bench1 = {
+      categories: ["发布及时率","初审通过率","采集完成率","闭环率"],
+      current: [m.timelinessRate, m.passRate, m.completionRate, m.closedRate],
+      target:  [90, 95, 90, 100]
+    };
+    c1.setOption({
+      tooltip:{trigger:"axis"},
+      legend:{data:["当前值","目标值"],bottom:0,textStyle:{fontSize:7}},
+      grid:{top:8,bottom:24,left:4,right:4,containLabel:true},
+      xAxis:{type:"category",data:bench1.categories,axisLabel:{fontSize:7}},
+      yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:6}},
+      series:[
+        {name:"当前值",type:"bar",data:bench1.current.map(v=>({value:v,itemStyle:{color:v>=80?"#2ECC71":v>=60?"#F39C12":"#E74C3C",borderRadius:[4,4,0,0]}})),barWidth:14,label:{show:true,position:"top",formatter:p=>p.value+"%",fontSize:7}},
+        {name:"目标值",type:"line",data:bench1.target,symbol:"none",lineStyle:{type:"dashed",color:"#95A5A6",width:1},label:{show:true,formatter:p=>p.value+"%",fontSize:6,color:"#95A5A6"}}
+      ]
+    });
+  }
+  // 采集执行条形图（分项目完成率对比）
+  const c2 = initC("benchChart2",160);
+  if(c2){
+    const items = tasks.filter(t=>t.demandQty>0).sort((a,b)=>pctStr(a.completionRate)-pctStr(b.completionRate)).slice(0,12);
+    c2.setOption({
+      tooltip:{trigger:"axis"},
+      grid:{top:6,bottom:12,left:4,right:12,containLabel:true},
+      xAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:6}},
+      yAxis:{type:"category",data:items.map(t=>t.name).reverse(),axisLabel:{fontSize:6}},
+      series:[{
+        type:"bar",data:items.map(t=>{
+          const v = pctStr(t.completionRate);
+          return {value:v,itemStyle:{color:v>=80?"#2ECC71":v>=60?"#F39C12":"#E74C3C",borderRadius:[0,4,4,0]}};
+        }).reverse(),barWidth:10,label:{show:true,position:"right",formatter:p=>p.value+"%",fontSize:6},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标90%",fontSize:6,color:"#E74C3C"},data:[{xAxis:90}]}
+      }]
+    });
+  }
 }
 
 // ============================================================
 // COLLECTION STEP TABS
 // ============================================================
 function switchTab(btn, id){
-  const parent = btn.closest(".step-body");
+  const parent = document.getElementById("collectionArea");
+  if(!parent) return;
   parent.querySelectorAll(".ftab").forEach(t=>t.classList.remove("on"));
   btn.classList.add("on");
   parent.querySelectorAll(".fpanel").forEach(p=>p.classList.remove("on"));
@@ -1265,46 +1579,6 @@ function renderTaskTable(tasks){
   });
   html += `</tbody></table></div>`;
   panel.innerHTML = html;
-}
-
-// ============================================================
-// REJECT / CLOSED CHARTS
-// ============================================================
-function renderRejectChart(tasks, idx){
-  const rejected = tasks.filter(t => t.rejectReason && t.rejectReason !== "");
-  const reasons = {};
-  rejected.forEach(t => {
-    const r = t.rejectReason || "其他";
-    reasons[r] = (reasons[r] || 0) + 1;
-  });
-  const names = Object.keys(reasons);
-  const vals = names.map(n => reasons[n]);
-  const selfCorrect = tasks.reduce((s,t) => s + num(t.selfCorrect), 0);
-  const c1 = initC(`stepChart${idx}_1`, 160);
-  if(c1) c1.setOption({tooltip:{formatter:p=>`<strong>${p.name}</strong><br/>${p.value}条`},series:[{type:"pie",radius:["20%","50%"],label:{show:true,formatter:"{b}: {c}",fontSize:8},data:names.map((n,i)=>({name:n,value:vals[i],itemStyle:{color:["#F1C40F","#E74C3C","#3498DB","#2ECC71"][i%4]}}))}]});
-  const c2 = initC(`stepChart${idx}_2`, 160);
-  if(c2){
-    const months = ["3月","4月","5月","6月"];
-    const acc = DATA.monthlyTrend["需求准确率"] || [];
-    c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"line",data:acc,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#F1C40F",width:2},itemStyle:{color:"#F1C40F"},areaStyle:{color:"#F1C40F22"},label:{show:true,formatter:p=>p.value+"%",fontSize:7}}]});
-  }
-}
-
-function renderClosedChart(tasks, m, idx){
-  const c1 = initC(`stepChart${idx}_1`, 160);
-  if(c1){
-    const months = ["3月","4月","5月","6月"];
-    const vals = DATA.monthlyTrend["闭环率"] || [];
-    c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"line",data:vals,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#2ECC71",width:2},itemStyle:{color:"#2ECC71"},areaStyle:{color:"#2ECC7122"},label:{show:true,formatter:p=>p.value+"%",fontSize:7},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标100%",fontSize:7,color:"#E74C3C"},data:[{yAxis:100}]}}]});
-  }
-  const c2 = initC(`stepChart${idx}_2`, 160);
-  if(c2){
-    const closed = tasks.filter(t => t.closed === "是" || t.closed === "全部闭环" || t.closed === "关闭").length;
-    const inProgress = tasks.filter(t => t.closed === "进行中").length;
-    const notStarted = tasks.filter(t => t.closed === "" || t.closed === "暂未启动").length;
-    const items = [{n:"✅ 已闭环",v:closed||1,c:"#2ECC71"},{n:"🔄 进行中",v:inProgress||1,c:"#F39C12"},{n:"⏳ 未闭环",v:notStarted||1,c:"#E74C3C"}];
-    c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:items.map(i=>i.n),axisLabel:{fontSize:7}},yAxis:{type:"value",axisLabel:{fontSize:7}},series:[{type:"bar",data:items.map(i=>({value:i.v,itemStyle:{color:i.c,borderRadius:[4,4,0,0]}})),barWidth:28,label:{show:true,position:"top",fontSize:9,fontWeight:700}}]});
-  }
 }
 
 // ============================================================

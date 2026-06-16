@@ -507,95 +507,85 @@
   "stepConfig": {
     "需求下发": {
       "color": "#E74C3C",
+      "icon": "📋",
       "metrics": [
-        {
-          "key": "timelinessRate",
-          "label": "需求发布及时率",
-          "unit": "%"
-        },
-        {
-          "key": "totalDemand",
-          "label": "需求量",
-          "unit": "条"
-        },
-        {
-          "key": "passRate",
-          "label": "需求初审通过率",
-          "unit": "%"
-        },
-        {
-          "key": "problemRate",
-          "label": "需求问题率",
-          "unit": "%"
-        }
+        {"key":"timelinessRate","label":"需求发布及时率","unit":"%"},
+        {"key":"totalDemand","label":"需求量","unit":"条"},
+        {"key":"passRate","label":"需求初审通过率","unit":"%"},
+        {"key":"problemRate","label":"需求问题率","unit":"%"}
       ]
     },
     "采集执行": {
       "color": "#F39C12",
+      "icon": "🔧",
       "metrics": [
-        {
-          "key": "completionRate",
-          "label": "采集完成率",
-          "unit": "%"
-        },
-        {
-          "key": "collected",
-          "label": "实际采集完成",
-          "unit": "条"
-        },
-        {
-          "key": "feedbackRate",
-          "label": "材料反馈率",
-          "unit": "%"
-        },
-        {
-          "key": "verifyPassRate",
-          "label": "专家核实通过率",
-          "unit": "%"
-        }
-      ],
-      "focusTabs": [
-        "产能",
-        "费用执行",
-        "采集进度",
-        "任务清单"
+        {"key":"completionRate","label":"整体采集完成率","unit":"%"},
+        {"key":"collected","label":"实际采集完成","unit":"条"},
+        {"key":"feedbackRate","label":"材料反馈率","unit":"%"},
+        {"key":"verifyPassRate","label":"专家核实通过率","unit":"%"}
       ]
     },
-    "审核打回": {
+    "数据加工/审核": {
       "color": "#F1C40F",
+      "icon": "🔍",
       "metrics": [
-        {
-          "key": "rejectCount",
-          "label": "打回数量",
-          "unit": "条"
-        },
-        {
-          "key": "selfCorrect",
-          "label": "自行更正数",
-          "unit": "条"
-        },
-        {
-          "key": "accuracyRate",
-          "label": "需求准确率",
-          "unit": "%"
-        }
+        {"key":"rejectCount","label":"打回数量","unit":"条"},
+        {"key":"selfCorrect","label":"自行更正数","unit":"条"},
+        {"key":"accuracyRate","label":"需求准确率","unit":"%"},
+        {"key":"rejectRate","label":"专家打回率","unit":"%"}
       ]
     },
-    "闭环验证": {
+    "上线发布": {
       "color": "#2ECC71",
+      "icon": "🚀",
       "metrics": [
-        {
-          "key": "closedRate",
-          "label": "闭环率",
-          "unit": "%"
-        },
-        {
-          "key": "allClosedRate",
-          "label": "全部闭环率",
-          "unit": "%"
-        }
+        {"key":"closedRate","label":"上线闭环率","unit":"%"},
+        {"key":"allClosedRate","label":"全部闭环率","unit":"%"},
+        {"key":"totalDemand","label":"覆盖量","unit":"条"},
+        {"key":"timelinessRate","label":"上线及时率","unit":"%"}
       ]
     }
+  },
+  "specialProjects": {
+    "供采试点": {
+      "color": "#3498DB",
+      "desc": "外包试点项目（浙江/广东试点，外包咬合、付费匹配）",
+      "metrics": [
+        {"key":"pilotCompletion","label":"试点完成率","unit":"%"},
+        {"key":"pilotProgress","label":"试点进度","unit":"%"}
+      ]
+    },
+    "采购价更新": {
+      "color": "#9B59B6",
+      "desc": "月度大批量更新需求专项（分层外包梯队完成情况）",
+      "metrics": [
+        {"key":"updateDemand","label":"更新需求量","unit":"条"},
+        {"key":"updateCompletion","label":"更新完成率","unit":"%"}
+      ]
+    },
+    "结算与成本": {
+      "color": "#1ABC9C",
+      "desc": "外包、专家人力成本预算管控",
+      "metrics": [
+        {"key":"budgetRate","label":"预算执行率","unit":"%"},
+        {"key":"totalCost","label":"累计成本","unit":"万"}
+      ]
+    }
+  },
+  "monthlyTrend": {
+    "需求发布及时率": [25,60,100,100],
+    "需求量": [15977,53581,2277,38906],
+    "采集完成率": [78.5,71.6,100,0],
+    "采集完成数": [10765,42484,2355,0],
+    "预算执行率": [8.6,14.5,18.2,20.8],
+    "需求准确率": [94.4,0,0,0],
+    "需求初审通过率": [92.8,90,97,99.4],
+    "需求问题率": [7.2,10,3,0.6],
+    "闭环率": [100,22.2,0,0],
+    "产能利用率": [67.3,79.3,100,0],
+    "上线及时率": [25,60,100,100],
+    "打回率": [5.6,10,3,0.6],
+    "成本执行率": [8.6,14.5,18.2,20.8]
   },
   "alerts": [
     {
@@ -622,67 +612,5 @@
       "problem": "{name} 闭环进行中",
       "action": "跟进闭环进度"
     }
-  ],
-  "monthlyTrend": {
-    "需求发布及时率": [
-      25,
-      60,
-      100,
-      100
-    ],
-    "需求量": [
-      15977,
-      53581,
-      2277,
-      38906
-    ],
-    "采集完成率": [
-      78.5,
-      71.6,
-      100,
-      0
-    ],
-    "采集完成数": [
-      10765,
-      42484,
-      2355,
-      0
-    ],
-    "预算执行率": [
-      8.6,
-      14.5,
-      18.2,
-      20.8
-    ],
-    "需求准确率": [
-      94.4,
-      0,
-      0,
-      0
-    ],
-    "需求初审通过率": [
-      92.8,
-      90,
-      97,
-      99.4
-    ],
-    "需求问题率": [
-      7.2,
-      10,
-      3,
-      0.6
-    ],
-    "闭环率": [
-      100,
-      22.2,
-      0,
-      0
-    ],
-    "产能利用率": [
-      67.3,
-      79.3,
-      100,
-      0
-    ]
-  }
+  ]
 }
