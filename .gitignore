@@ -6,3 +6,5 @@ Thumbs.db
 
 # Local overrides (user can create local data.json for testing)
 local/
+看板分析结果.json
+需求下发登记表_sample.json

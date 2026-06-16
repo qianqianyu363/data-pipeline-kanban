@@ -3,26 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>数据采集加工全链路看板</title>
+<title>需求下发登记全链路看板</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-/* ============ CSS Variables ============ */
 :root {
-  --color-red: #E74C3C; --color-red-bg: #FDEDEC;
-  --color-orange: #F39C12; --color-orange-bg: #FEF5E7;
-  --color-yellow: #F1C40F; --color-yellow-bg: #FEF9E7;
-  --color-green: #2ECC71; --color-green-bg: #EAFAF1;
-  --color-blue: #3498DB; --color-blue-bg: #EBF5FB;
-  --color-purple: #9B59B6; --color-purple-bg: #F4ECF7;
-  --color-dark: #2C3E50;
-  --color-gray: #95A5A6;
-  --color-light-gray: #ECF0F1;
-  --color-bg: #F5F7FA;
-  --color-card: #FFFFFF;
-  --color-text: #2C3E50;
-  --color-text-light: #7F8C8D;
+  --red: #E74C3C; --red-bg: #FDEDEC;
+  --orange: #F39C12; --orange-bg: #FEF5E7;
+  --yellow: #F1C40F; --yellow-bg: #FEF9E7;
+  --green: #2ECC71; --green-bg: #EAFAF1;
+  --blue: #3498DB; --blue-bg: #EBF5FB;
+  --purple: #9B59B6; --purple-bg: #F4ECF7;
+  --dark: #2C3E50;
+  --gray: #95A5A6;
+  --light-gray: #ECF0F1;
+  --bg: #F5F7FA;
+  --card: #FFFFFF;
+  --text: #2C3E50;
+  --text-light: #7F8C8D;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
@@ -33,287 +32,191 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:14px;scroll-behavior:smooth}
-body{
-  font-family:var(--font);
-  background:var(--color-bg);
-  color:var(--color-text);
-  line-height:1.6;
-  padding:20px;
-  min-height:100vh;
-}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;padding:20px;min-height:100vh}
 .container{max-width:1440px;margin:0 auto}
 
-/* ============ Header ============ */
+/* Header */
 .header{
   background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
-  color:#fff;border-radius:var(--radius-lg);
-  padding:28px 36px;margin-bottom:24px;
+  color:#fff;border-radius:var(--radius-lg);padding:28px 36px;margin-bottom:20px;
   display:flex;justify-content:space-between;align-items:flex-start;
-  flex-wrap:wrap;gap:12px;box-shadow:var(--shadow-lg);
-  position:relative;overflow:hidden
+  flex-wrap:wrap;gap:12px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden
 }
-.header::after{
-  content:'';position:absolute;top:-50%;right:-10%;
-  width:400px;height:400px;
-  background:radial-gradient(circle,rgba(52,152,219,0.15) 0%,transparent 70%);
-  border-radius:50%
-}
+.header::after{content:'';position:absolute;top:-50%;right:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(52,152,219,0.15)0%,transparent 70%);border-radius:50%}
 .header-left{position:relative;z-index:1}
-.header-title{font-size:1.8rem;font-weight:700;letter-spacing:2px;margin-bottom:4px}
+.header-title{font-size:1.6rem;font-weight:700;letter-spacing:2px;margin-bottom:4px}
 .header-title span{color:#3498DB}
-.header-subtitle{font-size:0.85rem;color:rgba(255,255,255,0.7);letter-spacing:1px}
-.header-right{position:relative;z-index:1;text-align:right;font-size:0.85rem;color:rgba(255,255,255,0.8)}
-.header-badge{
-  display:inline-block;
-  background:rgba(46,204,113,0.2);
-  border:1px solid rgba(46,204,113,0.4);
-  padding:4px 14px;border-radius:20px;font-size:0.75rem;margin-top:6px;color:#2ECC71
-}
-.data-source{
-  display:inline-block;
-  background:rgba(52,152,219,0.2);
-  border:1px solid rgba(52,152,219,0.4);
-  padding:4px 14px;border-radius:20px;font-size:0.75rem;margin-top:6px;margin-left:6px;color:#85C1E9
-}
+.header-sub{font-size:0.8rem;color:rgba(255,255,255,0.6)}
+.header-right{position:relative;z-index:1;text-align:right;font-size:0.8rem;color:rgba(255,255,255,0.8)}
+.header-badge{display:inline-block;background:rgba(46,204,113,0.2);border:1px solid rgba(46,204,113,0.4);padding:3px 12px;border-radius:20px;font-size:0.7rem;margin-top:4px;color:#2ECC71}
 
-/* ============ KPI ============ */
-.kpi-row{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:16px;margin-bottom:24px
-}
-.kpi-card{
-  background:var(--color-card);border-radius:var(--radius-md);
-  padding:20px 24px;box-shadow:var(--shadow-sm);
-  transition:transform 0.2s,box-shadow 0.2s;cursor:default;
-  position:relative;overflow:hidden
-}
+/* Toolbar */
+.toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border:none;border-radius:var(--radius-sm);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:var(--font)}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-success{background:var(--green);color:#fff}
+.btn-warning{background:var(--orange);color:#fff}
+.btn-outline{background:transparent;border:1px solid var(--gray);color:var(--text)}
+.btn-sm{padding:4px 10px;font-size:0.72rem}
+.data-info{font-size:0.72rem;color:var(--text-light);margin-left:auto}
+
+/* KPI Row */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--card);border-radius:var(--radius-md);padding:16px 20px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:transform 0.2s}
 .kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
 .kpi-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
-.kpi-card.red::before{background:var(--color-red)}
-.kpi-card.orange::before{background:var(--color-orange)}
-.kpi-card.green::before{background:var(--color-green)}
-.kpi-card.blue::before{background:var(--color-blue)}
-.kpi-card.purple::before{background:var(--color-purple)}
-.kpi-card.yellow::before{background:var(--color-yellow)}
-.kpi-label{font-size:0.8rem;color:var(--color-text-light);margin-bottom:6px;font-weight:500}
-.kpi-value{font-size:2rem;font-weight:700;line-height:1.2}
-.kpi-value.red{color:var(--color-red)}
-.kpi-value.orange{color:var(--color-orange)}
-.kpi-value.green{color:var(--color-green)}
-.kpi-value.blue{color:var(--color-blue)}
-.kpi-value.purple{color:var(--color-purple)}
-.kpi-sub{font-size:0.75rem;color:var(--color-text-light);margin-top:4px;display:flex;align-items:center;gap:6px}
-.kpi-trend-up{color:var(--color-green)}
-.kpi-trend-down{color:var(--color-red)}
-.kpi-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:2.5rem;opacity:0.10}
+.kpi-card.blue::before{background:var(--blue)}
+.kpi-card.green::before{background:var(--green)}
+.kpi-card.orange::before{background:var(--orange)}
+.kpi-card.red::before{background:var(--red)}
+.kpi-card.purple::before{background:var(--purple)}
+.kpi-label{font-size:0.75rem;color:var(--text-light);margin-bottom:4px;font-weight:500}
+.kpi-value{font-size:1.8rem;font-weight:700;line-height:1.2}
+.kpi-value.blue{color:var(--blue)}
+.kpi-value.green{color:var(--green)}
+.kpi-value.orange{color:var(--orange)}
+.kpi-value.red{color:var(--red)}
+.kpi-value.purple{color:var(--purple)}
+.kpi-sub{font-size:0.7rem;color:var(--text-light);margin-top:3px}
+.kpi-trend-up{color:var(--green)}
+.kpi-trend-down{color:var(--red)}
 
-/* ============ Section Layout ============ */
-.section-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;margin-bottom:24px
-}
-@media(max-width:1000px){.section-row{grid-template-columns:1fr}}
-
-.section-title{
-  font-size:1rem;font-weight:600;margin-bottom:14px;
+/* Step Section */
+.step-section{margin-bottom:18px}
+.step-header{
   display:flex;align-items:center;gap:10px;
-  padding-bottom:10px;border-bottom:2px solid var(--color-light-gray)
+  font-size:1rem;font-weight:600;margin-bottom:12px;
+  padding:10px 16px;border-radius:var(--radius-md) var(--radius-md) 0 0;
+  color:#fff;
 }
-.section-title .dot{display:inline-block;width:10px;height:10px;border-radius:50%}
-.dot.red{background:var(--color-red)}
-.dot.orange{background:var(--color-orange)}
-.dot.yellow{background:var(--color-yellow)}
-.dot.green{background:var(--color-green)}
-.dot.blue{background:var(--color-blue)}
-.dot.purple{background:var(--color-purple)}
-
-.card{
-  background:var(--color-card);border-radius:var(--radius-md);
-  padding:20px;box-shadow:var(--shadow-sm);transition:box-shadow 0.2s
+.step-header .step-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5)}
+.step-header .step-count{font-size:0.7rem;font-weight:400;opacity:0.8;margin-left:auto}
+.step-body{
+  background:var(--card);border-radius:0 0 var(--radius-md) var(--radius-md);
+  padding:16px 20px;box-shadow:var(--shadow-sm);margin-bottom:0
 }
-.card:hover{box-shadow:var(--shadow-md)}
-.card.chart-card{height:100%}
-.chart-container{width:100%;height:280px}
-.chart-container-sm{height:240px}
-.chart-container-lg{height:320px}
-.full-width{margin-bottom:24px}
 
-/* ============ Alert ============ */
+/* Metric badges inside step */
+.metrics-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.metric-badge{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:20px;
+  font-size:0.78rem;font-weight:500;
+}
+.metric-badge.good{background:var(--green-bg);color:#1e8449}
+.metric-badge.warn{background:var(--orange-bg);color:#b7950b}
+.metric-badge.bad{background:var(--red-bg);color:var(--red)}
+.metric-badge.info{background:var(--blue-bg);color:#1a5276}
+.metric-badge .m-label{font-weight:400;opacity:0.7}
+.metric-badge .m-value{font-weight:700}
+
+/* Chart containers */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:800px){.chart-row{grid-template-columns:1fr}}
+.chart-box{height:220px}
+
+/* Full width chart */
+.chart-full{width:100%;height:240px}
+
+/* Monthly trend overview */
+.monthly-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+
+/* Alert */
 .alert-section{
-  background:var(--color-card);border-radius:var(--radius-md);
-  padding:24px;box-shadow:var(--shadow-sm);margin-bottom:24px;
-  border-left:4px solid var(--color-red)
+  background:var(--card);border-radius:var(--radius-md);
+  padding:20px 24px;box-shadow:var(--shadow-sm);margin-bottom:16px;
+  border-left:4px solid var(--red)
 }
-.alert-title{
-  display:flex;align-items:center;gap:8px;
-  font-size:1rem;font-weight:600;color:var(--color-red);margin-bottom:16px
-}
-.alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.alert-title{display:flex;align-items:center;gap:8px;font-size:0.95rem;font-weight:600;color:var(--red);margin-bottom:14px}
+.alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:800px){.alert-grid{grid-template-columns:1fr}}
-.alert-item{
-  background:#f8f9fa;border-radius:var(--radius-sm);
-  padding:14px 18px;display:flex;align-items:flex-start;gap:12px
-}
-.alert-p0{border-left:3px solid var(--color-red)}
-.alert-p1{border-left:3px solid var(--color-orange)}
-.alert-priority{
-  font-size:0.7rem;font-weight:700;padding:2px 8px;
-  border-radius:10px;white-space:nowrap;flex-shrink:0;margin-top:1px
-}
-.alert-p0 .alert-priority{background:var(--color-red-bg);color:var(--color-red)}
-.alert-p1 .alert-priority{background:var(--color-orange-bg);color:var(--color-orange)}
+.alert-item{background:#f8f9fa;border-radius:var(--radius-sm);padding:12px 16px;display:flex;align-items:flex-start;gap:10px}
+.alert-p0{border-left:3px solid var(--red)}
+.alert-p1{border-left:3px solid var(--orange)}
+.alert-priority{font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.alert-p0 .alert-priority{background:var(--red-bg);color:var(--red)}
+.alert-p1 .alert-priority{background:var(--orange-bg);color:var(--orange)}
 .alert-content{flex:1}
-.alert-problem{font-weight:600;font-size:0.9rem;margin-bottom:2px}
-.alert-action{font-size:0.8rem;color:var(--color-text-light)}
+.alert-problem{font-weight:600;font-size:0.85rem;margin-bottom:2px}
+.alert-action{font-size:0.75rem;color:var(--text-light)}
 
-/* ============ Button Bar ============ */
-.toolbar{
-  display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;
-  align-items:center
-}
-.btn{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:8px 18px;border:none;border-radius:var(--radius-sm);
-  font-size:0.8rem;font-weight:600;cursor:pointer;
-  transition:all 0.2s;font-family:var(--font)
-}
-.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
-.btn-primary{background:var(--color-blue);color:#fff}
-.btn-success{background:var(--color-green);color:#fff}
-.btn-warning{background:var(--color-orange);color:#fff}
-.btn-outline{background:transparent;border:1px solid var(--color-gray);color:var(--color-text)}
-.btn-sm{padding:5px 12px;font-size:0.75rem}
-.btn-danger{background:var(--color-red);color:#fff}
-.hidden{display:none!important}
+/* Footer */
+.footer{text-align:center;padding:16px;color:var(--text-light);font-size:0.7rem}
 
-/* ============ Footer ============ */
-.footer{text-align:center;padding:20px;color:var(--color-text-light);font-size:0.75rem}
-
-/* ============ Animations ============ */
-@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.animate{animation:fadeInUp 0.5s ease forwards;opacity:0}
-.delay-1{animation-delay:0.1s}
-.delay-2{animation-delay:0.2s}
-.delay-3{animation-delay:0.3s}
-.delay-4{animation-delay:0.4s}
-
-/* ============ Panel Overlay ============ */
-.panel-overlay{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.4);z-index:98;display:none
-}
+/* Overlay panels (editor, CSV import) - same as before */
+.panel-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:98;display:none}
 .panel-overlay.open{display:block}
-
-.data-panel{
-  position:fixed;bottom:50%;right:50%;
-  transform:translate(50%,50%);
-  width:520px;max-width:90vw;max-height:80vh;
-  background:var(--color-card);border-radius:var(--radius-md);
+.data-panel,.csv-panel{
+  position:fixed;bottom:50%;right:50%;transform:translate(50%,50%);
+  width:540px;max-width:90vw;max-height:82vh;
+  background:var(--card);border-radius:var(--radius-md);
   box-shadow:var(--shadow-lg);z-index:99;
-  padding:24px;overflow-y:auto;display:none;
-  flex-direction:column
+  padding:22px;overflow-y:auto;display:none;flex-direction:column
 }
-.data-panel.open{display:flex}
-.data-panel h3{font-size:1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.data-panel .close-btn{
-  position:absolute;top:14px;right:16px;
-  background:none;border:none;font-size:1.3rem;cursor:pointer;
-  color:var(--color-text-light);padding:4px
+.data-panel.open,.csv-panel.open{display:flex}
+.data-panel h3,.csv-panel h3{font-size:0.95rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.data-panel .close-btn,.csv-panel .close-btn{
+  position:absolute;top:12px;right:14px;
+  background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text-light);padding:4px
 }
 .data-panel textarea{
-  width:100%;min-height:240px;
-  font-family:'Courier New',monospace;font-size:0.75rem;
-  padding:12px;border:1px solid var(--color-light-gray);
+  width:100%;min-height:220px;
+  font-family:'Courier New',monospace;font-size:0.72rem;
+  padding:10px;border:1px solid var(--light-gray);
   border-radius:var(--radius-sm);resize:vertical
 }
-.data-panel .btn-group{display:flex;gap:8px;margin-top:12px}
-.data-panel button{
-  flex:1;padding:9px 16px;border:none;border-radius:var(--radius-sm);
-  font-size:0.8rem;cursor:pointer;font-weight:600;transition:opacity 0.2s;
-  font-family:var(--font)
+.data-panel .btn-group,.csv-panel .btn-group{display:flex;gap:8px;margin-top:10px}
+.data-panel button,.csv-panel button{
+  flex:1;padding:8px 14px;border:none;border-radius:var(--radius-sm);
+  font-size:0.78rem;cursor:pointer;font-weight:600;transition:opacity 0.2s;font-family:var(--font)
 }
-.data-panel button:hover{opacity:0.85}
-.btn-apply{background:#3498DB;color:#fff}
-.btn-reset{background:var(--color-light-gray);color:var(--color-text)}
-.btn-export-data{background:#2ECC71;color:#fff}
+.data-panel button:hover,.csv-panel button:hover{opacity:0.85}
+.btn-apply{background:var(--blue);color:#fff}
+.btn-reset-btn{background:var(--light-gray);color:var(--text)}
+.btn-export-data{background:var(--green);color:#fff}
 
-/* ============ CSV Import ============ */
-.csv-panel{
-  position:fixed;bottom:50%;right:50%;
-  transform:translate(50%,50%);
-  width:640px;max-width:90vw;max-height:85vh;
-  background:var(--color-card);border-radius:var(--radius-md);
-  box-shadow:var(--shadow-lg);z-index:99;
-  padding:24px;overflow-y:auto;display:none;
-  flex-direction:column
-}
-.csv-panel.open{display:flex}
-.csv-panel h3{font-size:1rem;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.csv-panel .close-btn{
-  position:absolute;top:14px;right:16px;
-  background:none;border:none;font-size:1.3rem;cursor:pointer;
-  color:var(--color-text-light);padding:4px
-}
-.drop-zone{
-  border:2px dashed var(--color-light-gray);
-  border-radius:var(--radius-md);padding:40px 20px;
-  text-align:center;cursor:pointer;
-  transition:all 0.2s;margin-bottom:16px
-}
-.drop-zone:hover,.drop-zone.dragover{
-  border-color:var(--color-blue);
-  background:var(--color-blue-bg)
-}
-.drop-zone-icon{font-size:2.5rem;margin-bottom:8px}
-.drop-zone-text{font-size:0.85rem;color:var(--color-text-light)}
-.drop-zone-hint{font-size:0.75rem;color:var(--color-gray);margin-top:4px}
+.drop-zone{border:2px dashed var(--light-gray);border-radius:var(--radius-md);padding:30px 20px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:12px}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--blue);background:var(--blue-bg)}
+.drop-zone-icon{font-size:2rem;margin-bottom:6px}
+.drop-zone-text{font-size:0.82rem;color:var(--text-light)}
+.drop-zone-hint{font-size:0.7rem;color:var(--gray);margin-top:3px}
 
-.csv-preview{
-  max-height:200px;overflow:auto;
-  border:1px solid var(--color-light-gray);
-  border-radius:var(--radius-sm);margin:12px 0
-}
-.csv-preview table{width:100%;border-collapse:collapse;font-size:0.75rem}
-.csv-preview th,.csv-preview td{
-  padding:6px 10px;border:1px solid var(--color-light-gray);
-  text-align:left;white-space:nowrap
-}
-.csv-preview th{background:var(--color-light-gray);font-weight:600;position:sticky;top:0}
+.csv-preview{max-height:160px;overflow:auto;border:1px solid var(--light-gray);border-radius:var(--radius-sm);margin:10px 0}
+.csv-preview table{width:100%;border-collapse:collapse;font-size:0.72rem}
+.csv-preview th,.csv-preview td{padding:4px 8px;border:1px solid var(--light-gray);text-align:left;white-space:nowrap}
+.csv-preview th{background:var(--light-gray);font-weight:600;position:sticky;top:0}
 .csv-preview tr:nth-child(even){background:#fafafa}
 
-.csv-mapping{margin:12px 0}
-.csv-mapping h4{font-size:0.85rem;margin-bottom:8px;color:var(--color-text-light)}
-.csv-mapping-item{
-  display:flex;align-items:center;gap:8px;
-  padding:6px 0;font-size:0.8rem
-}
-.csv-mapping-item label{min-width:120px;font-weight:600}
-.csv-mapping-item select{
-  flex:1;padding:4px 8px;border:1px solid var(--color-light-gray);
-  border-radius:4px;font-size:0.75rem;font-family:var(--font)
-}
+.csv-mapping{margin:10px 0}
+.csv-mapping h4{font-size:0.82rem;margin-bottom:6px;color:var(--text-light)}
+.csv-mapping-item{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:0.78rem}
+.csv-mapping-item label{min-width:110px;font-weight:600}
+.csv-mapping-item select{flex:1;padding:3px 6px;border:1px solid var(--light-gray);border-radius:4px;font-size:0.72rem;font-family:var(--font)}
 
-.status-msg{
-  padding:10px 16px;border-radius:var(--radius-sm);
-  font-size:0.8rem;margin-bottom:12px;display:none
-}
-.status-msg.success{display:block;background:var(--color-green-bg);color:var(--color-green);border:1px solid rgba(46,204,113,0.3)}
-.status-msg.error{display:block;background:var(--color-red-bg);color:var(--color-red);border:1px solid rgba(231,76,60,0.3)}
-.status-msg.info{display:block;background:var(--color-blue-bg);color:var(--color-blue);border:1px solid rgba(52,152,219,0.3)}
+.status-msg{padding:8px 14px;border-radius:var(--radius-sm);font-size:0.78rem;margin-bottom:10px;display:none}
+.status-msg.success{display:block;background:var(--green-bg);color:#1e8449;border:1px solid rgba(46,204,113,0.3)}
+.status-msg.error{display:block;background:var(--red-bg);color:var(--red);border:1px solid rgba(231,76,60,0.3)}
+.status-msg.info{display:block;background:var(--blue-bg);color:#1a5276;border:1px solid rgba(52,152,219,0.3)}
 
-/* ============ Loading ============ */
+.hidden{display:none!important}
+
 .loading-overlay{
   position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(255,255,255,0.85);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:1000;transition:opacity 0.3s
+  background:rgba(255,255,255,0.85);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:1000;transition:opacity 0.3s
 }
 .loading-overlay.hidden{opacity:0;pointer-events:none}
-.spinner{width:40px;height:40px;border:4px solid var(--color-light-gray);border-top-color:var(--color-blue);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:16px}
+.spinner{width:36px;height:36px;border:3px solid var(--light-gray);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:0.9rem;color:var(--color-text-light)}
+.loading-text{font-size:0.85rem;color:var(--text-light)}
+
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeInUp 0.4s ease forwards;opacity:0}
+.delay-1{animation-delay:0.08s}
+.delay-2{animation-delay:0.15s}
+.delay-3{animation-delay:0.22s}
+.delay-4{animation-delay:0.3s}
 </style>
 </head>
 <body>
@@ -326,399 +229,338 @@ body{
     <div class="loading-text">⏳ 加载看板数据中...</div>
   </div>
 
-  <!-- ========== HEADER ========== -->
+  <!-- Header -->
   <header class="header animate">
     <div class="header-left">
-      <div class="header-title">📊 <span>数据采集加工</span>全链路看板</div>
-      <div class="header-subtitle">从需求下发 → 采集执行 → 数据加工 → 上线发布 → 结算成本 全流程监控</div>
+      <div class="header-title">📊 需求下发登记<span>全链路看板</span></div>
+      <div class="header-sub">从需求下发 → 采集执行 → 审核打回 → 闭环验证 全流程监控</div>
     </div>
     <div class="header-right">
       <div id="currentDate">—</div>
-      <div>
-        <span class="header-badge" id="dataStatusBadge">📡 data.json 加载中...</span>
-        <span class="data-source">🌐 GitHub Pages</span>
-      </div>
+      <div><span class="header-badge" id="dataStatusBadge">📡 加载中...</span></div>
     </div>
   </header>
 
-  <!-- ========== TOOLBAR ========== -->
+  <!-- Toolbar -->
   <div class="toolbar animate delay-1">
     <button class="btn btn-primary" onclick="openPanel()">✏️ 编辑数据</button>
     <button class="btn btn-warning" onclick="openCSV()">📥 导入 (CSV/Excel)</button>
     <button class="btn btn-success" onclick="exportDataJSON()">📤 导出 data.json</button>
-    <button class="btn btn-outline" onclick="resetToDefault()">↩️ 恢复默认</button>
-    <span id="dataInfo" style="font-size:0.75rem;color:var(--color-text-light);margin-left:auto">
-      💾 数据来源: <strong id="dataSourceLabel">data.json</strong>
-    </span>
+    <button class="btn btn-outline" onclick="resetToDefault()">↩️ 重置</button>
+    <span class="data-info" id="dataSourceLabel">💾 data.json</span>
   </div>
 
-  <!-- ========== KPI ROW ========== -->
+  <!-- KPI Cards -->
   <div class="kpi-row animate delay-1" id="kpiContainer"></div>
 
-  <!-- ========== ROW 1 ========== -->
-  <div class="section-row animate delay-2">
-    <div class="card chart-card">
-      <div class="section-title"><span class="dot red"></span>环节 1 · 需求下发</div>
-      <div class="chart-container" id="chartDemandRelease"></div>
+  <!-- Step Sections (rendered by JS) -->
+  <div id="stepsContainer"></div>
+
+  <!-- Monthly Trend Overview -->
+  <div class="step-section animate delay-4">
+    <div class="step-header" style="background:linear-gradient(135deg,#2C3E50,#34495E)">
+      <span class="step-dot"></span>📈 所有指标月度趋势总览
+      <span class="step-count">全览</span>
     </div>
-    <div class="card chart-card">
-      <div class="section-title"><span class="dot orange"></span>环节 2 · 采集执行进度</div>
-      <div class="chart-container" id="chartCollection"></div>
+    <div class="step-body">
+      <div class="monthly-grid" id="trendGrid"></div>
     </div>
   </div>
 
-  <!-- ========== ROW 2 ========== -->
-  <div class="section-row animate delay-3">
-    <div class="card chart-card">
-      <div class="section-title"><span class="dot yellow"></span>环节 3 · 审核打回根因分析</div>
-      <div class="chart-container chart-container-sm" id="chartReviewReject"></div>
-    </div>
-    <div class="card chart-card">
-      <div class="section-title"><span class="dot green"></span>环节 4 · 上线闭环状态</div>
-      <div class="chart-container chart-container-sm" id="chartClosedStatus"></div>
-    </div>
-  </div>
-
-  <!-- ========== ROW 3 ========== -->
-  <div class="section-row animate delay-4">
-    <div class="card chart-card">
-      <div class="section-title"><span class="dot purple"></span>全链路健康度评分</div>
-      <div class="chart-container chart-container-lg" id="chartRadar"></div>
-    </div>
-    <div class="card chart-card">
-      <div class="section-title"><span class="dot blue"></span>结算与预算执行</div>
-      <div class="chart-container chart-container-lg" id="chartBudget"></div>
-    </div>
-  </div>
-
-  <!-- ========== ALERTS ========== -->
+  <!-- Alert -->
   <div class="alert-section animate delay-4">
     <div class="alert-title">🚨 关键预警与行动项</div>
     <div class="alert-grid" id="alertContainer"></div>
   </div>
 
-  <!-- ========== FOOTER ========== -->
   <div class="footer">
-    数据采集加工全链路看板 · 数据来源于 <strong>data.json</strong> ·
-    更新后刷新页面即可看到最新数据 · Made with ❤️
+    基于「需求下发登记表」数据 · 更新 data.json 后刷新即可生效 · Made with ❤️
   </div>
 </div>
 
-<!-- ========== DATA EDITOR PANEL ========== -->
+<!-- Data Editor Panel -->
 <div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
 <div class="data-panel" id="dataPanel">
   <button class="close-btn" onclick="closePanel()">✕</button>
   <h3>✏️ 编辑看板数据</h3>
-  <p style="font-size:0.75rem;color:var(--color-text-light);margin-bottom:10px;">
-    修改下方 JSON 后点击「应用」预览效果。满意后点「导出 data.json」上传到 GitHub 即可永久生效。
-  </p>
+  <p style="font-size:0.72rem;color:var(--text-light);margin-bottom:8px;">修改 JSON 后点「应用」预览，满意后「导出 data.json」上传到 GitHub 即可永久生效。</p>
   <textarea id="dataEditor" spellcheck="false"></textarea>
   <div class="btn-group">
     <button class="btn-apply" onclick="applyDataEdit()">✅ 应用</button>
-    <button class="btn-reset" onclick="closePanel()">取消</button>
-    <button class="btn-export-data" onclick="exportDataJSON()">📤 导出 data.json</button>
+    <button class="btn-reset-btn" onclick="closePanel()">取消</button>
+    <button class="btn-export-data" onclick="exportDataJSON()">📤 导出</button>
   </div>
 </div>
 
-<!-- ========== CSV IMPORT PANEL ========== -->
+<!-- CSV Import Panel -->
 <div class="panel-overlay" id="csvOverlay" onclick="closeCSV()"></div>
 <div class="csv-panel" id="csvPanel">
   <button class="close-btn" onclick="closeCSV()">✕</button>
   <h3>📥 导入数据（CSV / Excel）</h3>
   <div class="status-msg" id="csvStatus"></div>
-
   <div class="drop-zone" id="dropZone">
     <div class="drop-zone-icon">📄</div>
-    <div class="drop-zone-text">拖拽 CSV 文件到这里，或点击选择文件</div>
-    <div class="drop-zone-hint">支持 CSV / Excel (.xlsx / .xls) 格式</div>
+    <div class="drop-zone-text">拖拽文件到这里，或点击选择</div>
+    <div class="drop-zone-hint">支持 CSV / Excel (.xlsx / .xls)</div>
   </div>
   <input type="file" id="csvFileInput" accept=".csv,.xlsx,.xls" style="display:none">
-
   <div id="csvPreviewArea" class="hidden">
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <h4 style="font-size:0.85rem">📋 数据预览（前5行）</h4>
-      <span id="csvRowCount" style="font-size:0.75rem;color:var(--color-text-light)"></span>
+      <h4 style="font-size:0.82rem">📋 预览（前5行）</h4>
+      <span id="csvRowCount" style="font-size:0.7rem;color:var(--text-light)"></span>
     </div>
     <div class="csv-preview" id="csvPreview"></div>
   </div>
-
   <div id="csvMappingArea" class="hidden">
-    <h4>🔗 字段映射（自动匹配，可手动调整）</h4>
+    <h4 style="font-size:0.82rem;margin-bottom:6px">🔗 字段映射</h4>
     <div id="csvMapping" class="csv-mapping"></div>
   </div>
-
-  <div class="btn-group" style="margin-top:12px">
-    <button class="btn-apply" id="csvApplyBtn" onclick="applyCSV()" disabled>🔄 导入并生成看板</button>
-    <button class="btn-reset" onclick="closeCSV()">取消</button>
+  <div class="btn-group" style="margin-top:10px">
+    <button class="btn-apply" id="csvApplyBtn" onclick="applyCSV()" disabled>🔄 导入并生成</button>
+    <button class="btn-reset-btn" onclick="closeCSV()">取消</button>
   </div>
 </div>
 
-<!-- ========== SCRIPT ========== -->
 <script>
 // =========================================================================
-// 📦 DATA — Embedded defaults (fallback if data.json can't be loaded)
+// 📦 DEFAULT DATA
 // =========================================================================
-const DEFAULT_DATA = {
-  monthlySummary: {
-    "3月": { demand: 32540, releaseTimeliness: 0.51, collected: 16595, completionRate: 0.51, collectTimeliness: 0.93 },
-    "4月": { demand: 40954, releaseTimeliness: 0.63, collected: 21682, completionRate: 0.53, collectTimeliness: 1.00 },
-    "5月": { demand: 44520, releaseTimeliness: 0.72, collected: 31609, completionRate: 0.71, collectTimeliness: 0.98 },
-    "6月": { demand: 38200, releaseTimeliness: 0.78, collected: 25212, completionRate: 0.66, collectTimeliness: 0.99 }
-  },
-  releaseMetrics: {
-    categories: ["需求发布及时率", "需求发布准确率", "需求发布覆盖率"],
-    current: [0.63, 0.71, 0.58],
-    target: [0.90, 0.90, 0.90]
-  },
-  projectCompletion: [
-    { name: "北京比价试点", rate: 0.82 },
-    { name: "河北价格采集", rate: 0.76 },
-    { name: "浙江商超数据", rate: 0.69 },
-    { name: "广东咬合试点", rate: 0.58 },
-    { name: "海南全品类",   rate: 0.85 },
-    { name: "1:3 需求",    rate: 0.464 },
-    { name: "价格更新",     rate: 0.71 },
-    { name: "全系列报价单", rate: 0.63 }
-  ],
-  rejectReasons: [
-    { name: "非常规材料", value: 142 },
-    { name: "参数错误",   value: 89  },
-    { name: "格式不符",   value: 56  },
-    { name: "数据缺失",   value: 41  },
-    { name: "其他",       value: 23  }
-  ],
-  closedStatus: { closed: 185, inProgress: 96, notStarted: 42 },
-  healthRadar: {
-    dimensions: ["需求下发", "采集执行", "数据加工", "上线发布", "供采试点", "结算成本"],
-    currentScore: [63, 53, 71, 68, 55, 42],
-    targetScore: [90, 90, 85, 85, 80, 80]
-  },
-  budgetMonthly: [
-    { month: "3月", actual: 126, target: 150, cumulativeTarget: 150 },
-    { month: "4月", actual: 148, target: 150, cumulativeTarget: 300 },
-    { month: "5月", actual: 135, target: 150, cumulativeTarget: 450 },
-    { month: "6月", actual: 92,  target: 150, cumulativeTarget: 600 }
-  ],
-  kpiCards: [
-    { label: "4月总需求量",     value: "40,954", unit: "条",   sub: "环比 +5.2%",   trend: "up",   color: "blue" },
-    { label: "采集完成数量",   value: "21,682", unit: "条",   sub: "完成率 53%",    trend: "up",   color: "orange" },
-    { label: "采集及时率",     value: "100%",   unit: "",     sub: "较上月 +7pp",   trend: "up",   color: "green" },
-    { label: "需求发布及时率", value: "63%",    unit: "",     sub: "较目标差 27pp", trend: "down", color: "red" },
-    { label: "审核打回率",     value: "12.3%",  unit: "",     sub: "较上月 -1.2pp", trend: "up",   color: "purple" }
-  ],
-  alerts: [
-    { priority: "P0", problem: "需求发布及时率仅 63%，远低于 90% 目标", action: "加强前置沟通机制，明确各环节责任人及时间节点" },
-    { priority: "P0", problem: "1:3 需求采集完成率仅 46.4%，低于警戒线", action: "专项攻坚，增配采集资源，每日跟进进度" },
-    { priority: "P1", problem: "预算执行率偏低（Q2累计 55%）", action: "优化排期，确保重点项目优先保障预算" },
-    { priority: "P1", problem: "闭环判定标准不统一，存在口径差异", action: "制定统一闭环标准文档，组织相关方培训" }
-  ]
-};
+const DEFAULT_DATA = {"title":"需求下发登记全链路看板","updateDate":"2026-06-16","months":["3月","4月","5月","6月"],"kpiCards":[{"label":"6月总需求量","value":"38,906","unit":"条","sub":"较4月 -27.4%","trend":"down","color":"blue"},{"label":"需求发布及时率","value":"100%","unit":"","sub":"连续2月达100%","trend":"up","color":"green"},{"label":"平均采集完成率","value":"71.6%","unit":"","sub":"4月数据","trend":"down","color":"orange"},{"label":"需求初审通过率","value":"99.4%","unit":"","sub":"持续上升趋势","trend":"up","color":"green"},{"label":"需求问题率","value":"0.6%","unit":"","sub":"大幅改善","trend":"up","color":"purple"}],"steps":{"需求下发":{"color":"#E74C3C","metrics":[{"label":"需求发布及时率","value":"100%","target":"100%","status":"good"},{"label":"需求量","value":"38,906条","target":"—","status":"info"},{"label":"需求问题率","value":"0.6%","target":"<5%","status":"good"},{"label":"需求初审通过率","value":"99.4%","target":">95%","status":"good"}],"trend":{"title":"需求发布及时率","categories":["3月","4月","5月","6月"],"values":[25,60,100,100],"target":100},"trend2":{"title":"需求量趋势","categories":["3月","4月","5月","6月"],"values":[15977,53581,2277,38906]}},"采集执行":{"color":"#F39C12","metrics":[{"label":"实际采集完成","value":"42,484条","target":"—","status":"info"},{"label":"平均采集完成率","value":"71.6%","target":">90%","status":"warn"},{"label":"采集总量（4月）","value":"42,484条","target":"53,581条","status":"info"}],"trend":{"title":"采集完成率","categories":["3月","4月","5月","6月"],"values":[78.5,71.6,100,0],"target":90},"trend2":{"title":"采集完成数量","categories":["3月","4月","5月","6月"],"values":[10765,42484,2355,0]}},"按结算类型":{"color":"#3498DB","metrics":[{"label":"价格采集","value":"43.2%","target":"完成率","status":"warn"},{"label":"价格更新","value":"100%","target":"完成率","status":"good"},{"label":"全系列报价单","value":"40.7%","target":"完成率","status":"bad"}],"chartData":{"categories":["价格采集","价格更新","全系列报价单"],"completionRate":[43.2,100,40.7],"timelinessRate":[68.4,100,50],"demandTotal":[96395,13776,570]}},"审核打回":{"color":"#F1C40F","metrics":[{"label":"打回根因","value":"非常规材料","target":"占100%","status":"info"}],"pieData":[{"name":"非常规材料","value":4}]},"闭环验证":{"color":"#2ECC71","metrics":[{"label":"3月闭环率","value":"100%","target":"已全部闭环","status":"good"},{"label":"4月闭环率","value":"22.2%","target":"进行中","status":"warn"}],"trend":{"title":"闭环率月度趋势","categories":["3月","4月","5月","6月"],"values":[100,22.2,0,0],"target":100}}},"monthlyTrend":{"需求发布及时率":[25,60,100,100],"需求量":[15977,53581,2277,38906],"采集完成率":[78.5,71.6,100,0],"采集完成数":[10765,42484,2355,0],"需求准确率":[94.4,0,0,0],"需求初审通过率":[92.8,90,97,99.4],"需求问题率":[7.2,10,3,0.6],"闭环率":[100,22.2,0,0]},"alerts":[{"priority":"P0","problem":"4月采集完成率仅 71.6%，低于 90% 目标","action":"加大采集资源投入，重点关注价格采集项目"},{"priority":"P0","problem":"价格采集完成率仅 43.2%，占需求总量 90% 以上","action":"专项攻坚价格采集流程，梳理瓶颈环节"},{"priority":"P1","problem":"全系列报价单采集完成率 40.7%，数量虽少但影响完整性","action":"明确全系列报价单采集责任人，设定交付节点"},{"priority":"P1","problem":"4月闭环率仅 22.2%，大量在途未闭环","action":"推动闭环流程自动化，减少人工确认环节"}]};
 
 // =========================================================================
-// 🌐 DATA LOADING
+// 🌐 STATE
 // =========================================================================
 let currentData = null;
 let chartInstances = {};
 let csvRawData = null;
+const MONTHS = ["3月","4月","5月","6月"];
 
-function pct(v) { return (v * 100).toFixed(1) + "%"; }
-
+// =========================================================================
+// 📥 DATA LOADING
+// =========================================================================
 async function loadData() {
-  const loadingEl = document.getElementById("loadingOverlay");
+  const loading = document.getElementById("loadingOverlay");
   const badge = document.getElementById("dataStatusBadge");
   const label = document.getElementById("dataSourceLabel");
-
-  // Try data.json first
   try {
-    const resp = await fetch("./data.json?_t=" + Date.now());
+    const resp = await fetch("./data.json?_t="+Date.now());
     if (resp.ok) {
       currentData = await resp.json();
-      badge.textContent = "✅ data.json 已加载";
+      badge.textContent = "✅ data.json";
       badge.style.color = "#2ECC71";
-      label.textContent = "data.json（外部文件）";
+      label.textContent = "💾 data.json（外部文件）";
       renderAll(currentData);
-      loadingEl.classList.add("hidden");
-      return;
-    }
-  } catch(e) {
-    // fall through to localStorage
-  }
-
-  // Try localStorage
-  try {
-    const saved = localStorage.getItem("kanbanData");
-    if (saved) {
-      currentData = JSON.parse(saved);
-      badge.textContent = "📦 本地缓存数据";
-      badge.style.borderColor = "rgba(241,196,15,0.4)";
-      badge.style.color = "#F1C40F";
-      label.textContent = "localStorage 缓存";
-      renderAll(currentData);
-      loadingEl.classList.add("hidden");
-      return;
+      loading.classList.add("hidden"); return;
     }
   } catch(e) {}
-
-  // Fallback to defaults
+  try {
+    const saved = localStorage.getItem("kanbanData_v2");
+    if (saved) { currentData = JSON.parse(saved); badge.textContent = "📦 本地缓存"; badge.style.color="#F1C40F"; label.textContent="💾 本地缓存"; renderAll(currentData); loading.classList.add("hidden"); return; }
+  } catch(e) {}
   currentData = JSON.parse(JSON.stringify(DEFAULT_DATA));
-  badge.textContent = "⚠️ 默认数据（离线模式）";
-  badge.style.borderColor = "rgba(243,156,18,0.4)";
+  badge.textContent = "⚠️ 默认数据";
   badge.style.color = "#F39C12";
-  label.textContent = "内置默认数据";
+  label.textContent = "💾 默认数据";
   renderAll(currentData);
-  loadingEl.classList.add("hidden");
+  loading.classList.add("hidden");
 }
 
 // =========================================================================
-// 📊 CHARTS (same as before, all 7 charts)
+// 📊 RENDER ENGINE
 // =========================================================================
 
-// 1. KPI Cards
+function disposeChart(id) { if(chartInstances[id]){chartInstances[id].dispose();delete chartInstances[id]} }
+function initChart(id, h) {
+  disposeChart(id);
+  const el = document.getElementById(id);
+  if(!el) return null;
+  const c = echarts.init(el);
+  chartInstances[id] = c;
+  const ro = new ResizeObserver(()=>c.resize());
+  ro.observe(el.parentElement);
+  return c;
+}
+
+// --- KPI ---
 function renderKPI(data) {
   const container = document.getElementById("kpiContainer");
-  const iconMap = { blue: "📋", orange: "📥", green: "✅", red: "⚠️", purple: "🔄" };
-  container.innerHTML = data.kpiCards.map((k, i) => `
-    <div class="kpi-card ${k.color} animate" style="animation-delay:${i*0.1}s">
+  container.innerHTML = data.kpiCards.map((k,i) => `
+    <div class="kpi-card ${k.color} animate" style="animation-delay:${i*0.08}s">
       <div class="kpi-label">${k.label}</div>
-      <div class="kpi-value ${k.color}">${k.value}<span style="font-size:0.7rem;font-weight:400;color:var(--color-text-light);margin-left:4px">${k.unit}</span></div>
-      <div class="kpi-sub">
-        <span class="kpi-trend-${k.trend==="up"?"up":"down"}">${k.trend==="up"?"↑":"↓"} ${k.sub}</span>
-      </div>
-      <div class="kpi-icon">${iconMap[k.color]||"📊"}</div>
+      <div class="kpi-value ${k.color}">${k.value}<span style="font-size:0.65rem;font-weight:400;color:var(--text-light);margin-left:3px">${k.unit}</span></div>
+      <div class="kpi-sub"><span class="kpi-trend-${k.trend==="up"?"up":"down"}">${k.trend==="up"?"↑":"↓"} ${k.sub}</span></div>
     </div>
   `).join("");
 }
 
-function disposeChart(id) {
-  if (chartInstances[id]) { chartInstances[id].dispose(); delete chartInstances[id]; }
-}
-function initChart(id) {
-  disposeChart(id);
-  const el = document.getElementById(id);
-  if (!el) return null;
-  const chart = echarts.init(el);
-  chartInstances[id] = chart;
-  const ro = new ResizeObserver(() => chart.resize());
-  ro.observe(el.parentElement);
-  return chart;
+// --- Step sections ---
+function renderSteps(data) {
+  const container = document.getElementById("stepsContainer");
+  const steps = data.steps;
+  let html = "";
+  let idx = 0;
+  for (const [name, step] of Object.entries(steps)) {
+    const delay = Math.min(idx + 2, 4);
+    idx++;
+    html += `
+      <div class="step-section animate delay-${delay}">
+        <div class="step-header" style="background:${step.color}">
+          <span class="step-dot"></span>${name}
+          <span class="step-count">${step.metrics.length}项指标</span>
+        </div>
+        <div class="step-body">
+          <div class="metrics-row">
+            ${step.metrics.map(m => `
+              <span class="metric-badge ${m.status}">
+                <span class="m-label">${m.label}</span>
+                <span class="m-value">${m.value}</span>
+                ${m.target !== "—" ? `<span style="font-size:0.7rem;opacity:0.6;margin-left:2px">目标:${m.target}</span>` : ""}
+              </span>
+            `).join("")}
+          </div>
+          <div class="chart-row">
+            <div class="chart-box" id="chart_step_${idx}_1"></div>
+            ${step.trend2 ? `<div class="chart-box" id="chart_step_${idx}_2"></div>` :
+             step.chartData ? `<div class="chart-box" id="chart_step_${idx}_2"></div>` :
+             step.pieData ? `<div class="chart-box" id="chart_step_${idx}_2"></div>` : ""}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+
+  // Render charts
+  idx = 0;
+  for (const [name, step] of Object.entries(steps)) {
+    idx++;
+    // First chart: trend line
+    if (step.trend) renderStepTrend(`chart_step_${idx}_1`, step.trend, step.color);
+    else if (step.chartData) renderTypeChart(`chart_step_${idx}_1`, step.chartData);
+    else if (step.pieData) renderSimplePie(`chart_step_${idx}_1`, step.pieData);
+
+    // Second chart
+    if (step.trend2) renderStepTrend(`chart_step_${idx}_2`, step.trend2, step.color);
+    else if (step.chartData) renderTypeChart(`chart_step_${idx}_2`, step.chartData);
+    else if (step.pieData) renderSimplePie(`chart_step_${idx}_2`, step.pieData);
+  }
 }
 
-// 2. 需求下发
-function renderDemandRelease(data) {
-  const chart = initChart("chartDemandRelease");
+function renderStepTrend(id, trend, color) {
+  const chart = initChart(id, 220);
   if (!chart) return;
-  const d = data.releaseMetrics;
+  const months = trend.categories || MONTHS;
+
+  const series = [{
+    type: "line",
+    data: trend.values,
+    smooth: true,
+    symbol: "circle",
+    symbolSize: 8,
+    lineStyle: { color, width: 3 },
+    itemStyle: { color },
+    areaStyle: { color: color + "22" },
+    label: { show: true, formatter: (p) => p.value + (trend.values[0] > 100 ? "" : "%"), fontSize: 10, fontWeight: 600 },
+  }];
+  if (trend.target) {
+    series.push({
+      type: "line",
+      data: [],
+      markLine: {
+        silent: true, symbol: "none",
+        lineStyle: { type: "dashed", color: "#E74C3C", width: 1.5 },
+        label: { formatter: `目标 ${trend.target}${trend.target > 1 ? "%" : ""}`, fontSize: 9, color: "#E74C3C" },
+        data: [{ yAxis: trend.target }],
+      },
+    });
+  }
+
   chart.setOption({
-    tooltip: { trigger: "axis", formatter: (p) => p.map(i => `${i.name}<br/>${i.seriesName}: ${(i.value*100).toFixed(1)}%`).join("<br/>") },
-    legend: { data: ["当前值", "目标值 (90%)"], bottom: 0, textStyle: { fontSize: 11 } },
-    grid: { top: 20, bottom: 40, left: 30, right: 20, containLabel: true },
-    xAxis: { type: "category", data: d.categories, axisLabel: { fontSize: 11 } },
-    yAxis: { type: "value", min: 0, max: 1, axisLabel: { formatter: (v) => pct(v), fontSize: 10 } },
+    tooltip: { trigger: "axis", formatter: (p) => `
+      <strong>${trend.title}</strong><br/>
+      ${p.map(i => `${i.name}: <strong>${typeof i.value === 'number' ? i.value.toFixed(1) : i.value}${trend.values[0] > 100 ? "" : "%"}</strong>`).join("<br/>")}
+    `},
+    grid: { top: 20, bottom: 16, left: 12, right: 12, containLabel: true },
+    xAxis: { type: "category", data: months, axisLabel: { fontSize: 10 } },
+    yAxis: { type: "value", axisLabel: { fontSize: 9 } },
+    series,
+  });
+}
+
+function renderTypeChart(id, data) {
+  const chart = initChart(id, 220);
+  if (!chart) return;
+  chart.setOption({
+    tooltip: { trigger: "axis" },
+    legend: { data: ["采集完成率", "发布及时率"], bottom: 0, textStyle: { fontSize: 10 } },
+    grid: { top: 16, bottom: 32, left: 8, right: 8, containLabel: true },
+    xAxis: { type: "category", data: data.categories, axisLabel: { fontSize: 9, rotate: 15 } },
+    yAxis: { type: "value", min: 0, max: 100, axisLabel: { formatter: "{value}%", fontSize: 9 } },
     series: [
-      { name: "当前值", type: "bar", data: d.current, itemStyle: { color: "#E74C3C", borderRadius: [4,4,0,0] }, label: { show: true, position: "top", formatter: (p) => pct(p.value), fontSize: 10, fontWeight: 600 }, barWidth: 30 },
-      { name: "目标值 (90%)", type: "bar", data: d.target, itemStyle: { color: "#BDC3C7", borderRadius: [4,4,0,0], opacity: 0.5 }, label: { show: true, position: "top", formatter: (p) => pct(p.value), fontSize: 10, color: "#95A5A6" }, barWidth: 30 },
+      { name: "采集完成率", type: "bar", data: data.completionRate, itemStyle: { color: "#F39C12", borderRadius: [4,4,0,0] }, label: { show: true, position: "top", formatter: "{c}%", fontSize: 9 } },
+      { name: "发布及时率", type: "bar", data: data.timelinessRate, itemStyle: { color: "#3498DB", borderRadius: [4,4,0,0] }, label: { show: true, position: "top", formatter: "{c}%", fontSize: 9 } },
     ],
   });
 }
 
-// 3. 采集执行
-function renderCollection(data) {
-  const chart = initChart("chartCollection");
+function renderSimplePie(id, data) {
+  const chart = initChart(id, 220);
   if (!chart) return;
-  const d = data.projectCompletion;
-  const names = d.map(i => i.name).reverse();
-  const values = d.map(i => i.rate).reverse();
   chart.setOption({
-    tooltip: { trigger: "axis", formatter: (p) => `${p[0].name}<br/>采集完成率: ${(p[0].value*100).toFixed(1)}%` },
-    grid: { top: 10, bottom: 10, left: 10, right: 40, containLabel: true },
-    xAxis: { type: "value", min: 0, max: 1, axisLabel: { formatter: (v) => pct(v), fontSize: 10 } },
-    yAxis: { type: "category", data: names, axisLabel: { fontSize: 10 } },
-    series: [
-      { type: "bar", data: values.map(v => ({ value: v, itemStyle: { color: v>=0.8?"#2ECC71":v>=0.6?"#F39C12":"#E74C3C", borderRadius: [0,4,4,0] } })), label: { show: true, position: "right", formatter: (p) => pct(p.value), fontSize: 10, fontWeight: 600 }, barWidth: 14 },
-      { type: "bar", data: [], markLine: { silent: true, symbol: "none", lineStyle: { type: "dashed", color: "#E74C3C", width: 2 }, label: { formatter: "目标 90%", position: "end", fontSize: 10, color: "#E74C3C" }, data: [{ xAxis: 0.9 }] } },
-    ],
+    tooltip: { formatter: (p) => `<strong>${p.name}</strong><br/>数量: ${p.value}` },
+    series: [{
+      type: "pie", radius: ["25%","55%"], center: ["50%","50%"],
+      itemStyle: { borderRadius: 4, borderColor: "#fff", borderWidth: 2 },
+      label: { show: true, formatter: "{b}: {c}", fontSize: 10 },
+      data: data.map((d,i) => ({ ...d, itemStyle: { color: ["#F1C40F","#E74C3C","#3498DB","#2ECC71","#9B59B6"][i%5] } })),
+    }],
   });
 }
 
-// 4. 审核打回饼图
-function renderRejectPie(data) {
-  const chart = initChart("chartReviewReject");
-  if (!chart) return;
-  const d = data.rejectReasons;
-  const colors = ["#E74C3C","#F39C12","#F1C40F","#3498DB","#95A5A6"];
-  const total = d.reduce((s,i) => s+i.value, 0);
-  chart.setOption({
-    tooltip: { formatter: (p) => `<strong>${p.name}</strong><br/>数量: ${p.value} 条<br/>占比: ${((p.value/total)*100).toFixed(1)}%` },
-    legend: { orient: "vertical", right: 10, top: "center", textStyle: { fontSize: 10 }, itemWidth: 12, itemHeight: 12 },
-    series: [{ type: "pie", radius: ["30%","65%"], center: ["35%","50%"], avoidLabelOverlap: true, itemStyle: { borderRadius: 6, borderColor: "#fff", borderWidth: 2 }, label: { show: false }, emphasis: { label: { show: true, fontSize: 12, fontWeight: 600 } }, data: d.map((item,i) => ({ ...item, itemStyle: { color: colors[i%colors.length] } })) }],
-  });
+// --- Monthly Trend Overview ---
+function renderMonthlyTrends(data) {
+  const grid = document.getElementById("trendGrid");
+  const trends = data.monthlyTrend;
+  const months = data.months || MONTHS;
+  const colors = ["#E74C3C","#3498DB","#F39C12","#2ECC71","#9B59B6","#1ABC9C","#E67E22","#2C3E50"];
+  let idx = 0;
+  grid.innerHTML = Object.entries(trends).map(([name, values]) => {
+    const c = colors[idx++ % colors.length];
+    return `<div class="card" style="padding:12px;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);background:var(--card)">
+      <div style="font-size:0.78rem;font-weight:600;margin-bottom:8px;color:${c}">${name}</div>
+      <div class="chart-box" id="trend_${name.replace(/[^a-zA-Z0-9]/g,'_')}" style="height:160px"></div>
+    </div>`;
+  }).join("");
+
+  idx = 0;
+  for (const [name, values] of Object.entries(trends)) {
+    const c = colors[idx++ % colors.length];
+    const id = `trend_${name.replace(/[^a-zA-Z0-9]/g,'_')}`;
+    const chart = initChart(id, 160);
+    if (!chart) continue;
+    chart.setOption({
+      grid: { top: 10, bottom: 10, left: 6, right: 6, containLabel: true },
+      xAxis: { type: "category", data: months, axisLabel: { fontSize: 8 } },
+      yAxis: { type: "value", axisLabel: { fontSize: 8 } },
+      series: [{
+        type: "line", data: values, smooth: true, symbol: "circle", symbolSize: 6,
+        lineStyle: { color: c, width: 2 },
+        itemStyle: { color: c },
+        areaStyle: { color: c + "18" },
+        label: { show: true, formatter: (p) => typeof p.value === 'number' ? (values[0] > 100 ? p.value : p.value.toFixed(1) + (p.value > 1 ? "%" : "")) : p.value, fontSize: 8, fontWeight: 600 },
+      }],
+    });
+  }
 }
 
-// 5. 闭环状态
-function renderClosedStatus(data) {
-  const chart = initChart("chartClosedStatus");
-  if (!chart) return;
-  const d = data.closedStatus;
-  const items = [
-    { name: "✅ 已闭环",   value: d.closed, color: "#2ECC71" },
-    { name: "🔄 进行中",   value: d.inProgress, color: "#F39C12" },
-    { name: "⏳ 未启动",   value: d.notStarted, color: "#95A5A6" },
-  ];
-  chart.setOption({
-    tooltip: { trigger: "axis", formatter: (p) => `${p[0].name}<br/>数量: ${p[0].value} 条` },
-    grid: { top: 20, bottom: 20, left: 10, right: 30, containLabel: true },
-    xAxis: { type: "category", data: items.map(i=>i.name), axisLabel: { fontSize: 11 } },
-    yAxis: { type: "value", axisLabel: { fontSize: 10 } },
-    series: [{ type: "bar", data: items.map(i => ({ value: i.value, itemStyle: { color: i.color, borderRadius: [6,6,0,0] } })), label: { show: true, position: "top", fontSize: 12, fontWeight: 700 }, barWidth: 50 }],
-  });
-}
-
-// 6. 雷达图
-function renderRadar(data) {
-  const chart = initChart("chartRadar");
-  if (!chart) return;
-  const d = data.healthRadar;
-  chart.setOption({
-    tooltip: { trigger: "item", formatter: (p) => `<strong>${p.name}</strong><br/>${p.seriesName}: ${p.value}` },
-    legend: { data: ["当前得分","目标值"], bottom: 0, textStyle: { fontSize: 11 } },
-    radar: { indicator: d.dimensions.map(name => ({ name, max: 100 })), center: ["50%","48%"], radius: "60%", axisName: { fontSize: 11, fontWeight: 600, color: "#2C3E50" }, splitArea: { areaStyle: { color: ["rgba(52,152,219,0.02)","rgba(52,152,219,0.05)"] } } },
-    series: [{ type: "radar", data: [
-      { value: d.currentScore, name: "当前得分", areaStyle: { color: "rgba(231,76,60,0.25)" }, lineStyle: { color: "#E74C3C", width: 2 }, itemStyle: { color: "#E74C3C" } },
-      { value: d.targetScore, name: "目标值", areaStyle: { color: "rgba(46,204,113,0.10)" }, lineStyle: { color: "#2ECC71", width: 2, type: "dashed" }, itemStyle: { color: "#2ECC71" } },
-    ]}],
-  });
-}
-
-// 7. 预算组合图
-function renderBudget(data) {
-  const chart = initChart("chartBudget");
-  if (!chart) return;
-  const d = data.budgetMonthly;
-  chart.setOption({
-    tooltip: { trigger: "axis", formatter: (p) => p.map(i => `${i.seriesName}<br/>${i.axisValue}: ${i.value}${i.seriesName.includes("累计")?"":"万"}`).join("<br/>") },
-    legend: { data: ["月度结算金额","月度目标","累计目标"], bottom: 0, textStyle: { fontSize: 11 } },
-    grid: { top: 20, bottom: 40, left: 10, right: 50, containLabel: true },
-    xAxis: { type: "category", data: d.map(i=>i.month), axisLabel: { fontSize: 11 } },
-    yAxis: [
-      { type: "value", name: "金额（万元）", nameTextStyle: { fontSize: 10 }, axisLabel: { fontSize: 10 } },
-      { type: "value", name: "累计（万元）", nameTextStyle: { fontSize: 10 }, axisLabel: { fontSize: 10 } },
-    ],
-    series: [
-      { name: "月度结算金额", type: "bar", data: d.map(i=>i.actual), itemStyle: { color: "#3498DB", borderRadius: [4,4,0,0] }, label: { show: true, position: "top", formatter: (p)=>p.value+"万", fontSize: 10 } },
-      { name: "月度目标", type: "bar", data: d.map(i=>i.target), itemStyle: { color: "#BDC3C7", opacity: 0.4, borderRadius: [4,4,0,0] }, label: { show: true, position: "top", formatter: (p)=>p.value+"万", fontSize: 9, color: "#95A5A6" } },
-      { name: "累计目标", type: "line", yAxisIndex: 1, data: d.map(i=>i.cumulativeTarget), lineStyle: { color: "#E74C3C", width: 2, type: "dashed" }, itemStyle: { color: "#E74C3C" }, label: { show: true, formatter: (p)=>p.value+"万", fontSize: 10, color: "#E74C3C" }, symbol: "diamond", symbolSize: 10 },
-    ],
-  });
-}
-
-// 8. 预警
+// --- Alerts ---
 function renderAlerts(data) {
   document.getElementById("alertContainer").innerHTML = data.alerts.map(a => `
     <div class="alert-item alert-${a.priority.toLowerCase()}">
       <span class="alert-priority">${a.priority}</span>
       <div class="alert-content">
         <div class="alert-problem">${a.problem}</div>
-        <div class="alert-action">💡 建议：${a.action}</div>
+        <div class="alert-action">💡 ${a.action}</div>
       </div>
     </div>
   `).join("");
@@ -727,17 +569,13 @@ function renderAlerts(data) {
 function renderAll(data) {
   if (!data) return;
   renderKPI(data);
-  renderDemandRelease(data);
-  renderCollection(data);
-  renderRejectPie(data);
-  renderClosedStatus(data);
-  renderRadar(data);
-  renderBudget(data);
+  renderSteps(data);
+  renderMonthlyTrends(data);
   renderAlerts(data);
 }
 
 // =========================================================================
-// 📝 DATA EDITOR PANEL
+// 📝 DATA EDITOR
 // =========================================================================
 function openPanel() {
   document.getElementById("dataEditor").value = JSON.stringify(currentData, null, 2);
@@ -752,327 +590,211 @@ function applyDataEdit() {
   try {
     const parsed = JSON.parse(document.getElementById("dataEditor").value);
     currentData = parsed;
-    localStorage.setItem("kanbanData", JSON.stringify(parsed));
+    localStorage.setItem("kanbanData_v2", JSON.stringify(parsed));
     renderAll(currentData);
-    document.getElementById("dataStatusBadge").textContent = "📦 已应用编辑（本地缓存）";
-    document.getElementById("dataStatusBadge").style.borderColor = "rgba(241,196,15,0.4)";
+    document.getElementById("dataStatusBadge").textContent = "📦 已编辑";
     document.getElementById("dataStatusBadge").style.color = "#F1C40F";
-    document.getElementById("dataSourceLabel").textContent = "手动编辑（localStorage）";
+    document.getElementById("dataSourceLabel").textContent = "💾 手动编辑";
     closePanel();
-    showToast("✅ 数据已应用！点击「导出 data.json」上传到 GitHub 即可永久生效。", "success");
-  } catch(e) {
-    alert("JSON 格式错误：" + e.message);
-  }
+    showToast("✅ 已应用！导出 data.json 上传到 GitHub 永久生效", "success");
+  } catch(e) { alert("JSON 格式错误：" + e.message); }
 }
 function resetToDefault() {
-  if (!confirm("恢复默认数据？当前编辑会丢失。")) return;
+  if (!confirm("恢复默认数据？")) return;
   currentData = JSON.parse(JSON.stringify(DEFAULT_DATA));
-  localStorage.removeItem("kanbanData");
+  localStorage.removeItem("kanbanData_v2");
   renderAll(currentData);
-  document.getElementById("dataStatusBadge").textContent = "✅ 已恢复默认数据";
+  document.getElementById("dataStatusBadge").textContent = "✅ 已重置";
   document.getElementById("dataStatusBadge").style.color = "#2ECC71";
-  document.getElementById("dataSourceLabel").textContent = "默认数据";
+  document.getElementById("dataSourceLabel").textContent = "💾 默认数据";
 }
 function exportDataJSON() {
   const blob = new Blob([JSON.stringify(currentData, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
-  a.download = "data.json";
-  a.click();
+  a.href = url; a.download = "data.json"; a.click();
   URL.revokeObjectURL(url);
-  showToast("📤 已导出 data.json，上传到 GitHub 替换原文件即可更新看板", "info");
+  showToast("📤 已导出 data.json，上传到 GitHub 替换原文件", "info");
 }
 
 // =========================================================================
-// 📥 CSV IMPORT
+// 📥 CSV / EXCEL IMPORT
 // =========================================================================
-
-// Known field keywords for auto-mapping
-const FIELD_KEYWORDS = {
-  month: ["月份", "月", "月度", "下发月份", "统计月份"],
-  project: ["项目", "来源", "省份", "地区", "需求来源", "项目名称", "试点", "城市", "区域"],
-  demandType: ["需求类型", "类型", "采集类型", "类别", "采集类别"],
-  demandQty: ["下发数量", "需求量", "需求数量", "数量", "总量", "下发条数", "任务量"],
-  releaseTimeliness: ["需求发布及时率", "及时率", "发布及时率", "下发及时率"],
-  releaseAccuracy: ["需求发布准确率", "准确率", "发布准确率", "下发准确率"],
-  releaseCoverage: ["需求发布覆盖率", "覆盖率", "发布覆盖率"],
-  collectedQty: ["实际采集完成数量", "采集完成数", "完成数", "采集数量", "实际采集", "已完成采集"],
-  completionRate: ["采集完成率", "完成率", "采集完成比率"],
-  collectTimeliness: ["采集及时率", "采集按时率", "按时完成率"],
-  rejectReason: ["审核打回根因", "根因", "打回原因", "审核根因", "退回原因", "退回类型", "不合格原因"],
-  closedStatus: ["是否采集闭环", "闭环状态", "闭环", "是否闭环", "完成状态", "推进状态", "状态"],
-  budgetAmount: ["结算金额", "金额", "预算", "结算", "成本", "费用"],
+const FIELD_MAP = {
+  month: ["月份","月","需求月份"],
+  project: ["项目","来源","需求来源","需求名称","省份"],
+  demandType: ["结算类型","需求类型","类型"],
+  demandQty: ["下发数量","需求量","下发数量(含多家）","收到数量"],
+  timeliness: ["需求发布及时率","发布及时率","及时率"],
+  collectedQty: ["实际采集完成数量","采集完成数","实际采集"],
+  completionRate: ["采集完成率","完成率"],
+  rejectReason: ["核实打回材料根因","打回根因","根因"],
+  closedStatus: ["是否采集闭环","闭环状态","闭环"],
+  accuracy: ["需求准确率","准确率"],
+  passRate: ["需求初审通过率","初审通过率"],
+  problemRate: ["需求问题率","问题率"],
 };
 
-function findField(header, fieldMap) {
-  const h = header.trim();
-  const keys = Object.keys(FIELD_KEYWORDS);
-  for (const key of keys) {
-    if (FIELD_KEYWORDS[key].some(kw => h.includes(kw) || kw.includes(h))) {
-      return key;
+function detectField(headers, field) {
+  const kws = FIELD_MAP[field] || [];
+  for (const h of headers) {
+    for (const kw of kws) {
+      if (h.includes(kw) || kw.includes(h)) return h;
     }
   }
   return null;
 }
 
-function showCSVStatus(msg, type) {
+document.getElementById("dropZone").addEventListener("click", ()=>document.getElementById("csvFileInput").click());
+document.getElementById("csvFileInput").addEventListener("change", (e)=>{if(e.target.files.length) handleFile(e.target.files[0]);});
+document.getElementById("dropZone").addEventListener("dragover", (e)=>{e.preventDefault();e.currentTarget.classList.add("dragover");});
+document.getElementById("dropZone").addEventListener("dragleave", (e)=>{e.preventDefault();e.currentTarget.classList.remove("dragover");});
+document.getElementById("dropZone").addEventListener("drop", (e)=>{e.preventDefault();e.currentTarget.classList.remove("dragover");if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);});
+
+function showStatus(msg, type) {
   const el = document.getElementById("csvStatus");
-  el.textContent = msg;
-  el.className = "status-msg " + type;
+  el.textContent = msg; el.className = "status-msg " + type;
 }
 
-document.getElementById("dropZone").addEventListener("click", () => {
-  document.getElementById("csvFileInput").click();
-});
-document.getElementById("csvFileInput").addEventListener("change", (e) => {
-  if (e.target.files.length) handleCSVFile(e.target.files[0]);
-});
-document.getElementById("dropZone").addEventListener("dragover", (e) => {
-  e.preventDefault();
-  e.currentTarget.classList.add("dragover");
-});
-document.getElementById("dropZone").addEventListener("dragleave", (e) => {
-  e.preventDefault();
-  e.currentTarget.classList.remove("dragover");
-});
-document.getElementById("dropZone").addEventListener("drop", (e) => {
-  e.preventDefault();
-  e.currentTarget.classList.remove("dragover");
-  if (e.dataTransfer.files.length) handleCSVFile(e.dataTransfer.files[0]);
-});
-
-function handleCSVFile(file) {
-  const isExcel = file.name.endsWith(".xlsx") || file.name.endsWith(".xls");
+function handleFile(file) {
+  const isExcel = file.name.endsWith(".xlsx")||file.name.endsWith(".xls");
   const isCSV = file.name.endsWith(".csv");
-  if (!isExcel && !isCSV) {
-    showCSVStatus("请选择 CSV 或 Excel (.xlsx / .xls) 文件", "error");
-    return;
-  }
+  if (!isExcel && !isCSV) { showStatus("请选择 CSV 或 Excel 文件", "error"); return; }
 
   const reader = new FileReader();
-  if (isExcel) {
-    reader.readAsArrayBuffer(file);
-  } else {
-    reader.readAsText(file);
-  }
+  if (isExcel) reader.readAsArrayBuffer(file);
+  else reader.readAsText(file);
+
   reader.onload = (e) => {
     let result;
     if (isExcel) {
-      // Parse Excel
       try {
-        const data = new Uint8Array(e.target.result);
-        const wb = XLSX.read(data, { type: "array" });
+        const wb = XLSX.read(new Uint8Array(e.target.result), {type:"array"});
         const ws = wb.Sheets[wb.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(ws, { defval: "" });
-        result = { data: json, meta: { fields: json.length ? Object.keys(json[0]) : [] } };
-        if (!json.length) {
-          showCSVStatus("Excel 文件为空或没有数据", "error");
-          return;
-        }
-        showCSVStatus(`✅ 已解析 Excel，共 ${json.length} 行数据`, "success");
-      } catch(ex) {
-        showCSVStatus("Excel 解析失败：" + ex.message, "error");
-        return;
-      }
+        const json = XLSX.utils.sheet_to_json(ws, {defval:""});
+        result = {data: json, meta: {fields: json.length ? Object.keys(json[0]) : []}};
+        if (!json.length) { showStatus("Excel 为空", "error"); return; }
+        showStatus(`✅ Excel ${json.length} 行`, "success");
+      } catch(ex) { showStatus("Excel 解析失败: "+ex.message, "error"); return; }
     } else {
-      // Parse CSV
       const csv = e.target.result;
-      result = Papa.parse(csv, { header: true, skipEmptyLines: true });
-      if (result.errors.length) {
-        showCSVStatus("CSV 解析有警告，已尝试继续：" + result.errors[0].message, "info");
-      }
-      showCSVStatus(`✅ 已解析 ${result.data.length} 行数据`, "success");
+      result = Papa.parse(csv, {header:true, skipEmptyLines:true});
+      showStatus(`✅ CSV ${result.data.length} 行`, "success");
     }
     csvRawData = result;
-    showCSVStatus(`✅ 已解析 ${result.data.length} 行数据`, "success");
 
     // Preview
     const preview = document.getElementById("csvPreview");
-    const headers = result.meta.fields;
-    const rows = result.data.slice(0, 5);
-    let html = "<table><thead><tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr></thead><tbody>";
-    rows.forEach(row => {
-      html += "<tr>" + headers.map(h => `<td>${row[h]||""}</td>`).join("") + "</tr>";
-    });
+    const headers = result.meta.fields || [];
+    const rows = result.data.slice(0,5);
+    let html = "<table><thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead><tbody>";
+    rows.forEach(r => { html += "<tr>"+headers.map(h=>`<td>${r[h]||""}</td>`).join("")+"</tr>"; });
     html += "</tbody></table>";
     preview.innerHTML = html;
     document.getElementById("csvPreviewArea").classList.remove("hidden");
-    document.getElementById("csvRowCount").textContent = `共 ${result.data.length} 行，显示前 5 行`;
+    document.getElementById("csvRowCount").textContent = `共 ${result.data.length} 行`;
 
-    // Auto mapping
-    const mappingContainer = document.getElementById("csvMapping");
+    // Mapping
+    const mapping = document.getElementById("csvMapping");
     const fieldLabels = {
-      month: "月份", project: "项目/来源", demandType: "需求类型",
-      demandQty: "下发数量", releaseTimeliness: "发布及时率", releaseAccuracy: "发布准确率",
-      releaseCoverage: "发布覆盖率", collectedQty: "采集完成数", completionRate: "采集完成率",
-      collectTimeliness: "采集及时率", rejectReason: "打回根因", closedStatus: "闭环状态",
-      budgetAmount: "结算金额",
+      month:"月份",project:"需求名称/来源",demandType:"结算类型",demandQty:"下发数量",
+      timeliness:"发布及时率",collectedQty:"采集完成数",completionRate:"采集完成率",
+      rejectReason:"打回根因",closedStatus:"闭环状态",accuracy:"需求准确率",
+      passRate:"初审通过率",problemRate:"问题率"
     };
-    const needed = Object.keys(fieldLabels);
-    let mappingHTML = "";
-    needed.forEach(field => {
-      const matched = findField(field, headers);
-      mappingHTML += `
-        <div class="csv-mapping-item">
-          <label>${fieldLabels[field]}</label>
-          <select id="map_${field}">
-            <option value="">— 不导入 —</option>
-            ${headers.map(h => `<option value="${h}" ${matched===field?'selected':''}>${h}</option>`).join("")}
-          </select>
-        </div>
-      `;
-    });
-    mappingContainer.innerHTML = mappingHTML;
+    mapping.innerHTML = Object.entries(fieldLabels).map(([key, label]) => {
+      const matched = detectField(headers, key);
+      return `<div class="csv-mapping-item"><label>${label}</label><select id="map_${key}">${["",...headers].map(h => `<option value="${h}" ${h===matched?'selected':''}>${h||"— 不导入 —"}</option>`).join("")}</select></div>`;
+    }).join("");
     document.getElementById("csvMappingArea").classList.remove("hidden");
     document.getElementById("csvApplyBtn").disabled = false;
   };
-  reader.readAsText(file);
-}
-
-function getMapping() {
-  const map = {};
-  document.querySelectorAll("#csvMapping select").forEach(sel => {
-    const field = sel.id.replace("map_", "");
-    if (sel.value) map[field] = sel.value;
-  });
-  return map;
 }
 
 function applyCSV() {
   if (!csvRawData) return;
-  const map = getMapping();
-  const rows = csvRawData.data;
-  const headers = csvRawData.meta.fields;
+  const map = {};
+  document.querySelectorAll("#csvMapping select").forEach(s => { if(s.value) map[s.id.replace("map_","")] = s.value; });
 
-  // Build aggregated data structure from CSV
-  // This is a best-effort conversion — user can fine-tune in editor
   try {
     const newData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    const rows = csvRawData.data;
+    const months = {};
+    const types = {};
 
-    // If we have month + demand columns, build monthlySummary
-    if (map.month && map.demandQty) {
-      const months = {};
-      rows.forEach(row => {
-        const m = row[map.month];
-        if (!m) return;
-        if (!months[m]) months[m] = { demand: 0, timelinessSum: 0, timelinessCount: 0, collected: 0, completionSum: 0, completionCount: 0, collectTimelinessSum: 0, collectTimelinessCount: 0 };
-        const demand = parseFloat(row[map.demandQty]) || 0;
-        months[m].demand += demand;
-        if (map.releaseTimeliness) {
-          const v = parseFloat(row[map.releaseTimeliness]);
-          if (!isNaN(v)) { months[m].timelinessSum += v; months[m].timelinessCount++; }
-        }
-        if (map.collectedQty) {
-          months[m].collected += parseFloat(row[map.collectedQty]) || 0;
-        }
-        if (map.completionRate) {
-          const v = parseFloat(row[map.completionRate]);
-          if (!isNaN(v)) { months[m].completionSum += v; months[m].completionCount++; }
-        }
-        if (map.collectTimeliness) {
-          const v = parseFloat(row[map.collectTimeliness]);
-          if (!isNaN(v)) { months[m].collectTimelinessSum += v; months[m].collectTimelinessCount++; }
-        }
-      });
+    rows.forEach(r => {
+      const month = r[map.month] || "";
+      const mKey = month.replace("2026年","").replace("年","").replace("月","");
+      const type = r[map.demandType] || "其他";
+      const demand = parseFloat(r[map.demandQty]) || 0;
+      const collected = parseFloat(r[map.collectedQty]) || 0;
+      const tl = r[map.timeliness];
+      const tlVal = tl === 1 || tl === "1" || tl === "100%" || tl === 100 ? 1 : 0;
+      const cr = parseFloat(r[map.completionRate]) || 0;
 
-      const monthKeys = Object.keys(months).sort();
-      if (monthKeys.length) {
-        newData.monthlySummary = {};
-        monthKeys.forEach(m => {
-          const d = months[m];
-          newData.monthlySummary[m] = {
-            demand: d.demand,
-            releaseTimeliness: d.timelinessCount ? +(d.timelinessSum / d.timelinessCount).toFixed(2) : 0,
-            collected: d.collected,
-            completionRate: d.demand ? +((d.collected / d.demand)).toFixed(2) : 0,
-            collectTimeliness: d.collectTimelinessCount ? +(d.collectTimelinessSum / d.collectTimelinessCount).toFixed(2) : 0,
-          };
-        });
+      // Monthly aggregation
+      if (mKey && map.demandQty) {
+        if (!months[mKey]) months[mKey] = {demand:0, tlSum:0, tlCnt:0, collected:0, crSum:0, crCnt:0};
+        months[mKey].demand += demand;
+        if (map.timeliness) { months[mKey].tlSum += tlVal; months[mKey].tlCnt++; }
+        months[mKey].collected += collected;
+        if (cr) { months[mKey].crSum += cr; months[mKey].crCnt++; }
       }
-    }
 
-    // Build projectCompletion from project/region column
-    if (map.project && map.completionRate) {
-      const projects = {};
-      rows.forEach(row => {
-        const p = row[map.project];
-        if (!p) return;
-        const rate = parseFloat(row[map.completionRate]);
-        if (isNaN(rate)) return;
-        if (!projects[p]) projects[p] = { sum: 0, count: 0 };
-        projects[p].sum += rate;
-        projects[p].count++;
-      });
-      newData.projectCompletion = Object.entries(projects).map(([name, d]) => ({
-        name, rate: +(d.sum / d.count).toFixed(3)
-      })).sort((a, b) => b.rate - a.rate);
-    }
+      // By type
+      if (!types[type]) types[type] = {demand:0, collected:0, tlSum:0, tlCnt:0};
+      types[type].demand += demand;
+      types[type].collected += collected;
+      if (map.timeliness) { types[type].tlSum += tlVal; types[type].tlCnt++; }
+    });
 
-    // Build rejectReasons
-    if (map.rejectReason) {
-      const reasons = {};
-      rows.forEach(row => {
-        const r = row[map.rejectReason];
-        if (!r) return;
-        reasons[r] = (reasons[r] || 0) + 1;
-      });
-      const entries = Object.entries(reasons).sort((a, b) => b[1] - a[1]);
-      if (entries.length) {
-        newData.rejectReasons = entries.map(([name, value]) => ({ name, value }));
-      }
-    }
+    // Build monthlySummary trends
+    const monthOrder = ["3月","4月","5月","6月"];
+    const trendData = {
+      需求发布及时率: [], 需求量: [], 采集完成率: [], 采集完成数: [],
+      需求准确率: [], 需求初审通过率: [], 需求问题率: [], 闭环率: [],
+    };
+    monthOrder.forEach(m => {
+      const d = months[m] || {demand:0, tlSum:0, tlCnt:0, collected:0, crSum:0, crCnt:0};
+      trendData["需求量"].push(d.demand);
+      trendData["需求发布及时率"].push(d.tlCnt ? +(d.tlSum/d.tlCnt*100).toFixed(1) : 0);
+      trendData["采集完成率"].push(d.crCnt ? +(d.crSum/d.crCnt).toFixed(1) : 0);
+      trendData["采集完成数"].push(d.collected);
+    });
+    newData.monthlyTrend = trendData;
 
-    // Build closedStatus
-    if (map.closedStatus) {
-      let closed = 0, inProgress = 0, notStarted = 0;
-      rows.forEach(row => {
-        const val = (row[map.closedStatus] || "").trim();
-        if (val.includes("已闭环") || val.includes("是") || val.includes("完成")) closed++;
-        else if (val.includes("进行中") || val.includes("否")) inProgress++;
-        else notStarted++;
-      });
-      if (closed || inProgress || notStarted) {
-        newData.closedStatus = { closed, inProgress, notStarted };
-      }
-    }
+    // Build steps
+    newData.steps["需求下发"].trend.values = trendData["需求发布及时率"];
+    newData.steps["需求下发"].trend2.values = trendData["需求量"];
+    newData.steps["需求下发"].metrics[0].value = trendData["需求发布及时率"].slice(-1)[0] + "%";
+    newData.steps["需求下发"].metrics[1].value = trendData["需求量"].slice(-1)[0].toLocaleString() + "条";
 
-    // Recalculate KPI cards based on monthlySummary
-    const months = Object.keys(newData.monthlySummary);
-    if (months.length) {
-      const last2 = months.slice(-2);
-      const latest = months[months.length - 1];
-      const prev = months[months.length - 2];
-      const m = newData.monthlySummary;
+    newData.steps["采集执行"].trend.values = trendData["采集完成率"];
+    newData.steps["采集执行"].trend2.values = trendData["采集完成数"];
 
-      if (last2.length >= 2) {
-        const latestM = m[last2[last2.length-1]];
-        const prevM = m[last2[last2.length-2]];
-        const demandChange = prevM.demand ? ((latestM.demand - prevM.demand) / prevM.demand * 100).toFixed(1) : 0;
-        const timelinessChange = ((latestM.releaseTimeliness - prevM.releaseTimeliness) * 100).toFixed(0);
-
-        newData.kpiCards = [
-          { label: `${latest}总需求量`, value: latestM.demand.toLocaleString(), unit: "条", sub: `环比 ${demandChange > 0 ? "+" : ""}${demandChange}%`, trend: demandChange >= 0 ? "up" : "down", color: "blue" },
-          { label: "采集完成数量", value: latestM.collected.toLocaleString(), unit: "条", sub: `完成率 ${(latestM.completionRate*100).toFixed(0)}%`, trend: "up", color: "orange" },
-          { label: "采集及时率", value: pct(latestM.collectTimeliness), unit: "", sub: `较上月 ${timelinessChange > 0 ? "+" : ""}${timelinessChange}pp`, trend: timelinessChange >= 0 ? "up" : "down", color: "green" },
-          { label: "需求发布及时率", value: pct(latestM.releaseTimeliness), unit: "", sub: `较目标差 ${(90 - latestM.releaseTimeliness*100).toFixed(0)}pp`, trend: "down", color: "red" },
-          { label: "审核打回率", value: "—", unit: "", sub: "导入后可在编辑器中调整", trend: "up", color: "purple" },
-        ];
-      }
+    // Build type chart
+    const typeKeys = Object.keys(types).sort();
+    if (typeKeys.length) {
+      newData.steps["按结算类型"].chartData = {
+        categories: typeKeys,
+        completionRate: typeKeys.map(t => types[t].demand ? +(types[t].collected/types[t].demand*100).toFixed(1) : 0),
+        timelinessRate: typeKeys.map(t => types[t].tlCnt ? +(types[t].tlSum/types[t].tlCnt*100).toFixed(1) : 0),
+        demandTotal: typeKeys.map(t => types[t].demand),
+      };
+      const ws = typeKeys.map(t => ({name: t, ...types[t]}));
+      const worst = ws.sort((a,b) => (a.collected/a.demand||0) - (b.collected/b.demand||0))[0];
+      if (worst) newData.alerts[1].problem = `${worst.name} 采集完成率仅 ${(worst.collected/worst.demand*100).toFixed(1)}%`;
     }
 
     currentData = newData;
-    localStorage.setItem("kanbanData", JSON.stringify(newData));
+    localStorage.setItem("kanbanData_v2", JSON.stringify(newData));
     renderAll(currentData);
-    document.getElementById("dataStatusBadge").textContent = "📥 CSV 导入成功（本地缓存）";
-    document.getElementById("dataStatusBadge").style.borderColor = "rgba(46,204,113,0.4)";
+    document.getElementById("dataStatusBadge").textContent = "📥 导入成功";
     document.getElementById("dataStatusBadge").style.color = "#2ECC71";
-    document.getElementById("dataSourceLabel").textContent = "CSV 导入 (localStorage)";
+    document.getElementById("dataSourceLabel").textContent = "💾 导入数据";
     closeCSV();
-    showToast("✅ CSV 导入成功！检查数据后点击「导出 data.json」上传到 GitHub", "success");
-  } catch(e) {
-    showCSVStatus("导入处理出错：" + e.message, "error");
-  }
+    showToast("✅ 导入成功！点「导出 data.json」上传到 GitHub 永久生效", "success");
+  } catch(e) { showStatus("处理出错: "+e.message, "error"); }
 }
 
 function openCSV() {
@@ -1091,33 +813,25 @@ function closeCSV() {
 }
 
 // =========================================================================
-// 🔔 Toast
+// 🔔 TOAST
 // =========================================================================
 function showToast(msg, type) {
+  const colors = {success:["#EAFAF1","#2ECC71"], info:["#EBF5FB","#3498DB"], error:["#FDEDEC","#E74C3C"]};
+  const [bg, c] = colors[type] || colors.info;
   const el = document.createElement("div");
-  el.style.cssText = `
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-    padding:12px 24px;border-radius:8px;font-size:0.85rem;font-weight:500;
-    z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);
-    background: ${type==="success"?"#EAFAF1":type==="info"?"#EBF5FB":"#FDEDEC"};
-    color: ${type==="success"?"#2ECC71":type==="info"?"#3498DB":"#E74C3C"};
-    border: 1px solid ${type==="success"?"rgba(46,204,113,0.3)":type==="info"?"rgba(52,152,219,0.3)":"rgba(231,76,60,0.3)"};
-    animation: fadeInUp 0.3s ease;
-  `;
+  el.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:8px;font-size:0.82rem;font-weight:500;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:${bg};color:${c};border:1px solid ${c}22;animation:fadeInUp 0.3s ease`;
   el.textContent = msg;
   document.body.appendChild(el);
-  setTimeout(() => { el.style.opacity = "0"; el.style.transition = "opacity 0.3s"; setTimeout(() => el.remove(), 300); }, 4000);
+  setTimeout(() => { el.style.opacity="0"; el.style.transition="opacity 0.3s"; setTimeout(()=>el.remove(),300); }, 4000);
 }
 
 // =========================================================================
 // 🚀 INIT
 // =========================================================================
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("currentDate").textContent =
-    new Date().toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" });
+  document.getElementById("currentDate").textContent = new Date().toLocaleDateString("zh-CN", {year:"numeric",month:"long",day:"numeric"});
   loadData();
 });
 </script>
-
 </body>
 </html>
