@@ -372,22 +372,23 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   </div>
 </div>
 
-<script id="dataEmbed" type="application/json">{
+<script id="dataEmbed" type="application/json">
+{
   "title": "需求下发登记全链路看板",
   "updateDate": "2026-06-16",
   "months": [
     "03月",
     "04月",
     "05月",
-    "06月"
+    "06月",
+    "07月",
+    "08月"
   ],
   "monthNames": {
     "03": "3月",
     "04": "4月",
     "05": "5月",
-    "06": "6月",
-    "01": "1月",
-    "02": "2月"
+    "06": "6月"
   },
   "filterOptions": {
     "demandItems": [
@@ -399,14 +400,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "全部",
       "价格采集",
       "价格更新",
-      "全系列报价单"
+      "全系列报价单",
+      "聚合比价"
     ],
     "months": [
       "全部",
       "03月",
       "04月",
       "05月",
-      "06月"
+      "06月",
+      "07月",
+      "08月"
     ]
   },
   "tasks": [
@@ -416,15 +420,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "03月",
-      "demandQty": 5761,
+      "totalPoints": 5761,
+      "itemCount": 2681,
+      "reviewIssues": 0,
+      "issuedQty": 5761,
       "collected": 3812,
-      "completionRate": "66%",
-      "timeliness": 0,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0.9723983588213353,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": 34,
+      "supplierRejects": 40,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "北京比价",
@@ -432,15 +438,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "03月",
-      "demandQty": 6642,
+      "totalPoints": 8784,
+      "itemCount": 2928,
+      "reviewIssues": 2142,
+      "issuedQty": 6642,
       "collected": 3637,
-      "completionRate": "55%",
-      "timeliness": 0,
-      "closed": "是",
-      "allClosed": "",
-      "problemRate": "24%",
-      "accuracy": 0.9518754423213022,
-      "passRate": "76%"
+      "feedbackMat": null,
+      "expertVerify": 50,
+      "supplierRejects": 18,
+      "closed": "否",
+      "allClosed": null,
+      "notes": "剩余材料挑选部分做重新采集"
     },
     {
       "name": "河北比价",
@@ -448,31 +456,35 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "03月",
-      "demandQty": 3489,
+      "totalPoints": 3669,
+      "itemCount": 1223,
+      "reviewIssues": 180,
+      "issuedQty": 3489,
       "collected": 3231,
-      "completionRate": "93%",
-      "timeliness": 0,
-      "closed": "是",
-      "allClosed": "",
-      "problemRate": "5%",
-      "accuracy": 0.9071367153912295,
-      "passRate": "95%"
+      "feedbackMat": null,
+      "expertVerify": 77,
+      "supplierRejects": 31,
+      "closed": "否",
+      "allClosed": null,
+      "notes": "剩余材料挑选部分做重新采集"
     },
     {
       "name": "山东&上海",
       "settleType": "价格采集",
-      "source": "",
+      "source": null,
       "demandItem": "采购建议价",
       "month": "03月",
-      "demandQty": 85,
+      "totalPoints": 85,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": 85,
       "collected": 85,
-      "completionRate": "100%",
-      "timeliness": 1,
-      "closed": "是",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "北京比价试点",
@@ -480,15 +492,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 606,
+      "totalPoints": 606,
+      "itemCount": 202,
+      "reviewIssues": 0,
+      "issuedQty": 606,
       "collected": 591,
-      "completionRate": "98%",
-      "timeliness": 1,
-      "closed": "进行中",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "河北比价试点",
@@ -496,15 +510,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 234,
+      "totalPoints": 234,
+      "itemCount": 79,
+      "reviewIssues": 0,
+      "issuedQty": 234,
       "collected": 161,
-      "completionRate": "69%",
-      "timeliness": 1,
-      "closed": "进行中",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "海南更新",
@@ -512,15 +528,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "更新",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 13716,
+      "totalPoints": 13716,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": 13716,
       "collected": 13716,
-      "completionRate": "100%",
-      "timeliness": 1,
-      "closed": "是",
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": "否",
       "allClosed": "是",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "notes": null
     },
     {
       "name": "江西更新",
@@ -528,31 +546,35 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "更新",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 60,
+      "totalPoints": 60,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": 60,
       "collected": 60,
-      "completionRate": "100%",
-      "timeliness": 1,
-      "closed": "是",
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": "否",
       "allClosed": "是",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "notes": null
     },
     {
       "name": "全国",
       "settleType": "全系列报价单",
-      "source": "",
+      "source": null,
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 570,
+      "totalPoints": 1662,
+      "itemCount": null,
+      "reviewIssues": null,
+      "issuedQty": 570,
       "collected": 232,
-      "completionRate": "41%",
-      "timeliness": 0,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "1:3",
@@ -560,31 +582,35 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "聚合1:3",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 19910,
+      "totalPoints": 19910,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": 19910,
       "collected": 9739,
-      "completionRate": "49%",
-      "timeliness": 0,
-      "closed": "进行中",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "山东",
       "settleType": "价格采集",
-      "source": "",
+      "source": null,
       "demandItem": "采购建议价",
       "month": "04月",
-      "demandQty": 286,
+      "totalPoints": 286,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": 286,
       "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "进行中",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "浙江比价",
@@ -592,15 +618,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 1605,
+      "totalPoints": 1605,
+      "itemCount": 535,
+      "reviewIssues": 0,
+      "issuedQty": 1605,
       "collected": 1391,
-      "completionRate": "87%",
-      "timeliness": 1,
-      "closed": "关闭",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": 11,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "江苏比价更新",
@@ -608,15 +636,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 16594,
+      "totalPoints": 16594,
+      "itemCount": 16594,
+      "reviewIssues": 0,
+      "issuedQty": 16594,
       "collected": 16594,
-      "completionRate": "100%",
-      "timeliness": 0,
-      "closed": "关闭",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "1:3-管材管件",
@@ -624,31 +654,35 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "聚合1:3",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 0,
-      "collected": 0,
-      "completionRate": "计算错误",
-      "timeliness": 0,
-      "closed": "暂未启动",
-      "allClosed": "",
-      "problemRate": "100%",
-      "accuracy": 0,
-      "passRate": "0%"
+      "totalPoints": 3161,
+      "itemCount": null,
+      "reviewIssues": null,
+      "issuedQty": null,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "新疆",
       "settleType": "全系列报价单",
-      "source": "",
+      "source": null,
       "demandItem": "市场价",
       "month": "05月",
-      "demandQty": 0,
-      "collected": 0,
-      "completionRate": "计算错误",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "计算错误",
-      "accuracy": 0,
-      "passRate": "计算错误"
+      "totalPoints": null,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": null,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "江苏比价",
@@ -656,15 +690,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "05月",
-      "demandQty": 2277,
+      "totalPoints": 2355,
+      "itemCount": 785,
+      "reviewIssues": 78,
+      "issuedQty": 2277,
       "collected": 2355,
-      "completionRate": "103%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "3%",
-      "accuracy": 0,
-      "passRate": "97%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "山东比价",
@@ -672,15 +708,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 14100,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "3%",
-      "accuracy": 0,
-      "passRate": "97%"
+      "totalPoints": 14562,
+      "itemCount": 4854,
+      "reviewIssues": 462,
+      "issuedQty": 14100,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "淄博价目表",
@@ -688,15 +726,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "地区特性",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 5855,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "1%",
-      "accuracy": 0,
-      "passRate": "99%"
+      "totalPoints": 5889,
+      "itemCount": 5889,
+      "reviewIssues": 34,
+      "issuedQty": 5855,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "广东比价",
@@ -704,15 +744,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 14064,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "totalPoints": 14106,
+      "itemCount": 4702,
+      "reviewIssues": 42,
+      "issuedQty": 14064,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "山东比价",
@@ -720,15 +762,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 2115,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "totalPoints": 2115,
+      "itemCount": 705,
+      "reviewIssues": 0,
+      "issuedQty": 2115,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "淄博价目表",
@@ -736,15 +780,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "地区特性",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 771,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "totalPoints": 771,
+      "itemCount": 771,
+      "reviewIssues": 0,
+      "issuedQty": 771,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "广东比价",
@@ -752,15 +798,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 2001,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "totalPoints": 2001,
+      "itemCount": 667,
+      "reviewIssues": 0,
+      "issuedQty": 2001,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "甘肃新清单",
@@ -768,15 +816,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "地区特性",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 0,
-      "collected": 0,
-      "completionRate": "计算错误",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "totalPoints": 646,
+      "itemCount": 646,
+      "reviewIssues": 0,
+      "issuedQty": 646,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     }
   ],
   "settlements": [
@@ -794,7 +844,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "需求类型": "价格更新",
       "需求数量": 289,
       "结算单价": 2.3,
-      "结算金额": 664.6999999999999
+      "结算金额": 664.7
     },
     {
       "月份": "1月",
@@ -842,7 +892,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "需求类型": "价格采集",
       "需求数量": 390,
       "结算单价": 2.3,
-      "结算金额": 896.9999999999999
+      "结算金额": 897
     },
     {
       "月份": "3月",
@@ -874,7 +924,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "需求类型": "价格采集",
       "需求数量": 2635,
       "结算单价": 2.3,
-      "结算金额": 6060.499999999999
+      "结算金额": 6060.5
+    },
+    {
+      "月份": "4月",
+      "产品模块": "市场价",
+      "需求类型": "价格采集",
+      "需求数量": 19910,
+      "结算单价": 0,
+      "结算金额": 0
     }
   ],
   "totalBudget": 3900000,
@@ -883,66 +941,152 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "color": "#E74C3C",
       "icon": "📋",
       "metrics": [
-        {"key":"timelinessRate","label":"需求发布及时率","unit":"%"},
-        {"key":"totalDemand","label":"需求量","unit":"条"},
-        {"key":"passRate","label":"需求初审通过率","unit":"%"},
-        {"key":"problemRate","label":"需求问题率","unit":"%"}
+        {
+          "key": "totalPoints",
+          "label": "需求总条数",
+          "unit": "条"
+        },
+        {
+          "key": "itemCount",
+          "label": "需求项数",
+          "unit": "项"
+        },
+        {
+          "key": "reviewIssues",
+          "label": "初审问题数",
+          "unit": "条"
+        },
+        {
+          "key": "reviewIssueRate",
+          "label": "初审问题率",
+          "unit": "%"
+        }
       ]
     },
     "采集执行": {
       "color": "#F39C12",
       "icon": "🔧",
       "metrics": [
-        {"key":"completionRate","label":"整体采集完成率","unit":"%"},
-        {"key":"totalCollected","label":"实际采集完成","unit":"条"},
-        {"key":"feedbackRate","label":"材料反馈率","unit":"%"},
-        {"key":"verifyPassRate","label":"专家核实通过率","unit":"%"}
+        {
+          "key": "issuedQty",
+          "label": "采集下发数",
+          "unit": "条"
+        },
+        {
+          "key": "collected",
+          "label": "采集完成数",
+          "unit": "条"
+        },
+        {
+          "key": "completionRate",
+          "label": "采集完成率",
+          "unit": "%"
+        },
+        {
+          "key": "feedbackMat",
+          "label": "材料反馈数",
+          "unit": "条"
+        }
       ]
     },
     "数据加工/审核": {
       "color": "#F1C40F",
       "icon": "🔍",
       "metrics": [
-        {"key":"rejectCount","label":"打回数量","unit":"条"},
-        {"key":"selfCorrect","label":"自行更正数","unit":"条"},
-        {"key":"accuracyRate","label":"需求准确率","unit":"%"},
-        {"key":"rejectRate","label":"专家打回率","unit":"%"}
+        {
+          "key": "feedbackMat",
+          "label": "材料反馈数",
+          "unit": "条"
+        },
+        {
+          "key": "expertVerify",
+          "label": "专家核实通过数",
+          "unit": "条"
+        },
+        {
+          "key": "verifyPassRate",
+          "label": "核实通过率",
+          "unit": "%"
+        },
+        {
+          "key": "supplierRejects",
+          "label": "供应商确认不通过数",
+          "unit": "条"
+        },
+        {
+          "key": "accuracyRate",
+          "label": "需求准确率",
+          "unit": "%"
+        }
       ]
     },
     "上线发布": {
       "color": "#2ECC71",
       "icon": "🚀",
       "metrics": [
-        {"key":"closedRate","label":"上线闭环率","unit":"%"},
-        {"key":"allClosedRate","label":"全部闭环率","unit":"%"},
-        {"key":"totalDemand","label":"覆盖量","unit":"条"},
-        {"key":"timelinessRate","label":"上线及时率","unit":"%"}
+        {
+          "key": "closedRate",
+          "label": "闭环率",
+          "unit": "%"
+        },
+        {
+          "key": "allClosedRate",
+          "label": "全部闭环率",
+          "unit": "%"
+        }
       ]
     }
   },
   "specialProjects": {
     "供采试点": {
       "color": "#3498DB",
+      "icon": "🔵",
       "desc": "外包试点项目（浙江/广东试点，外包咬合、付费匹配）",
       "metrics": [
-        {"key":"pilotCompletion","label":"试点完成率","unit":"%"},
-        {"key":"pilotProgress","label":"试点进度","unit":"%"}
+        {
+          "key": "pilotCompletion",
+          "label": "试点完成率",
+          "unit": "%"
+        },
+        {
+          "key": "pilotProgress",
+          "label": "试点进度",
+          "unit": "%"
+        }
       ]
     },
     "采购价更新": {
       "color": "#9B59B6",
-      "desc": "月度大批量更新需求专项（分层外包梯队完成情况）",
+      "icon": "🟣",
+      "desc": "月度大批量更新需求专项",
       "metrics": [
-        {"key":"updateDemand","label":"更新需求量","unit":"条"},
-        {"key":"updateCompletion","label":"更新完成率","unit":"%"}
+        {
+          "key": "updateDemand",
+          "label": "更新需求量",
+          "unit": "条"
+        },
+        {
+          "key": "updateCompletion",
+          "label": "更新完成率",
+          "unit": "%"
+        }
       ]
     },
     "结算与成本": {
       "color": "#1ABC9C",
+      "icon": "💰",
       "desc": "外包、专家人力成本预算管控",
       "metrics": [
-        {"key":"budgetRate","label":"预算执行率","unit":"%"},
-        {"key":"totalCost","label":"累计成本","unit":"万"}
+        {
+          "key": "budgetRate",
+          "label": "预算执行率",
+          "unit": "%"
+        },
+        {
+          "key": "totalCost",
+          "label": "累计成本",
+          "unit": "万"
+        }
       ]
     }
   },
@@ -950,36 +1094,36 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     {
       "condition": "completionRate<60",
       "priority": "P0",
-      "problem": "{name} 采集完成率仅 {value}",
+      "problem": "{name} 采集完成率 {value}",
       "action": "专项攻坚，增配采集资源"
     },
     {
-      "condition": "problemRate>10",
-      "priority": "P0",
-      "problem": "{name} 需求问题率 {value}",
-      "action": "追溯需求源头，优化质量"
-    },
-    {
-      "condition": "timeliness=0",
+      "condition": "reviewIssues>0",
       "priority": "P1",
-      "problem": "{name} 发布及时率为0%",
-      "action": "排查下发流程，确保按时"
+      "problem": "{name} 初审问题数 {value}",
+      "action": "追溯源头，优化需求质量"
     },
     {
       "condition": "closed=进行中",
       "priority": "P1",
       "problem": "{name} 闭环进行中",
       "action": "跟进闭环进度"
+    },
+    {
+      "condition": "supplierRejects>10",
+      "priority": "P1",
+      "problem": "{name} 供应商不通过 {value}",
+      "action": "排查原因，协同供应商确认"
     }
   ],
   "monthlyTrend": {
-    "需求发布及时率": [
-      25,
-      60,
-      100,
-      100
+    "需求总条数": [
+      15977,
+      53581,
+      2277,
+      38906
     ],
-    "需求量": [
+    "采集下发数": [
       15977,
       53581,
       2277,
@@ -1009,18 +1153,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       0,
       0
     ],
-    "需求初审通过率": [
-      92.8,
-      90,
-      97,
-      99.4
-    ],
-    "需求问题率": [
-      7.2,
-      10,
-      3,
-      0.6
-    ],
     "闭环率": [
       100,
       22.2,
@@ -1033,18 +1165,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       100,
       0
     ],
-    "上线及时率": [
-      25,
-      60,
-      100,
-      100
-    ],
-    "打回率": [
-      5.6,
-      10,
-      3,
-      0.6
-    ],
     "成本执行率": [
       8.6,
       14.5,
@@ -1052,7 +1172,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       20.8
     ]
   }
-}</script>
+}
+</script>
 <script>
 // ============================================================
 // STATE
@@ -1145,29 +1266,41 @@ function pctStr(v){ return typeof v === 'string' && v.includes('%') ? num(v) : n
 
 function calcMetrics(tasks){
   const n = tasks.length;
-  const totalDemand = tasks.reduce((s,t) => s + num(t.demandQty), 0);
+  const totalPoints = tasks.reduce((s,t) => s + num(t.totalPoints), 0);
+  const itemCount = tasks.reduce((s,t) => s + num(t.itemCount), 0);
+  const totalIssued = tasks.reduce((s,t) => s + num(t.issuedQty), 0);
   const totalCollected = tasks.reduce((s,t) => s + num(t.collected), 0);
-  const tlCount = tasks.filter(t => t.timeliness === 1 || t.timeliness === "100%").length;
-  const hasTL = tasks.some(t => t.timeliness !== undefined && t.timeliness !== '');
-  let crSum = 0, crCnt = 0, prSum = 0, prCnt = 0, passSum = 0, passCnt = 0;
-  let rejectCount = 0, selfCorrectSum = 0, feedbackSum = 0, verifySum = 0;
+  const totalReviewIssues = tasks.reduce((s,t) => s + num(t.reviewIssues), 0);
+  const totalFeedback = tasks.reduce((s,t) => s + num(t.feedbackMat), 0);
+  const totalVerify = tasks.reduce((s,t) => s + num(t.expertVerify), 0);
+  const totalRejects = tasks.reduce((s,t) => s + num(t.supplierRejects), 0);
   let closedCount = 0, allClosedCount = 0, hasClosed = 0;
+
   tasks.forEach(t => {
-    const cr = pctStr(t.completionRate);
-    if(cr > 0 || t.completionRate === "0%"){ crSum += cr; crCnt++; }
-    const pr = pctStr(t.problemRate);
-    if(!isNaN(pr) && t.problemRate !== ""){ prSum += pr; prCnt++; }
-    if(t.passRate !== "" && t.passRate !== undefined){
-      const pr2 = pctStr(t.passRate);
-      if(!isNaN(pr2) && pr2 > 0){ passSum += pr2; passCnt++; }
-    }
-    if(t.rejectReason && t.rejectReason !== "") rejectCount++;
-    selfCorrectSum += num(t.selfCorrect);
-    feedbackSum += num(t.feedbackMat);
-    verifySum += num(t.expertVerify);
-    if(t.closed !== "" && t.closed !== undefined){ hasClosed++; if(t.closed === "是" || t.closed === "全部闭环") closedCount++; }
+    if(t.closed && t.closed !== ""){ hasClosed++; if(t.closed === "是" || t.closed === "全部闭环") closedCount++; }
     if(t.allClosed === "是") allClosedCount++;
   });
+
+  const compRate = totalIssued ? +((totalCollected/totalIssued)*100).toFixed(1) : 0;
+  const fbRate = totalIssued ? +((totalFeedback/totalIssued)*100).toFixed(1) : 0;
+  const vpRate = totalFeedback ? +((totalVerify/totalFeedback)*100).toFixed(1) : 0;
+  const accRate = totalPoints ? +((1 - totalReviewIssues/totalPoints)*100).toFixed(1) : 0;
+  const riRate = totalPoints ? +((totalReviewIssues/totalPoints)*100).toFixed(1) : 0;
+
+  return {
+    n,
+    totalPoints, itemCount, reviewIssues: totalReviewIssues, reviewIssueRate: riRate,
+    issuedQty: totalIssued, collected: totalCollected,
+    completionRate: compRate,
+    feedbackMat: totalFeedback, feedbackRate: fbRate,
+    expertVerify: totalVerify, verifyPassRate: vpRate,
+    supplierRejects: totalRejects,
+    accuracyRate: accRate,
+    closedRate: hasClosed ? +(closedCount/hasClosed*100).toFixed(1) : 0,
+    allClosedRate: n ? +(allClosedCount/n*100).toFixed(1) : 0,
+    totalDemand: totalIssued
+  };
+});
 
   return {
     n, totalDemand, totalCollected,
@@ -1211,13 +1344,12 @@ function renderFlowKPIs(tasks, m){
       let raw = m[mm.key];
       if(raw === undefined || raw === null) raw = "—";
       else if(mm.unit === "%") raw = raw + "%";
-      else if(mm.key === "totalDemand" || mm.key === "totalCollected") raw = Number(raw).toLocaleString();
+      else if(["totalPoints","itemCount","issuedQty","collected","totalDemand","totalCollected","feedbackMat","expertVerify","supplierRejects","reviewIssues"].includes(mm.key)) raw = Number(raw).toLocaleString();
       else raw = raw + (mm.unit ? " "+mm.unit : "");
       let cls = "";
-      if(["completionRate","timelinessRate","passRate","closedRate","allClosedRate"].includes(mm.key))
+      if(["completionRate","verifyPassRate","accuracyRate","closedRate","allClosedRate"].includes(mm.key))
         cls = m[mm.key] >= 80 ? "good" : m[mm.key] >= 60 ? "warn" : "bad";
-      if(mm.key === "problemRate") cls = m[mm.key] <= 5 ? "good" : m[mm.key] <= 15 ? "warn" : "bad";
-      if(mm.key === "rejectRate") cls = m[mm.key] <= 10 ? "good" : m[mm.key] <= 25 ? "warn" : "bad";
+      if(mm.key === "reviewIssueRate") cls = m[mm.key] <= 5 ? "good" : m[mm.key] <= 15 ? "warn" : "bad";
       return `<div class="fm"><span class="fl">${mm.label}</span><span class="fv ${cls}">${raw}</span></div>`;
     }).join("");
     html += `<div class="flow-card"><div class="flow-card-header" style="background:${cfg.color}">${cfg.icon||''} ${name}</div><div class="flow-card-body">${metricsHtml}</div></div>`;
@@ -1232,9 +1364,9 @@ function renderSpecialProjects(tasks, m){
   const pilotTasks = tasks.filter(t => t.source && (t.source.includes("试点")||t.name.includes("试点")));
   const updateTasks = tasks.filter(t => t.settleType === "价格更新");
   const pilotCol = pilotTasks.reduce((s,t) => s + num(t.collected), 0);
-  const pilotDem = pilotTasks.reduce((s,t) => s + num(t.demandQty), 0);
+  const pilotDem = pilotTasks.reduce((s,t) => s + num(t.issuedQty||t.totalPoints), 0);
   const updCol = updateTasks.reduce((s,t) => s + num(t.collected), 0);
-  const updDem = updateTasks.reduce((s,t) => s + num(t.demandQty), 0);
+  const updDem = updateTasks.reduce((s,t) => s + num(t.issuedQty||t.totalPoints), 0);
   const s = DATA.settlements||[];
   const totalAmt = s.reduce((x,y) => x + num(y.结算金额||y.amount), 0);
   const budget = DATA.totalBudget||3900000;
@@ -1284,10 +1416,10 @@ function renderRadarChart(tasks, m){
   const c = initC("radarChart",200);
   if(!c) return;
   const dims = [
-    {name:"需求下发", max:100, val: Math.min(100, (m.timelinessRate*0.4 + m.passRate*0.3 + (100-m.problemRate)*0.3))},
-    {name:"采集执行", max:100, val: m.completionRate},
-    {name:"数据加工", max:100, val: Math.min(100, m.accuracyRate*0.6 + (100-(m.rejectRate||0))*0.4)},
-    {name:"上线发布", max:100, val: m.closedRate},
+    {name:"需求下发", max:100, val: Math.min(100, 100-(m.reviewIssueRate||0))},
+    {name:"采集执行", max:100, val: m.completionRate||0},
+    {name:"数据加工", max:100, val: Math.min(100, (m.accuracyRate*0.6 + (m.verifyPassRate||0)*0.4))},
+    {name:"上线发布", max:100, val: m.closedRate||0},
     {name:"供采试点", max:100, val: m.pilotCompletion||0},
     {name:"结算成本", max:100, val: Math.min(100, 100-(m.budgetRate||0))},
   ];
@@ -1347,9 +1479,9 @@ function renderBenchCharts(tasks, m){
   const c1 = initC("benchChart1",160);
   if(c1){
     const bench1 = {
-      categories: ["发布及时率","初审通过率","采集完成率","闭环率"],
-      current: [m.timelinessRate, m.passRate, m.completionRate, m.closedRate],
-      target:  [90, 95, 90, 100]
+      categories: ["采集完成率","核实通过率","需求准确率","闭环率"],
+      current: [m.completionRate, m.verifyPassRate, m.accuracyRate, m.closedRate],
+      target:  [90, 85, 95, 100]
     };
     c1.setOption({
       tooltip:{trigger:"axis"},
@@ -1366,7 +1498,7 @@ function renderBenchCharts(tasks, m){
   // 采集执行条形图（分项目完成率对比）
   const c2 = initC("benchChart2",160);
   if(c2){
-    const items = tasks.filter(t=>t.demandQty>0).sort((a,b)=>pctStr(a.completionRate)-pctStr(b.completionRate)).slice(0,12);
+    const items = tasks.filter(t=>t.issuedQty>0).sort((a,b)=>(a.collected&&a.issuedQty?(a.collected/a.issuedQty)*100:0)-(b.collected&&b.issuedQty?(b.collected/b.issuedQty)*100:0)).slice(0,12);
     c2.setOption({
       tooltip:{trigger:"axis"},
       grid:{top:6,bottom:12,left:4,right:12,containLabel:true},
@@ -1419,7 +1551,7 @@ function renderColOverview(m){
 function renderCapacityTab(tasks, m){
   const panel = document.getElementById("fp_cp");
   if(!panel) return;
-  const totalReceived = tasks.reduce((s,t)=>s+num(t.demandQty), 0);
+  const totalIssued = tasks.reduce((s,t)=>s+num(t.issuedQty), 0);
   const totalFeedback = tasks.reduce((s,t)=>s+num(t.feedbackMat), 0);
   const totalVerify = tasks.reduce((s,t)=>s+num(t.expertVerify), 0);
   panel.innerHTML = `
@@ -1435,14 +1567,14 @@ function renderCapacityTab(tasks, m){
   const c1 = initC("cpChart1", 160);
   if(c1) c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"line",data:vals,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#9B59B6",width:2},itemStyle:{color:"#9B59B6"},areaStyle:{color:"#9B59B622"},label:{show:true,formatter:p=>p.value+"%",fontSize:7},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标85%",fontSize:7,color:"#E74C3C"},data:[{yAxis:85}]}}]});
 
-  const funnel = ["收到→下发","下发→采集","采集→反馈","反馈→核实"];
-  const fvals = [totalReceived?+((tasks.reduce((s,t)=>s+num(t.demandQty),0)/totalReceived)*100).toFixed(1):0, m.completionRate, m.feedbackRate, m.verifyPassRate];
+  const funnel = ["下发→采集","采集→反馈","反馈→核实","核实通过"];
+  
   // Use actual product ratios
-  const totalDemand = tasks.reduce((s,t)=>s+num(t.demandQty),0);
+  const totalDemand = tasks.reduce((s,t)=>s+num(t.issuedQty||t.totalPoints),0);
   const totalCollected = tasks.reduce((s,t)=>s+num(t.collected),0);
-  const r1 = totalDemand ? 100 : 0;
-  const r2 = totalDemand ? +((totalCollected/totalDemand)*100).toFixed(1) : 0;
-  const r3 = totalCollected ? +((totalFeedback/totalCollected)*100).toFixed(1) : 0;
+  const r1 = totalIssued ? 100 : 0;
+  const r2 = totalIssued ? +((m.collected/totalIssued)*100).toFixed(1) : 0;
+  const r3 = m.collected ? +((totalFeedback/m.collected)*100).toFixed(1) : 0;
   const r4 = totalFeedback ? +((totalVerify/totalFeedback)*100).toFixed(1) : 0;
   const c2 = initC("cpChart2", 160);
   if(c2) c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:12,left:4,right:4,containLabel:true},xAxis:{type:"category",data:funnel,axisLabel:{fontSize:7}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"bar",data:[r1,r2,r3,r4].map((v,i)=>({value:v,itemStyle:{color:[94.8,79.3,83.2,76.5][i]>=85?"#2ECC71":[94.8,79.3,83.2,76.5][i]>=70?"#F39C12":"#E74C3C",borderRadius:[4,4,0,0]}})),barWidth:24,label:{show:true,position:"top",formatter:p=>p.value+"%",fontSize:8}}]});
@@ -1494,13 +1626,13 @@ function renderBudgetTab(){
 function renderProgressTab(tasks, m){
   const panel = document.getElementById("fp_pg");
   if(!panel) return;
-  const remain = m.totalDemand - m.totalCollected;
+  const remain = m.issuedQty - m.collected;
   // By settle type
   const byType = {};
   tasks.forEach(t => {
     const tp = t.settleType || "其他";
     if(!byType[tp]) byType[tp] = {demand:0, collected:0, cnt:0};
-    byType[tp].demand += num(t.demandQty);
+    byType[tp].demand += num(t.issuedQty||t.totalPoints);
     byType[tp].collected += num(t.collected);
     byType[tp].cnt++;
   });
@@ -1543,11 +1675,10 @@ function renderTaskTable(tasks){
     return;
   }
   const cr = (t) => {
-    const v = t.completionRate;
-    if(v === "计算错误") return {val:"错误", pct:0, cls:"bad"};
-    const n = pctStr(v);
-    if(n > 100) return {val:"超额", pct:100, cls:"good"};
-    return {val: v, pct: n, cls: n >= 80 ? "good" : n >= 60 ? "warn" : "bad"};
+    const v = t.collected && t.issuedQty ? +((t.collected/t.issuedQty)*100).toFixed(1) : 0;
+    if(v === 0 && (!t.collected || !t.issuedQty)) return {val:"—", pct:0, cls:""};
+    if(v > 100) return {val:"超额", pct:100, cls:"good"};
+    return {val: v+"%", pct: v, cls: v >= 80 ? "good" : v >= 60 ? "warn" : "bad"};
   };
   const cls = (t) => {
     const c = (t.closed || "").trim();
@@ -1556,26 +1687,22 @@ function renderTaskTable(tasks){
     if(c === "暂未启动") return "s-暂未启动";
     return "";
   };
-  const timelinessIcon = (t) => {
-    if(t.timeliness === 1 || t.timeliness === "100%") return "✅";
-    if(t.timeliness === 0 || t.timeliness === "0%") return "❌";
-    return "—";
-  };
+  
 
   let html = `<div class="task-table-wrap"><table class="task-table">
-    <thead><tr><th>需求名称</th><th>结算类型</th><th>需求项</th><th>月份</th><th>需求量</th><th>采集完成</th><th>完成率</th><th>及时</th><th>闭环状态</th><th>问题率</th></tr></thead><tbody>`;
+    <thead><tr><th>需求名称</th><th>结算类型</th><th>需求项</th><th>月份</th><th>总条数</th><th>下发数</th><th>采集完成</th><th>完成率</th><th>初审问题</th><th>闭环状态</th></tr></thead><tbody>`;
   tasks.forEach(t => {
     const r = cr(t);
     html += `<tr><td><strong>${t.name}</strong></td>
-      <td>${t.settleType}</td>
+      <td>${t.settleType||"—"}</td>
       <td>${t.demandItem||"—"}</td>
-      <td>${MONTH_MAP[t.month.replace('月','')]||t.month}</td>
-      <td>${num(t.demandQty).toLocaleString()}</td>
-      <td>${num(t.collected).toLocaleString()}</td>
+      <td>${t.month||"—"}</td>
+      <td>${num(t.totalPoints).toLocaleString()||"—"}</td>
+      <td>${num(t.issuedQty).toLocaleString()||"—"}</td>
+      <td>${num(t.collected).toLocaleString()||"—"}</td>
       <td><div class="progress-wrap"><div class="bar-wrap"><div class="progress-bar" style="width:${r.pct}%;background:${r.cls==='good'?'#2ECC71':r.cls==='warn'?'#F39C12':'#E74C3C'}"></div></div><span>${r.val}</span></div></td>
-      <td style="text-align:center">${timelinessIcon(t)}</td>
-      <td><span class="status-badge ${cls(t)}">${t.closed || "—"}</span></td>
-      <td>${t.problemRate || "—"}</td></tr>`;
+      <td>${num(t.reviewIssues).toLocaleString()||"—"}</td>
+      <td><span class="status-badge ${cls(t)}">${t.closed || "—"}</span></td></tr>`;
   });
   html += `</tbody></table></div>`;
   panel.innerHTML = html;
@@ -1612,18 +1739,14 @@ function renderAlerts(tasks, m){
   const grid = document.getElementById("alertGrid");
   const items = [];
   tasks.forEach(t => {
-    const cr = pctStr(t.completionRate);
-    const pr = pctStr(t.problemRate);
-    const tl = t.timeliness;
     const nm = t.name;
-    if(!isNaN(cr) && cr < 60 && cr > 0) items.push({p:"P0", prob:`${nm} 采集完成率 ${t.completionRate}`, act:"专项攻坚，增配采集资源"});
-    if(!isNaN(pr) && pr > 10) items.push({p:"P0", prob:`${nm} 需求问题率 ${t.problemRate}`, act:"追溯需求源头，优化质量"});
-    if(tl === 0 && t.timeliness !== undefined && t.timeliness !== "") items.push({p:"P1", prob:`${nm} 发布及时率 0%`, act:"排查下发流程，确保按时"});
-    if(t.closed === "进行中") items.push({p:"P1", prob:`${nm} 闭环进行中`, act:"跟进闭环进度"});
+    const cr = t.collected && t.issuedQty ? (t.collected/t.issuedQty)*100 : 0;
+    if(cr > 0 && cr < 60) items.push({p:"P0", prob:nm+" 采集完成率 "+cr.toFixed(1)+"%", act:"专项攻坚，增配采集资源"});
+    if(t.reviewIssues > 0) items.push({p:"P1", prob:nm+" 初审问题数 "+t.reviewIssues, act:"追溯源头，优化需求质量"});
+    if(t.supplierRejects > 10) items.push({p:"P1", prob:nm+" 供应商不通过 "+t.supplierRejects+"条", act:"排查原因，协同供应商确认"});
+    if(t.closed === "进行中") items.push({p:"P1", prob:nm+" 闭环进行中", act:"跟进闭环进度"});
   });
-  // Also add global alerts
-  if(m.completionRate < 70) items.push({p:"P0", prob:`整体采集完成率 ${m.completionRate}%，低于70%`, act:"整体推进，重点关注低完成率项目"});
-  if(m.timelinessRate < 80) items.push({p:"P0", prob:`整体发布及时率 ${m.timelinessRate}%`, act:"优化下发流程，确保按时交付"});
+  if(m.completionRate < 70) items.push({p:"P0", prob:"整体采集完成率 "+m.completionRate+"%，低于70%", act:"整体推进，重点关注低完成率项目"});
 
   const shown = items.slice(0, 8);
   grid.innerHTML = shown.map(a => `
@@ -1670,7 +1793,7 @@ function toast(m,t){
 }
 
 // CSV Import
-const FIELD_MAP={month:["月份","月","需求月份"],project:["项目","来源","需求来源","需求名称"],demandType:["结算类型","需求类型"],demandQty:["下发数量","需求量","下发数量(含多家）","收到数量"],timeliness:["需求发布及时率","及时率"],collectedQty:["实际采集完成数量","采集完成数"],completionRate:["采集完成率","完成率"],rejectReason:["核实打回材料根因","打回根因"],closedStatus:["是否采集闭环","闭环状态","闭环"],accuracy:["需求准确率"],passRate:["需求初审通过率","初审通过率"],problemRate:["需求问题率","问题率"]};
+const FIELD_MAP={month:["月份","月","需求月份"],project:["项目","来源","需求来源","需求名称"],demandType:["结算类型","需求类型"],totalPoints:["需求总条数","总条数","总点数"],itemCount:["需求项数","项数"],issuedQty:["采集下发数","下发数","下发数量"],collectedQty:["采集完成数","实际采集完成数"],feedbackMat:["材料反馈数","反馈数"],expertVerify:["专家核实通过数","核实通过数"],supplierRejects:["供应商确认不通过数","不通过数"],completionRate:["采集完成率","完成率"],accuracy:["需求准确率","准确率"],closedStatus:["是否闭环","闭环状态","闭环"],allClosed:["是否全部闭环","全部闭环"]};
 function detectField(headers,f){const kws=FIELD_MAP[f]||[];for(const h of headers)for(const kw of kws)if(h.includes(kw)||kw.includes(h))return h;return null;}
 document.getElementById("dropZone").addEventListener("click",()=>document.getElementById("csvInput").click());
 document.getElementById("csvInput").addEventListener("change",e=>{if(e.target.files.length)handleFile(e.target.files[0]);});
@@ -1687,7 +1810,7 @@ function handleFile(file){
     const prev=document.getElementById("csvPreview");
     prev.innerHTML="<table><thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead><tbody>"+result.data.slice(0,4).map(r=>"<tr>"+headers.map(h=>`<td>${r[h]||""}</td>`).join("")+"</tr>").join("")+"</tbody></table>";
     document.getElementById("csvPreviewArea").classList.remove("hidden");
-    const mapFields={month:"月份",demandType:"结算类型",demandQty:"下发数量",timeliness:"发布及时率",collectedQty:"采集完成数",completionRate:"完成率",rejectReason:"打回根因",closedStatus:"闭环状态",accuracy:"准确率",passRate:"初审通过率",problemRate:"问题率"};
+    const mapFields={month:"月份",demandType:"结算类型",totalPoints:"需求总条数",itemCount:"需求项数",issuedQty:"采集下发数",collectedQty:"采集完成数",feedbackMat:"材料反馈数",expertVerify:"专家核实通过数",supplierRejects:"供应商不通过数",completionRate:"完成率",accuracy:"准确率",closedStatus:"闭环状态",allClosed:"全部闭环"};
     document.getElementById("csvMapping").innerHTML=Object.entries(mapFields).map(([k,l])=>{
       const m=detectField(headers,k);return `<div class="csv-mapping-item"><label>${l}</label><select id="cm_${k}">${["",...headers].map(h=>`<option value="${h}" ${h===m?"selected":""}>${h||"—不导入—"}</option>`).join("")}</select></div>`;
     }).join("");

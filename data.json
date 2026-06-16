@@ -5,15 +5,15 @@
     "03月",
     "04月",
     "05月",
-    "06月"
+    "06月",
+    "07月",
+    "08月"
   ],
   "monthNames": {
     "03": "3月",
     "04": "4月",
     "05": "5月",
-    "06": "6月",
-    "01": "1月",
-    "02": "2月"
+    "06": "6月"
   },
   "filterOptions": {
     "demandItems": [
@@ -25,14 +25,17 @@
       "全部",
       "价格采集",
       "价格更新",
-      "全系列报价单"
+      "全系列报价单",
+      "聚合比价"
     ],
     "months": [
       "全部",
       "03月",
       "04月",
       "05月",
-      "06月"
+      "06月",
+      "07月",
+      "08月"
     ]
   },
   "tasks": [
@@ -42,15 +45,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "03月",
-      "demandQty": 5761,
+      "totalPoints": 5761,
+      "itemCount": 2681,
+      "reviewIssues": 0,
+      "issuedQty": 5761,
       "collected": 3812,
-      "completionRate": "66%",
-      "timeliness": 0,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0.9723983588213353,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": 34,
+      "supplierRejects": 40,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "北京比价",
@@ -58,15 +63,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "03月",
-      "demandQty": 6642,
+      "totalPoints": 8784,
+      "itemCount": 2928,
+      "reviewIssues": 2142,
+      "issuedQty": 6642,
       "collected": 3637,
-      "completionRate": "55%",
-      "timeliness": 0,
-      "closed": "是",
-      "allClosed": "",
-      "problemRate": "24%",
-      "accuracy": 0.9518754423213022,
-      "passRate": "76%"
+      "feedbackMat": null,
+      "expertVerify": 50,
+      "supplierRejects": 18,
+      "closed": "否",
+      "allClosed": null,
+      "notes": "剩余材料挑选部分做重新采集"
     },
     {
       "name": "河北比价",
@@ -74,31 +81,35 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "03月",
-      "demandQty": 3489,
+      "totalPoints": 3669,
+      "itemCount": 1223,
+      "reviewIssues": 180,
+      "issuedQty": 3489,
       "collected": 3231,
-      "completionRate": "93%",
-      "timeliness": 0,
-      "closed": "是",
-      "allClosed": "",
-      "problemRate": "5%",
-      "accuracy": 0.9071367153912295,
-      "passRate": "95%"
+      "feedbackMat": null,
+      "expertVerify": 77,
+      "supplierRejects": 31,
+      "closed": "否",
+      "allClosed": null,
+      "notes": "剩余材料挑选部分做重新采集"
     },
     {
       "name": "山东&上海",
       "settleType": "价格采集",
-      "source": "",
+      "source": null,
       "demandItem": "采购建议价",
       "month": "03月",
-      "demandQty": 85,
+      "totalPoints": 85,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": 85,
       "collected": 85,
-      "completionRate": "100%",
-      "timeliness": 1,
-      "closed": "是",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "北京比价试点",
@@ -106,15 +117,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 606,
+      "totalPoints": 606,
+      "itemCount": 202,
+      "reviewIssues": 0,
+      "issuedQty": 606,
       "collected": 591,
-      "completionRate": "98%",
-      "timeliness": 1,
-      "closed": "进行中",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "河北比价试点",
@@ -122,15 +135,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 234,
+      "totalPoints": 234,
+      "itemCount": 79,
+      "reviewIssues": 0,
+      "issuedQty": 234,
       "collected": 161,
-      "completionRate": "69%",
-      "timeliness": 1,
-      "closed": "进行中",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "海南更新",
@@ -138,15 +153,17 @@
       "source": "更新",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 13716,
+      "totalPoints": 13716,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": 13716,
       "collected": 13716,
-      "completionRate": "100%",
-      "timeliness": 1,
-      "closed": "是",
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": "否",
       "allClosed": "是",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "notes": null
     },
     {
       "name": "江西更新",
@@ -154,31 +171,35 @@
       "source": "更新",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 60,
+      "totalPoints": 60,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": 60,
       "collected": 60,
-      "completionRate": "100%",
-      "timeliness": 1,
-      "closed": "是",
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": "否",
       "allClosed": "是",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "notes": null
     },
     {
       "name": "全国",
       "settleType": "全系列报价单",
-      "source": "",
+      "source": null,
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 570,
+      "totalPoints": 1662,
+      "itemCount": null,
+      "reviewIssues": null,
+      "issuedQty": 570,
       "collected": 232,
-      "completionRate": "41%",
-      "timeliness": 0,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "1:3",
@@ -186,31 +207,35 @@
       "source": "聚合1:3",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 19910,
+      "totalPoints": 19910,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": 19910,
       "collected": 9739,
-      "completionRate": "49%",
-      "timeliness": 0,
-      "closed": "进行中",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "山东",
       "settleType": "价格采集",
-      "source": "",
+      "source": null,
       "demandItem": "采购建议价",
       "month": "04月",
-      "demandQty": 286,
+      "totalPoints": 286,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": 286,
       "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "进行中",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "浙江比价",
@@ -218,15 +243,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 1605,
+      "totalPoints": 1605,
+      "itemCount": 535,
+      "reviewIssues": 0,
+      "issuedQty": 1605,
       "collected": 1391,
-      "completionRate": "87%",
-      "timeliness": 1,
-      "closed": "关闭",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": 11,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "江苏比价更新",
@@ -234,15 +261,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 16594,
+      "totalPoints": 16594,
+      "itemCount": 16594,
+      "reviewIssues": 0,
+      "issuedQty": 16594,
       "collected": 16594,
-      "completionRate": "100%",
-      "timeliness": 0,
-      "closed": "关闭",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "1:3-管材管件",
@@ -250,31 +279,35 @@
       "source": "聚合1:3",
       "demandItem": "市场价",
       "month": "04月",
-      "demandQty": 0,
-      "collected": 0,
-      "completionRate": "计算错误",
-      "timeliness": 0,
-      "closed": "暂未启动",
-      "allClosed": "",
-      "problemRate": "100%",
-      "accuracy": 0,
-      "passRate": "0%"
+      "totalPoints": 3161,
+      "itemCount": null,
+      "reviewIssues": null,
+      "issuedQty": null,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "新疆",
       "settleType": "全系列报价单",
-      "source": "",
+      "source": null,
       "demandItem": "市场价",
       "month": "05月",
-      "demandQty": 0,
-      "collected": 0,
-      "completionRate": "计算错误",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "计算错误",
-      "accuracy": 0,
-      "passRate": "计算错误"
+      "totalPoints": null,
+      "itemCount": null,
+      "reviewIssues": 0,
+      "issuedQty": null,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "江苏比价",
@@ -282,15 +315,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "05月",
-      "demandQty": 2277,
+      "totalPoints": 2355,
+      "itemCount": 785,
+      "reviewIssues": 78,
+      "issuedQty": 2277,
       "collected": 2355,
-      "completionRate": "103%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "3%",
-      "accuracy": 0,
-      "passRate": "97%"
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "山东比价",
@@ -298,15 +333,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 14100,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "3%",
-      "accuracy": 0,
-      "passRate": "97%"
+      "totalPoints": 14562,
+      "itemCount": 4854,
+      "reviewIssues": 462,
+      "issuedQty": 14100,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "淄博价目表",
@@ -314,15 +351,17 @@
       "source": "地区特性",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 5855,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "1%",
-      "accuracy": 0,
-      "passRate": "99%"
+      "totalPoints": 5889,
+      "itemCount": 5889,
+      "reviewIssues": 34,
+      "issuedQty": 5855,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "广东比价",
@@ -330,15 +369,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 14064,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "totalPoints": 14106,
+      "itemCount": 4702,
+      "reviewIssues": 42,
+      "issuedQty": 14064,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "山东比价",
@@ -346,15 +387,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 2115,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "totalPoints": 2115,
+      "itemCount": 705,
+      "reviewIssues": 0,
+      "issuedQty": 2115,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "淄博价目表",
@@ -362,15 +405,17 @@
       "source": "地区特性",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 771,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "totalPoints": 771,
+      "itemCount": 771,
+      "reviewIssues": 0,
+      "issuedQty": 771,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "广东比价",
@@ -378,15 +423,17 @@
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 2001,
-      "collected": 0,
-      "completionRate": "0%",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "totalPoints": 2001,
+      "itemCount": 667,
+      "reviewIssues": 0,
+      "issuedQty": 2001,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     },
     {
       "name": "甘肃新清单",
@@ -394,15 +441,17 @@
       "source": "地区特性",
       "demandItem": "市场价",
       "month": "06月",
-      "demandQty": 0,
-      "collected": 0,
-      "completionRate": "计算错误",
-      "timeliness": 1,
-      "closed": "",
-      "allClosed": "",
-      "problemRate": "0%",
-      "accuracy": 0,
-      "passRate": "100%"
+      "totalPoints": 646,
+      "itemCount": 646,
+      "reviewIssues": 0,
+      "issuedQty": 646,
+      "collected": null,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
     }
   ],
   "settlements": [
@@ -420,7 +469,7 @@
       "需求类型": "价格更新",
       "需求数量": 289,
       "结算单价": 2.3,
-      "结算金额": 664.6999999999999
+      "结算金额": 664.7
     },
     {
       "月份": "1月",
@@ -468,7 +517,7 @@
       "需求类型": "价格采集",
       "需求数量": 390,
       "结算单价": 2.3,
-      "结算金额": 896.9999999999999
+      "结算金额": 897
     },
     {
       "月份": "3月",
@@ -500,7 +549,15 @@
       "需求类型": "价格采集",
       "需求数量": 2635,
       "结算单价": 2.3,
-      "结算金额": 6060.499999999999
+      "结算金额": 6060.5
+    },
+    {
+      "月份": "4月",
+      "产品模块": "市场价",
+      "需求类型": "价格采集",
+      "需求数量": 19910,
+      "结算单价": 0,
+      "结算金额": 0
     }
   ],
   "totalBudget": 3900000,
@@ -509,108 +566,235 @@
       "color": "#E74C3C",
       "icon": "📋",
       "metrics": [
-        {"key":"timelinessRate","label":"需求发布及时率","unit":"%"},
-        {"key":"totalDemand","label":"需求量","unit":"条"},
-        {"key":"passRate","label":"需求初审通过率","unit":"%"},
-        {"key":"problemRate","label":"需求问题率","unit":"%"}
+        {
+          "key": "totalPoints",
+          "label": "需求总条数",
+          "unit": "条"
+        },
+        {
+          "key": "itemCount",
+          "label": "需求项数",
+          "unit": "项"
+        },
+        {
+          "key": "reviewIssues",
+          "label": "初审问题数",
+          "unit": "条"
+        },
+        {
+          "key": "reviewIssueRate",
+          "label": "初审问题率",
+          "unit": "%"
+        }
       ]
     },
     "采集执行": {
       "color": "#F39C12",
       "icon": "🔧",
       "metrics": [
-        {"key":"completionRate","label":"整体采集完成率","unit":"%"},
-        {"key":"totalCollected","label":"实际采集完成","unit":"条"},
-        {"key":"feedbackRate","label":"材料反馈率","unit":"%"},
-        {"key":"verifyPassRate","label":"专家核实通过率","unit":"%"}
+        {
+          "key": "issuedQty",
+          "label": "采集下发数",
+          "unit": "条"
+        },
+        {
+          "key": "collected",
+          "label": "采集完成数",
+          "unit": "条"
+        },
+        {
+          "key": "completionRate",
+          "label": "采集完成率",
+          "unit": "%"
+        },
+        {
+          "key": "feedbackMat",
+          "label": "材料反馈数",
+          "unit": "条"
+        }
       ]
     },
     "数据加工/审核": {
       "color": "#F1C40F",
       "icon": "🔍",
       "metrics": [
-        {"key":"rejectCount","label":"打回数量","unit":"条"},
-        {"key":"selfCorrect","label":"自行更正数","unit":"条"},
-        {"key":"accuracyRate","label":"需求准确率","unit":"%"},
-        {"key":"rejectRate","label":"专家打回率","unit":"%"}
+        {
+          "key": "feedbackMat",
+          "label": "材料反馈数",
+          "unit": "条"
+        },
+        {
+          "key": "expertVerify",
+          "label": "专家核实通过数",
+          "unit": "条"
+        },
+        {
+          "key": "verifyPassRate",
+          "label": "核实通过率",
+          "unit": "%"
+        },
+        {
+          "key": "supplierRejects",
+          "label": "供应商确认不通过数",
+          "unit": "条"
+        },
+        {
+          "key": "accuracyRate",
+          "label": "需求准确率",
+          "unit": "%"
+        }
       ]
     },
     "上线发布": {
       "color": "#2ECC71",
       "icon": "🚀",
       "metrics": [
-        {"key":"closedRate","label":"上线闭环率","unit":"%"},
-        {"key":"allClosedRate","label":"全部闭环率","unit":"%"},
-        {"key":"totalDemand","label":"覆盖量","unit":"条"},
-        {"key":"timelinessRate","label":"上线及时率","unit":"%"}
+        {
+          "key": "closedRate",
+          "label": "闭环率",
+          "unit": "%"
+        },
+        {
+          "key": "allClosedRate",
+          "label": "全部闭环率",
+          "unit": "%"
+        }
       ]
     }
   },
   "specialProjects": {
     "供采试点": {
       "color": "#3498DB",
+      "icon": "🔵",
       "desc": "外包试点项目（浙江/广东试点，外包咬合、付费匹配）",
       "metrics": [
-        {"key":"pilotCompletion","label":"试点完成率","unit":"%"},
-        {"key":"pilotProgress","label":"试点进度","unit":"%"}
+        {
+          "key": "pilotCompletion",
+          "label": "试点完成率",
+          "unit": "%"
+        },
+        {
+          "key": "pilotProgress",
+          "label": "试点进度",
+          "unit": "%"
+        }
       ]
     },
     "采购价更新": {
       "color": "#9B59B6",
-      "desc": "月度大批量更新需求专项（分层外包梯队完成情况）",
+      "icon": "🟣",
+      "desc": "月度大批量更新需求专项",
       "metrics": [
-        {"key":"updateDemand","label":"更新需求量","unit":"条"},
-        {"key":"updateCompletion","label":"更新完成率","unit":"%"}
+        {
+          "key": "updateDemand",
+          "label": "更新需求量",
+          "unit": "条"
+        },
+        {
+          "key": "updateCompletion",
+          "label": "更新完成率",
+          "unit": "%"
+        }
       ]
     },
     "结算与成本": {
       "color": "#1ABC9C",
+      "icon": "💰",
       "desc": "外包、专家人力成本预算管控",
       "metrics": [
-        {"key":"budgetRate","label":"预算执行率","unit":"%"},
-        {"key":"totalCost","label":"累计成本","unit":"万"}
+        {
+          "key": "budgetRate",
+          "label": "预算执行率",
+          "unit": "%"
+        },
+        {
+          "key": "totalCost",
+          "label": "累计成本",
+          "unit": "万"
+        }
       ]
     }
-  },
-  "monthlyTrend": {
-    "需求发布及时率": [25,60,100,100],
-    "需求量": [15977,53581,2277,38906],
-    "采集完成率": [78.5,71.6,100,0],
-    "采集完成数": [10765,42484,2355,0],
-    "预算执行率": [8.6,14.5,18.2,20.8],
-    "需求准确率": [94.4,0,0,0],
-    "需求初审通过率": [92.8,90,97,99.4],
-    "需求问题率": [7.2,10,3,0.6],
-    "闭环率": [100,22.2,0,0],
-    "产能利用率": [67.3,79.3,100,0],
-    "上线及时率": [25,60,100,100],
-    "打回率": [5.6,10,3,0.6],
-    "成本执行率": [8.6,14.5,18.2,20.8]
   },
   "alerts": [
     {
       "condition": "completionRate<60",
       "priority": "P0",
-      "problem": "{name} 采集完成率仅 {value}",
+      "problem": "{name} 采集完成率 {value}",
       "action": "专项攻坚，增配采集资源"
     },
     {
-      "condition": "problemRate>10",
-      "priority": "P0",
-      "problem": "{name} 需求问题率 {value}",
-      "action": "追溯需求源头，优化质量"
-    },
-    {
-      "condition": "timeliness=0",
+      "condition": "reviewIssues>0",
       "priority": "P1",
-      "problem": "{name} 发布及时率为0%",
-      "action": "排查下发流程，确保按时"
+      "problem": "{name} 初审问题数 {value}",
+      "action": "追溯源头，优化需求质量"
     },
     {
       "condition": "closed=进行中",
       "priority": "P1",
       "problem": "{name} 闭环进行中",
       "action": "跟进闭环进度"
+    },
+    {
+      "condition": "supplierRejects>10",
+      "priority": "P1",
+      "problem": "{name} 供应商不通过 {value}",
+      "action": "排查原因，协同供应商确认"
     }
-  ]
+  ],
+  "monthlyTrend": {
+    "需求总条数": [
+      15977,
+      53581,
+      2277,
+      38906
+    ],
+    "采集下发数": [
+      15977,
+      53581,
+      2277,
+      38906
+    ],
+    "采集完成率": [
+      78.5,
+      71.6,
+      100,
+      0
+    ],
+    "采集完成数": [
+      10765,
+      42484,
+      2355,
+      0
+    ],
+    "预算执行率": [
+      8.6,
+      14.5,
+      18.2,
+      20.8
+    ],
+    "需求准确率": [
+      94.4,
+      0,
+      0,
+      0
+    ],
+    "闭环率": [
+      100,
+      22.2,
+      0,
+      0
+    ],
+    "产能利用率": [
+      67.3,
+      79.3,
+      100,
+      0
+    ],
+    "成本执行率": [
+      8.6,
+      14.5,
+      18.2,
+      20.8
+    ]
+  }
 }
