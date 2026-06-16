@@ -894,7 +894,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "icon": "🔧",
       "metrics": [
         {"key":"completionRate","label":"整体采集完成率","unit":"%"},
-        {"key":"collected","label":"实际采集完成","unit":"条"},
+        {"key":"totalCollected","label":"实际采集完成","unit":"条"},
         {"key":"feedbackRate","label":"材料反馈率","unit":"%"},
         {"key":"verifyPassRate","label":"专家核实通过率","unit":"%"}
       ]
@@ -1211,7 +1211,7 @@ function renderFlowKPIs(tasks, m){
       let raw = m[mm.key];
       if(raw === undefined || raw === null) raw = "—";
       else if(mm.unit === "%") raw = raw + "%";
-      else if(mm.key === "totalDemand" || mm.key === "collected") raw = Number(raw).toLocaleString();
+      else if(mm.key === "totalDemand" || mm.key === "totalCollected") raw = Number(raw).toLocaleString();
       else raw = raw + (mm.unit ? " "+mm.unit : "");
       let cls = "";
       if(["completionRate","timelinessRate","passRate","closedRate","allClosedRate"].includes(mm.key))

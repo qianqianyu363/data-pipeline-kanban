@@ -520,7 +520,7 @@
       "icon": "🔧",
       "metrics": [
         {"key":"completionRate","label":"整体采集完成率","unit":"%"},
-        {"key":"collected","label":"实际采集完成","unit":"条"},
+        {"key":"totalCollected","label":"实际采集完成","unit":"条"},
         {"key":"feedbackRate","label":"材料反馈率","unit":"%"},
         {"key":"verifyPassRate","label":"专家核实通过率","unit":"%"}
       ]
