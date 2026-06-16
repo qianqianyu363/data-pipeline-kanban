@@ -6,6 +6,7 @@
 <title>数据采集加工全链路看板</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 /* ============ CSS Variables ============ */
 :root {
@@ -343,7 +344,7 @@ body{
   <!-- ========== TOOLBAR ========== -->
   <div class="toolbar animate delay-1">
     <button class="btn btn-primary" onclick="openPanel()">✏️ 编辑数据</button>
-    <button class="btn btn-warning" onclick="openCSV()">📥 导入CSV</button>
+    <button class="btn btn-warning" onclick="openCSV()">📥 导入 (CSV/Excel)</button>
     <button class="btn btn-success" onclick="exportDataJSON()">📤 导出 data.json</button>
     <button class="btn btn-outline" onclick="resetToDefault()">↩️ 恢复默认</button>
     <span id="dataInfo" style="font-size:0.75rem;color:var(--color-text-light);margin-left:auto">
@@ -423,15 +424,15 @@ body{
 <div class="panel-overlay" id="csvOverlay" onclick="closeCSV()"></div>
 <div class="csv-panel" id="csvPanel">
   <button class="close-btn" onclick="closeCSV()">✕</button>
-  <h3>📥 从企微文档导入 CSV</h3>
+  <h3>📥 导入数据（CSV / Excel）</h3>
   <div class="status-msg" id="csvStatus"></div>
 
   <div class="drop-zone" id="dropZone">
     <div class="drop-zone-icon">📄</div>
     <div class="drop-zone-text">拖拽 CSV 文件到这里，或点击选择文件</div>
-    <div class="drop-zone-hint">支持从企微文档导出的 CSV 文件</div>
+    <div class="drop-zone-hint">支持 CSV / Excel (.xlsx / .xls) 格式</div>
   </div>
-  <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+  <input type="file" id="csvFileInput" accept=".csv,.xlsx,.xls" style="display:none">
 
   <div id="csvPreviewArea" class="hidden">
     <div style="display:flex;justify-content:space-between;align-items:center">
@@ -789,19 +790,19 @@ function exportDataJSON() {
 
 // Known field keywords for auto-mapping
 const FIELD_KEYWORDS = {
-  month: ["月份", "月", "月度", "月份"],
-  project: ["项目", "来源", "省份", "地区", "需求来源", "项目名称", "试点"],
-  demandType: ["需求类型", "类型", "采集类型", "类别"],
-  demandQty: ["下发数量", "需求量", "需求数量", "数量", "总量"],
-  releaseTimeliness: ["需求发布及时率", "及时率", "发布及时率"],
-  releaseAccuracy: ["需求发布准确率", "准确率", "发布准确率"],
+  month: ["月份", "月", "月度", "下发月份", "统计月份"],
+  project: ["项目", "来源", "省份", "地区", "需求来源", "项目名称", "试点", "城市", "区域"],
+  demandType: ["需求类型", "类型", "采集类型", "类别", "采集类别"],
+  demandQty: ["下发数量", "需求量", "需求数量", "数量", "总量", "下发条数", "任务量"],
+  releaseTimeliness: ["需求发布及时率", "及时率", "发布及时率", "下发及时率"],
+  releaseAccuracy: ["需求发布准确率", "准确率", "发布准确率", "下发准确率"],
   releaseCoverage: ["需求发布覆盖率", "覆盖率", "发布覆盖率"],
-  collectedQty: ["实际采集完成数量", "采集完成数", "完成数", "采集数量", "实际采集"],
-  completionRate: ["采集完成率", "完成率"],
-  collectTimeliness: ["采集及时率", "采集按时率"],
-  rejectReason: ["审核打回根因", "根因", "打回原因", "审核根因", "退回原因"],
-  closedStatus: ["是否采集闭环", "闭环状态", "闭环", "是否闭环"],
-  budgetAmount: ["结算金额", "金额", "预算", "结算"],
+  collectedQty: ["实际采集完成数量", "采集完成数", "完成数", "采集数量", "实际采集", "已完成采集"],
+  completionRate: ["采集完成率", "完成率", "采集完成比率"],
+  collectTimeliness: ["采集及时率", "采集按时率", "按时完成率"],
+  rejectReason: ["审核打回根因", "根因", "打回原因", "审核根因", "退回原因", "退回类型", "不合格原因"],
+  closedStatus: ["是否采集闭环", "闭环状态", "闭环", "是否闭环", "完成状态", "推进状态", "状态"],
+  budgetAmount: ["结算金额", "金额", "预算", "结算", "成本", "费用"],
 };
 
 function findField(header, fieldMap) {
@@ -842,16 +843,46 @@ document.getElementById("dropZone").addEventListener("drop", (e) => {
 });
 
 function handleCSVFile(file) {
-  if (!file.name.endsWith(".csv")) {
-    showCSVStatus("请选择 CSV 文件", "error");
+  const isExcel = file.name.endsWith(".xlsx") || file.name.endsWith(".xls");
+  const isCSV = file.name.endsWith(".csv");
+  if (!isExcel && !isCSV) {
+    showCSVStatus("请选择 CSV 或 Excel (.xlsx / .xls) 文件", "error");
     return;
   }
+
   const reader = new FileReader();
+  if (isExcel) {
+    reader.readAsArrayBuffer(file);
+  } else {
+    reader.readAsText(file);
+  }
   reader.onload = (e) => {
-    const csv = e.target.result;
-    const result = Papa.parse(csv, { header: true, skipEmptyLines: true });
-    if (result.errors.length) {
-      showCSVStatus("CSV 解析有警告，已尝试继续：" + result.errors[0].message, "info");
+    let result;
+    if (isExcel) {
+      // Parse Excel
+      try {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, { type: "array" });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(ws, { defval: "" });
+        result = { data: json, meta: { fields: json.length ? Object.keys(json[0]) : [] } };
+        if (!json.length) {
+          showCSVStatus("Excel 文件为空或没有数据", "error");
+          return;
+        }
+        showCSVStatus(`✅ 已解析 Excel，共 ${json.length} 行数据`, "success");
+      } catch(ex) {
+        showCSVStatus("Excel 解析失败：" + ex.message, "error");
+        return;
+      }
+    } else {
+      // Parse CSV
+      const csv = e.target.result;
+      result = Papa.parse(csv, { header: true, skipEmptyLines: true });
+      if (result.errors.length) {
+        showCSVStatus("CSV 解析有警告，已尝试继续：" + result.errors[0].message, "info");
+      }
+      showCSVStatus(`✅ 已解析 ${result.data.length} 行数据`, "success");
     }
     csvRawData = result;
     showCSVStatus(`✅ 已解析 ${result.data.length} 行数据`, "success");
