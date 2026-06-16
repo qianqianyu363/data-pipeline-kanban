@@ -1,110 +1,73 @@
 {
   "title": "需求下发登记全链路看板",
   "updateDate": "2026-06-16",
+  "months": ["03月","04月","05月","06月"],
+  "monthNames": {"03":"3月","04":"4月","05":"5月","06":"6月","01":"1月","02":"2月"},
 
-  "months": ["3月", "4月", "5月", "6月"],
+  "filterOptions": {
+    "demandItems": ["全部","市场价","采购建议价"],
+    "settleTypes": ["全部","价格采集","价格更新","全系列报价单"],
+    "months": ["全部","03月","04月","05月","06月"]
+  },
 
-  "kpiCards": [
-    { "label": "6月总需求量", "value": "38,906", "unit": "条", "sub": "较4月 -27.4%", "trend": "down", "color": "blue" },
-    { "label": "需求发布及时率", "value": "100%", "unit": "", "sub": "连续2月达100%", "trend": "up", "color": "green" },
-    { "label": "平均采集完成率", "value": "71.6%", "unit": "", "sub": "4月数据", "trend": "down", "color": "orange" },
-    { "label": "需求初审通过率", "value": "99.4%", "unit": "", "sub": "持续上升趋势", "trend": "up", "color": "green" },
-    { "label": "需求问题率", "value": "0.6%", "unit": "", "sub": "大幅改善", "trend": "up", "color": "purple" }
-  ],
+  "tasks": [],
+  "settlements": [],
+  "totalBudget": 3900000,
 
-  "steps": {
+  "stepConfig": {
     "需求下发": {
       "color": "#E74C3C",
       "metrics": [
-        { "label": "需求发布及时率", "value": "100%", "target": "100%", "status": "good" },
-        { "label": "需求量", "value": "38,906条", "target": "—", "status": "info" },
-        { "label": "需求问题率", "value": "0.6%", "target": "<5%", "status": "good" },
-        { "label": "需求初审通过率", "value": "99.4%", "target": ">95%", "status": "good" }
-      ],
-      "trend": {
-        "title": "需求发布及时率",
-        "categories": ["3月", "4月", "5月", "6月"],
-        "values": [25, 60, 100, 100],
-        "target": 100
-      },
-      "trend2": {
-        "title": "需求量趋势",
-        "categories": ["3月", "4月", "5月", "6月"],
-        "values": [15977, 53581, 2277, 38906]
-      }
+        {"key":"timelinessRate","label":"需求发布及时率","unit":"%"},
+        {"key":"totalDemand","label":"需求量","unit":"条"},
+        {"key":"passRate","label":"需求初审通过率","unit":"%"},
+        {"key":"problemRate","label":"需求问题率","unit":"%"}
+      ]
     },
     "采集执行": {
       "color": "#F39C12",
       "metrics": [
-        { "label": "实际采集完成", "value": "42,484条", "target": "—", "status": "info" },
-        { "label": "平均采集完成率", "value": "71.6%", "target": ">90%", "status": "warn" },
-        { "label": "采集总量（4月）", "value": "42,484条", "target": "53,581条", "status": "info" }
+        {"key":"completionRate","label":"采集完成率","unit":"%"},
+        {"key":"collected","label":"实际采集完成","unit":"条"},
+        {"key":"feedbackRate","label":"材料反馈率","unit":"%"},
+        {"key":"verifyPassRate","label":"专家核实通过率","unit":"%"}
       ],
-      "trend": {
-        "title": "采集完成率",
-        "categories": ["3月", "4月", "5月", "6月"],
-        "values": [78.5, 71.6, 100, 0],
-        "target": 90
-      },
-      "trend2": {
-        "title": "采集完成数量",
-        "categories": ["3月", "4月", "5月", "6月"],
-        "values": [10765, 42484, 2355, 0]
-      }
-    },
-    "按结算类型": {
-      "color": "#3498DB",
-      "metrics": [
-        { "label": "价格采集", "value": "43.2%", "target": "完成率", "status": "warn" },
-        { "label": "价格更新", "value": "100%", "target": "完成率", "status": "good" },
-        { "label": "全系列报价单", "value": "40.7%", "target": "完成率", "status": "bad" }
-      ],
-      "chartData": {
-        "categories": ["价格采集", "价格更新", "全系列报价单"],
-        "completionRate": [43.2, 100, 40.7],
-        "timelinessRate": [68.4, 100, 50],
-        "demandTotal": [96395, 13776, 570]
-      }
+      "focusTabs": ["产能","费用执行","采集进度","任务清单"]
     },
     "审核打回": {
       "color": "#F1C40F",
       "metrics": [
-        { "label": "打回根因", "value": "非常规材料", "target": "占100%", "status": "info" }
-      ],
-      "pieData": [
-        { "name": "非常规材料", "value": 4 }
+        {"key":"rejectCount","label":"打回数量","unit":"条"},
+        {"key":"selfCorrect","label":"自行更正数","unit":"条"},
+        {"key":"accuracyRate","label":"需求准确率","unit":"%"}
       ]
     },
     "闭环验证": {
       "color": "#2ECC71",
       "metrics": [
-        { "label": "3月闭环率", "value": "100%", "target": "已全部闭环", "status": "good" },
-        { "label": "4月闭环率", "value": "22.2%", "target": "进行中", "status": "warn" }
-      ],
-      "trend": {
-        "title": "闭环率月度趋势",
-        "categories": ["3月", "4月", "5月", "6月"],
-        "values": [100, 22.2, 0, 0],
-        "target": 100
-      }
+        {"key":"closedRate","label":"闭环率","unit":"%"},
+        {"key":"allClosedRate","label":"全部闭环率","unit":"%"}
+      ]
     }
   },
+
+  "alerts": [
+    {"condition":"completionRate<60","priority":"P0","problem":"{name} 采集完成率仅 {value}", "action":"专项攻坚，增配采集资源"},
+    {"condition":"problemRate>10","priority":"P0","problem":"{name} 需求问题率 {value}", "action":"追溯需求源头，优化质量"},
+    {"condition":"timeliness=0","priority":"P1","problem":"{name} 发布及时率为0%", "action":"排查下发流程，确保按时"},
+    {"condition":"closed=进行中","priority":"P1","problem":"{name} 闭环进行中", "action":"跟进闭环进度"}
+  ],
 
   "monthlyTrend": {
     "需求发布及时率": [25, 60, 100, 100],
     "需求量": [15977, 53581, 2277, 38906],
     "采集完成率": [78.5, 71.6, 100, 0],
     "采集完成数": [10765, 42484, 2355, 0],
+    "预算执行率": [8.6, 14.5, 18.2, 20.8],
     "需求准确率": [94.4, 0, 0, 0],
     "需求初审通过率": [92.8, 90, 97, 99.4],
     "需求问题率": [7.2, 10, 3, 0.6],
-    "闭环率": [100, 22.2, 0, 0]
-  },
-
-  "alerts": [
-    { "priority": "P0", "problem": "4月采集完成率仅 71.6%，低于 90% 目标", "action": "加大采集资源投入，重点关注价格采集项目" },
-    { "priority": "P0", "problem": "价格采集完成率仅 43.2%，占需求总量 90% 以上", "action": "专项攻坚价格采集流程，梳理瓶颈环节" },
-    { "priority": "P1", "problem": "全系列报价单采集完成率 40.7%，数量虽少但影响完整性", "action": "明确全系列报价单采集责任人，设定交付节点" },
-    { "priority": "P1", "problem": "4月闭环率仅 22.2%，大量在途未闭环", "action": "推动闭环流程自动化，减少人工确认环节" }
-  ]
+    "闭环率": [100, 22.2, 0, 0],
+    "产能利用率": [67.3, 79.3, 100, 0]
+  }
 }

@@ -1,835 +1,827 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>需求下发登记全链路看板</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<style>
-:root {
-  --red: #E74C3C; --red-bg: #FDEDEC;
-  --orange: #F39C12; --orange-bg: #FEF5E7;
-  --yellow: #F1C40F; --yellow-bg: #FEF9E7;
-  --green: #2ECC71; --green-bg: #EAFAF1;
-  --blue: #3498DB; --blue-bg: #EBF5FB;
-  --purple: #9B59B6; --purple-bg: #F4ECF7;
-  --dark: #2C3E50;
-  --gray: #95A5A6;
-  --light-gray: #ECF0F1;
-  --bg: #F5F7FA;
-  --card: #FFFFFF;
-  --text: #2C3E50;
-  --text-light: #7F8C8D;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
-}
+<style>:root{--red:#E74C3C;--orange:#F39C12;--yellow:#F1C40F;--green:#2ECC71;--blue:#3498DB;--purple:#9B59B6;--dark:#2C3E50;--gray:#95A5A6;--lg:#ECF0F1;--bg:#F5F7FA;--card:#FFF;--text:#2C3E50;--tl:#7F8C8D;--shadow:0 1px 3px rgba(0,0,0,0.08);--shadow-h:0 4px 12px rgba(0,0,0,0.10);--r-sm:6px;--r-md:10px;--r-lg:16px;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:14px;scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;padding:20px;min-height:100vh}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;padding:14px;min-height:100vh}
 .container{max-width:1440px;margin:0 auto}
 
-/* Header */
-.header{
-  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
-  color:#fff;border-radius:var(--radius-lg);padding:28px 36px;margin-bottom:20px;
-  display:flex;justify-content:space-between;align-items:flex-start;
-  flex-wrap:wrap;gap:12px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden
-}
-.header::after{content:'';position:absolute;top:-50%;right:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(52,152,219,0.15)0%,transparent 70%);border-radius:50%}
-.header-left{position:relative;z-index:1}
-.header-title{font-size:1.6rem;font-weight:700;letter-spacing:2px;margin-bottom:4px}
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e 50%,#0f3460);color:#fff;border-radius:var(--r-lg);padding:20px 28px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,0.15)}
+.header-title{font-size:1.3rem;font-weight:700;letter-spacing:1px}
 .header-title span{color:#3498DB}
-.header-sub{font-size:0.8rem;color:rgba(255,255,255,0.6)}
-.header-right{position:relative;z-index:1;text-align:right;font-size:0.8rem;color:rgba(255,255,255,0.8)}
-.header-badge{display:inline-block;background:rgba(46,204,113,0.2);border:1px solid rgba(46,204,113,0.4);padding:3px 12px;border-radius:20px;font-size:0.7rem;margin-top:4px;color:#2ECC71}
+.header-sub{font-size:0.72rem;color:rgba(255,255,255,0.6);margin-top:2px}
+.header-right{text-align:right;font-size:0.75rem;color:rgba(255,255,255,0.8)}
+.header-badge{display:inline-block;background:rgba(46,204,113,0.2);border:1px solid rgba(46,204,113,0.4);padding:2px 10px;border-radius:20px;font-size:0.65rem;margin-top:2px;color:#2ECC71}
 
-/* Toolbar */
-.toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border:none;border-radius:var(--radius-sm);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:var(--font)}
-.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.toolbar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border:none;border-radius:var(--r-sm);font-size:0.74rem;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:var(--font)}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
 .btn-primary{background:var(--blue);color:#fff}
 .btn-success{background:var(--green);color:#fff}
 .btn-warning{background:var(--orange);color:#fff}
 .btn-outline{background:transparent;border:1px solid var(--gray);color:var(--text)}
-.btn-sm{padding:4px 10px;font-size:0.72rem}
-.data-info{font-size:0.72rem;color:var(--text-light);margin-left:auto}
+.btn-sm{padding:3px 8px;font-size:0.68rem}
+.data-info{font-size:0.68rem;color:var(--tl);margin-left:auto}
 
-/* KPI Row */
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
-.kpi-card{background:var(--card);border-radius:var(--radius-md);padding:16px 20px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:transform 0.2s}
-.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
-.kpi-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
+/* Filter Bar */
+.filter-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;background:var(--card);padding:10px 16px;border-radius:var(--r-md);box-shadow:var(--shadow)}
+.filter-bar label{font-size:0.72rem;font-weight:600;color:var(--tl)}
+.filter-bar select{padding:4px 10px;border:1px solid var(--lg);border-radius:var(--r-sm);font-size:0.74rem;font-family:var(--font);background:#fff;min-width:100px}
+.filter-bar .filter-count{font-size:0.72rem;color:var(--tl);margin-left:auto}
+.filter-tag{display:inline-block;background:var(--blue-bg, #EBF5FB);color:var(--blue);padding:2px 8px;border-radius:12px;font-size:0.65rem;margin-left:4px}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:14px}
+.kpi-card{background:var(--card);border-radius:var(--r-md);padding:12px 16px;box-shadow:var(--shadow);position:relative;transition:transform 0.15s}
+.kpi-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-h)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
 .kpi-card.blue::before{background:var(--blue)}
 .kpi-card.green::before{background:var(--green)}
 .kpi-card.orange::before{background:var(--orange)}
 .kpi-card.red::before{background:var(--red)}
 .kpi-card.purple::before{background:var(--purple)}
-.kpi-label{font-size:0.75rem;color:var(--text-light);margin-bottom:4px;font-weight:500}
-.kpi-value{font-size:1.8rem;font-weight:700;line-height:1.2}
-.kpi-value.blue{color:var(--blue)}
-.kpi-value.green{color:var(--green)}
-.kpi-value.orange{color:var(--orange)}
-.kpi-value.red{color:var(--red)}
-.kpi-value.purple{color:var(--purple)}
-.kpi-sub{font-size:0.7rem;color:var(--text-light);margin-top:3px}
-.kpi-trend-up{color:var(--green)}
-.kpi-trend-down{color:var(--red)}
+.kpi-label{font-size:0.68rem;color:var(--tl);margin-bottom:2px;font-weight:500}
+.kpi-value{font-size:1.4rem;font-weight:700;line-height:1.2}
+.kpi-value.blue{color:var(--blue)}.kpi-value.green{color:var(--green)}.kpi-value.orange{color:var(--orange)}.kpi-value.red{color:var(--red)}.kpi-value.purple{color:var(--purple)}
+.kpi-sub{font-size:0.65rem;color:var(--tl);margin-top:2px}
 
-/* Step Section */
-.step-section{margin-bottom:18px}
-.step-header{
-  display:flex;align-items:center;gap:10px;
-  font-size:1rem;font-weight:600;margin-bottom:12px;
-  padding:10px 16px;border-radius:var(--radius-md) var(--radius-md) 0 0;
-  color:#fff;
-}
-.step-header .step-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5)}
-.step-header .step-count{font-size:0.7rem;font-weight:400;opacity:0.8;margin-left:auto}
-.step-body{
-  background:var(--card);border-radius:0 0 var(--radius-md) var(--radius-md);
-  padding:16px 20px;box-shadow:var(--shadow-sm);margin-bottom:0
-}
+/* Step */
+.step-section{margin-bottom:14px}
+.step-header{display:flex;align-items:center;gap:6px;font-size:0.88rem;font-weight:600;padding:8px 14px;border-radius:var(--r-md) var(--r-md) 0 0;color:#fff}
+.step-header .s-count{font-size:0.65rem;font-weight:400;opacity:0.8;margin-left:auto}
+.step-body{background:var(--card);border-radius:0 0 var(--r-md) var(--r-md);padding:12px 16px;box-shadow:var(--shadow)}
 
-/* Metric badges inside step */
-.metrics-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.metric-badge{
-  display:flex;align-items:center;gap:6px;
-  padding:6px 14px;border-radius:20px;
-  font-size:0.78rem;font-weight:500;
-}
-.metric-badge.good{background:var(--green-bg);color:#1e8449}
-.metric-badge.warn{background:var(--orange-bg);color:#b7950b}
-.metric-badge.bad{background:var(--red-bg);color:var(--red)}
-.metric-badge.info{background:var(--blue-bg);color:#1a5276}
-.metric-badge .m-label{font-weight:400;opacity:0.7}
-.metric-badge .m-value{font-weight:700}
+.metrics-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.metric-badge{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:16px;font-size:0.74rem;font-weight:500}
+.metric-badge.good{background:#EAFAF1;color:#1e8449}
+.metric-badge.warn{background:#FEF5E7;color:#b7950b}
+.metric-badge.bad{background:#FDEDEC;color:var(--red)}
+.metric-badge.info{background:#EBF5FB;color:#1a5276}
+.metric-badge .ml{font-weight:400;opacity:0.7}
+.metric-badge .mv{font-weight:700}
 
-/* Chart containers */
-.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+/* Focus Tabs */
+.focus-tabs{display:flex;gap:4px;margin:8px 0 10px;flex-wrap:wrap}
+.ftab{padding:5px 14px;border-radius:16px;font-size:0.74rem;font-weight:600;cursor:pointer;transition:all 0.15s;border:none;font-family:var(--font);background:var(--lg);color:var(--tl)}
+.ftab:hover{opacity:0.8}
+.ftab.on{color:#fff}
+.ftab.on.ft-capacity{background:var(--purple)}
+.ftab.on.ft-budget{background:var(--red)}
+.ftab.on.ft-progress{background:var(--blue)}
+.ftab.on.ft-tasks{background:var(--green)}
+.fpanel{display:none}
+.fpanel.on{display:block}
+
+.focus-metrics{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.fm-box{background:#f8f9fa;border-radius:var(--r-sm);padding:8px 12px;flex:1;min-width:120px}
+.fm-l{font-size:0.65rem;color:var(--tl);font-weight:500}
+.fm-v{font-size:1.1rem;font-weight:700;margin:1px 0}
+.fm-d{font-size:0.62rem;color:var(--tl)}
+
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:800px){.chart-row{grid-template-columns:1fr}}
-.chart-box{height:220px}
+.chart-box{height:180px}
+.chart-box-sm{height:160px}
 
-/* Full width chart */
-.chart-full{width:100%;height:240px}
+/* Task Table */
+.task-table-wrap{overflow-x:auto;margin-top:6px}
+.task-table{width:100%;border-collapse:collapse;font-size:0.72rem}
+.task-table th{background:var(--lg);padding:6px 8px;text-align:left;font-weight:600;white-space:nowrap;position:sticky;top:0}
+.task-table td{padding:5px 8px;border-bottom:1px solid var(--lg)}
+.task-table tr:hover td{background:#f8f9fa}
+.progress-bar{display:inline-block;height:6px;border-radius:3px;min-width:2px}
+.progress-wrap{display:flex;align-items:center;gap:6px}
+.progress-wrap .bar-wrap{flex:1;background:var(--lg);border-radius:3px;height:6px;max-width:100px}
+.status-badge{padding:1px 6px;border-radius:8px;font-size:0.65rem;font-weight:600}
+.s-closed,.s-全部闭环{background:#EAFAF1;color:#1e8449}
+.s-进行中,.s-关闭{background:#FEF5E7;color:#b7950b}
+.s-暂未启动,.s-计算错误{background:#FDEDEC;color:var(--red)}
 
-/* Monthly trend overview */
-.monthly-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+/* Analysis */
+.analysis-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.ac{background:var(--card);border-radius:var(--r-md);padding:12px;box-shadow:var(--shadow)}
+.ac-title{font-size:0.78rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.monthly-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.monthly-grid .mc{background:var(--card);border-radius:var(--r-md);padding:8px 10px;box-shadow:var(--shadow)}
 
-/* Alert */
-.alert-section{
-  background:var(--card);border-radius:var(--radius-md);
-  padding:20px 24px;box-shadow:var(--shadow-sm);margin-bottom:16px;
-  border-left:4px solid var(--red)
-}
-.alert-title{display:flex;align-items:center;gap:8px;font-size:0.95rem;font-weight:600;color:var(--red);margin-bottom:14px}
-.alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.alert-section{background:var(--card);border-radius:var(--r-md);padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px;border-left:4px solid var(--red)}
+.alert-title{display:flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:600;color:var(--red);margin-bottom:10px}
+.alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 @media(max-width:800px){.alert-grid{grid-template-columns:1fr}}
-.alert-item{background:#f8f9fa;border-radius:var(--radius-sm);padding:12px 16px;display:flex;align-items:flex-start;gap:10px}
-.alert-p0{border-left:3px solid var(--red)}
-.alert-p1{border-left:3px solid var(--orange)}
-.alert-priority{font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0;margin-top:1px}
-.alert-p0 .alert-priority{background:var(--red-bg);color:var(--red)}
-.alert-p1 .alert-priority{background:var(--orange-bg);color:var(--orange)}
-.alert-content{flex:1}
-.alert-problem{font-weight:600;font-size:0.85rem;margin-bottom:2px}
-.alert-action{font-size:0.75rem;color:var(--text-light)}
+.al{background:#f8f9fa;border-radius:var(--r-sm);padding:8px 12px;display:flex;align-items:flex-start;gap:6px}
+.al-p0{border-left:3px solid var(--red)}
+.al-p1{border-left:3px solid var(--orange)}
+.al-pr{font-size:0.6rem;font-weight:700;padding:1px 5px;border-radius:6px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.al-p0 .al-pr{background:#FDEDEC;color:var(--red)}
+.al-p1 .al-pr{background:#FEF5E7;color:var(--orange)}
+.al-c{flex:1}
+.al-p{font-weight:600;font-size:0.78rem;margin-bottom:1px}
+.al-a{font-size:0.68rem;color:var(--tl)}
 
-/* Footer */
-.footer{text-align:center;padding:16px;color:var(--text-light);font-size:0.7rem}
+.footer{text-align:center;padding:12px;color:var(--tl);font-size:0.65rem}
 
-/* Overlay panels (editor, CSV import) - same as before */
+/* Panels */
 .panel-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:98;display:none}
-.panel-overlay.open{display:block}
-.data-panel,.csv-panel{
-  position:fixed;bottom:50%;right:50%;transform:translate(50%,50%);
-  width:540px;max-width:90vw;max-height:82vh;
-  background:var(--card);border-radius:var(--radius-md);
-  box-shadow:var(--shadow-lg);z-index:99;
-  padding:22px;overflow-y:auto;display:none;flex-direction:column
-}
-.data-panel.open,.csv-panel.open{display:flex}
-.data-panel h3,.csv-panel h3{font-size:0.95rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.data-panel .close-btn,.csv-panel .close-btn{
-  position:absolute;top:12px;right:14px;
-  background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text-light);padding:4px
-}
-.data-panel textarea{
-  width:100%;min-height:220px;
-  font-family:'Courier New',monospace;font-size:0.72rem;
-  padding:10px;border:1px solid var(--light-gray);
-  border-radius:var(--radius-sm);resize:vertical
-}
-.data-panel .btn-group,.csv-panel .btn-group{display:flex;gap:8px;margin-top:10px}
-.data-panel button,.csv-panel button{
-  flex:1;padding:8px 14px;border:none;border-radius:var(--radius-sm);
-  font-size:0.78rem;cursor:pointer;font-weight:600;transition:opacity 0.2s;font-family:var(--font)
-}
-.data-panel button:hover,.csv-panel button:hover{opacity:0.85}
+.panel-overlay.show{display:block}
+.editor-panel,.csv-panel{position:fixed;bottom:50%;right:50%;transform:translate(50%,50%);width:500px;max-width:92vw;max-height:80vh;background:var(--card);border-radius:var(--r-md);box-shadow:0 8px 30px rgba(0,0,0,0.2);z-index:99;padding:18px;overflow-y:auto;display:none;flex-direction:column}
+.editor-panel.show,.csv-panel.show{display:flex}
+.editor-panel h3,.csv-panel h3{font-size:0.85rem;margin-bottom:10px}
+.editor-panel .close-btn,.csv-panel .close-btn{position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--tl);padding:4px}
+.editor-panel textarea{width:100%;min-height:180px;font-family:monospace;font-size:0.68rem;padding:8px;border:1px solid var(--lg);border-radius:var(--r-sm);resize:vertical}
+.editor-panel .btn-group,.csv-panel .btn-group{display:flex;gap:6px;margin-top:8px}
+.editor-panel button,.csv-panel button{flex:1;padding:6px 12px;border:none;border-radius:var(--r-sm);font-size:0.74rem;cursor:pointer;font-weight:600;font-family:var(--font)}
+.editor-panel button:hover,.csv-panel button:hover{opacity:0.85}
 .btn-apply{background:var(--blue);color:#fff}
-.btn-reset-btn{background:var(--light-gray);color:var(--text)}
-.btn-export-data{background:var(--green);color:#fff}
+.btn-rst{background:var(--lg);color:var(--text)}
+.btn-exp{background:var(--green);color:#fff}
 
-.drop-zone{border:2px dashed var(--light-gray);border-radius:var(--radius-md);padding:30px 20px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:12px}
-.drop-zone:hover,.drop-zone.dragover{border-color:var(--blue);background:var(--blue-bg)}
-.drop-zone-icon{font-size:2rem;margin-bottom:6px}
-.drop-zone-text{font-size:0.82rem;color:var(--text-light)}
-.drop-zone-hint{font-size:0.7rem;color:var(--gray);margin-top:3px}
-
-.csv-preview{max-height:160px;overflow:auto;border:1px solid var(--light-gray);border-radius:var(--radius-sm);margin:10px 0}
-.csv-preview table{width:100%;border-collapse:collapse;font-size:0.72rem}
-.csv-preview th,.csv-preview td{padding:4px 8px;border:1px solid var(--light-gray);text-align:left;white-space:nowrap}
-.csv-preview th{background:var(--light-gray);font-weight:600;position:sticky;top:0}
-.csv-preview tr:nth-child(even){background:#fafafa}
-
-.csv-mapping{margin:10px 0}
-.csv-mapping h4{font-size:0.82rem;margin-bottom:6px;color:var(--text-light)}
-.csv-mapping-item{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:0.78rem}
-.csv-mapping-item label{min-width:110px;font-weight:600}
-.csv-mapping-item select{flex:1;padding:3px 6px;border:1px solid var(--light-gray);border-radius:4px;font-size:0.72rem;font-family:var(--font)}
-
-.status-msg{padding:8px 14px;border-radius:var(--radius-sm);font-size:0.78rem;margin-bottom:10px;display:none}
-.status-msg.success{display:block;background:var(--green-bg);color:#1e8449;border:1px solid rgba(46,204,113,0.3)}
-.status-msg.error{display:block;background:var(--red-bg);color:var(--red);border:1px solid rgba(231,76,60,0.3)}
-.status-msg.info{display:block;background:var(--blue-bg);color:#1a5276;border:1px solid rgba(52,152,219,0.3)}
-
+.drop-zone{border:2px dashed var(--lg);border-radius:var(--r-md);padding:20px 16px;text-align:center;cursor:pointer;margin-bottom:8px}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--blue);background:#EBF5FB}
+.drop-zone-icon{font-size:1.5rem}
+.drop-zone-text{font-size:0.78rem;color:var(--tl)}
+.csv-preview{max-height:120px;overflow:auto;border:1px solid var(--lg);border-radius:var(--r-sm);margin:6px 0}
+.csv-preview table{width:100%;border-collapse:collapse;font-size:0.68rem}
+.csv-preview th,.csv-preview td{padding:2px 6px;border:1px solid var(--lg);text-align:left;white-space:nowrap;font-size:0.65rem}
+.csv-preview th{background:var(--lg)}
+.csv-mapping{margin:6px 0}
+.csv-mapping-item{display:flex;align-items:center;gap:4px;padding:2px 0;font-size:0.74rem}
+.csv-mapping-item label{min-width:80px;font-weight:600;font-size:0.7rem}
+.csv-mapping-item select{flex:1;padding:2px 6px;border:1px solid var(--lg);border-radius:4px;font-size:0.68rem;font-family:var(--font)}
+.status-msg{padding:6px 12px;border-radius:var(--r-sm);font-size:0.74rem;margin-bottom:6px;display:none}
+.status-msg.ok{display:block;background:#EAFAF1;color:#1e8449;border:1px solid rgba(46,204,113,0.3)}
+.status-msg.err{display:block;background:#FDEDEC;color:var(--red)}
 .hidden{display:none!important}
 
-.loading-overlay{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(255,255,255,0.85);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;z-index:1000;transition:opacity 0.3s
-}
-.loading-overlay.hidden{opacity:0;pointer-events:none}
-.spinner{width:36px;height:36px;border:3px solid var(--light-gray);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:0.85rem;color:var(--text-light)}
+.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;transition:opacity 0.3s}
+.loading-overlay.hide{opacity:0;pointer-events:none}
+.spin{width:28px;height:28px;border:3px solid var(--lg);border-top-color:var(--blue);border-radius:50%;animation:sp 0.8s linear infinite;margin-bottom:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fu 0.3s ease forwards;opacity:0}
+.d1{animation-delay:0.05s}.d2{animation-delay:0.1s}.d3{animation-delay:0.15s}.d4{animation-delay:0.2s}
 
-@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.animate{animation:fadeInUp 0.4s ease forwards;opacity:0}
-.delay-1{animation-delay:0.08s}
-.delay-2{animation-delay:0.15s}
-.delay-3{animation-delay:0.22s}
-.delay-4{animation-delay:0.3s}
+.empty-state{padding:30px;text-align:center;color:var(--tl);font-size:0.8rem}
 </style>
 </head>
 <body>
-
 <div class="container">
+  <div class="loading-overlay" id="loading"><div class="spin"></div><div style="font-size:0.8rem;color:var(--tl)">加载中...</div></div>
 
-  <!-- Loading -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-    <div class="loading-text">⏳ 加载看板数据中...</div>
-  </div>
-
-  <!-- Header -->
-  <header class="header animate">
-    <div class="header-left">
-      <div class="header-title">📊 需求下发登记<span>全链路看板</span></div>
-      <div class="header-sub">从需求下发 → 采集执行 → 审核打回 → 闭环验证 全流程监控</div>
-    </div>
-    <div class="header-right">
-      <div id="currentDate">—</div>
-      <div><span class="header-badge" id="dataStatusBadge">📡 加载中...</span></div>
-    </div>
+  <header class="header anim">
+    <div class="header-left"><div class="header-title">📊 需求下发登记<span>全链路看板</span></div><div class="header-sub">需求下发 → 采集执行 → 审核打回 → 闭环验证</div></div>
+    <div class="header-right"><div id="curDate"></div><div><span class="header-badge" id="dataBadge">📡 加载中...</span></div></div>
   </header>
 
-  <!-- Toolbar -->
-  <div class="toolbar animate delay-1">
-    <button class="btn btn-primary" onclick="openPanel()">✏️ 编辑数据</button>
-    <button class="btn btn-warning" onclick="openCSV()">📥 导入 (CSV/Excel)</button>
-    <button class="btn btn-success" onclick="exportDataJSON()">📤 导出 data.json</button>
-    <button class="btn btn-outline" onclick="resetToDefault()">↩️ 重置</button>
-    <span class="data-info" id="dataSourceLabel">💾 data.json</span>
+  <div class="toolbar anim d1">
+    <button class="btn btn-primary" onclick="openEditor()">✏️ 编辑</button>
+    <button class="btn btn-warning" onclick="openCSV()">📥 导入</button>
+    <button class="btn btn-success" onclick="exportJSON()">📤 导出</button>
+    <button class="btn btn-outline" onclick="resetData()">↩️ 重置</button>
+    <span class="data-info" id="srcLabel">💾 data.json</span>
   </div>
 
-  <!-- KPI Cards -->
-  <div class="kpi-row animate delay-1" id="kpiContainer"></div>
+  <!-- Filter Bar -->
+  <div class="filter-bar anim d1" id="filterBar">
+    <label>需求项</label>
+    <select id="fDemandItem" onchange="applyFilter()"></select>
+    <label>结算类型</label>
+    <select id="fSettleType" onchange="applyFilter()"></select>
+    <label>月份</label>
+    <select id="fMonth" onchange="applyFilter()"></select>
+    <span class="filter-count" id="filterCount">共 0 条</span>
+  </div>
 
-  <!-- Step Sections (rendered by JS) -->
-  <div id="stepsContainer"></div>
+  <div class="kpi-row anim d1" id="kpiRow"></div>
+  <div id="stepsArea"></div>
 
-  <!-- Monthly Trend Overview -->
-  <div class="step-section animate delay-4">
-    <div class="step-header" style="background:linear-gradient(135deg,#2C3E50,#34495E)">
-      <span class="step-dot"></span>📈 所有指标月度趋势总览
-      <span class="step-count">全览</span>
-    </div>
+  <!-- Monthly Trend (independent) -->
+  <div class="step-section anim d4">
+    <div class="step-header" style="background:linear-gradient(135deg,#2C3E50,#34495E)">📈 月度趋势总览<span class="s-count">独立于筛选</span></div>
     <div class="step-body">
       <div class="monthly-grid" id="trendGrid"></div>
     </div>
   </div>
 
-  <!-- Alert -->
-  <div class="alert-section animate delay-4">
-    <div class="alert-title">🚨 关键预警与行动项</div>
-    <div class="alert-grid" id="alertContainer"></div>
+  <div class="alert-section anim d4" id="alertSec">
+    <div class="alert-title">🚨 关键预警</div>
+    <div class="alert-grid" id="alertGrid"></div>
   </div>
-
-  <div class="footer">
-    基于「需求下发登记表」数据 · 更新 data.json 后刷新即可生效 · Made with ❤️
-  </div>
+  <div class="footer">基于需求下发登记表 · 更新 data.json 后刷新生效</div>
 </div>
 
-<!-- Data Editor Panel -->
-<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
-<div class="data-panel" id="dataPanel">
-  <button class="close-btn" onclick="closePanel()">✕</button>
-  <h3>✏️ 编辑看板数据</h3>
-  <p style="font-size:0.72rem;color:var(--text-light);margin-bottom:8px;">修改 JSON 后点「应用」预览，满意后「导出 data.json」上传到 GitHub 即可永久生效。</p>
-  <textarea id="dataEditor" spellcheck="false"></textarea>
-  <div class="btn-group">
-    <button class="btn-apply" onclick="applyDataEdit()">✅ 应用</button>
-    <button class="btn-reset-btn" onclick="closePanel()">取消</button>
-    <button class="btn-export-data" onclick="exportDataJSON()">📤 导出</button>
-  </div>
+<!-- Editor -->
+<div class="panel-overlay" id="panelOv" onclick="closeEditor()"></div>
+<div class="editor-panel" id="editorPanel">
+  <button class="close-btn" onclick="closeEditor()">✕</button>
+  <h3>✏️ 编辑数据</h3>
+  <p style="font-size:0.68rem;color:var(--tl);margin-bottom:6px">修改后点「应用」预览，满意后「导出」上传 GitHub。</p>
+  <textarea id="editorText" spellcheck="false"></textarea>
+  <div class="btn-group"><button class="btn-apply" onclick="applyEdit()">✅ 应用</button><button class="btn-rst" onclick="closeEditor()">取消</button><button class="btn-exp" onclick="exportJSON()">📤 导出</button></div>
 </div>
 
-<!-- CSV Import Panel -->
-<div class="panel-overlay" id="csvOverlay" onclick="closeCSV()"></div>
+<!-- CSV Panel -->
+<div class="panel-overlay" id="csvOv" onclick="closeCSV()"></div>
 <div class="csv-panel" id="csvPanel">
   <button class="close-btn" onclick="closeCSV()">✕</button>
-  <h3>📥 导入数据（CSV / Excel）</h3>
-  <div class="status-msg" id="csvStatus"></div>
-  <div class="drop-zone" id="dropZone">
-    <div class="drop-zone-icon">📄</div>
-    <div class="drop-zone-text">拖拽文件到这里，或点击选择</div>
-    <div class="drop-zone-hint">支持 CSV / Excel (.xlsx / .xls)</div>
-  </div>
-  <input type="file" id="csvFileInput" accept=".csv,.xlsx,.xls" style="display:none">
-  <div id="csvPreviewArea" class="hidden">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h4 style="font-size:0.82rem">📋 预览（前5行）</h4>
-      <span id="csvRowCount" style="font-size:0.7rem;color:var(--text-light)"></span>
-    </div>
-    <div class="csv-preview" id="csvPreview"></div>
-  </div>
-  <div id="csvMappingArea" class="hidden">
-    <h4 style="font-size:0.82rem;margin-bottom:6px">🔗 字段映射</h4>
-    <div id="csvMapping" class="csv-mapping"></div>
-  </div>
-  <div class="btn-group" style="margin-top:10px">
-    <button class="btn-apply" id="csvApplyBtn" onclick="applyCSV()" disabled>🔄 导入并生成</button>
-    <button class="btn-reset-btn" onclick="closeCSV()">取消</button>
-  </div>
+  <h3>📥 导入 (CSV/Excel)</h3>
+  <div class="status-msg" id="csvMsg"></div>
+  <div class="drop-zone" id="dropZone"><div class="drop-zone-icon">📄</div><div class="drop-zone-text">拖拽或点击选择文件</div><div class="drop-zone-hint" style="font-size:0.65rem;color:var(--gray)">.csv / .xlsx / .xls</div></div>
+  <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none">
+  <div id="csvPreviewArea" class="hidden"><h4 style="font-size:0.76rem;margin-bottom:4px">预览</h4><div class="csv-preview" id="csvPreview"></div></div>
+  <div id="csvMappingArea" class="hidden"><h4 style="font-size:0.76rem;margin:4px 0">字段映射</h4><div id="csvMapping"></div></div>
+  <div class="btn-group" style="margin-top:6px"><button class="btn-apply" id="csvApplyBtn" onclick="applyCSV()" disabled>🔄 导入</button><button class="btn-rst" onclick="closeCSV()">取消</button></div>
 </div>
 
 <script>
-// =========================================================================
-// 📦 DEFAULT DATA
-// =========================================================================
-const DEFAULT_DATA = {"title":"需求下发登记全链路看板","updateDate":"2026-06-16","months":["3月","4月","5月","6月"],"kpiCards":[{"label":"6月总需求量","value":"38,906","unit":"条","sub":"较4月 -27.4%","trend":"down","color":"blue"},{"label":"需求发布及时率","value":"100%","unit":"","sub":"连续2月达100%","trend":"up","color":"green"},{"label":"平均采集完成率","value":"71.6%","unit":"","sub":"4月数据","trend":"down","color":"orange"},{"label":"需求初审通过率","value":"99.4%","unit":"","sub":"持续上升趋势","trend":"up","color":"green"},{"label":"需求问题率","value":"0.6%","unit":"","sub":"大幅改善","trend":"up","color":"purple"}],"steps":{"需求下发":{"color":"#E74C3C","metrics":[{"label":"需求发布及时率","value":"100%","target":"100%","status":"good"},{"label":"需求量","value":"38,906条","target":"—","status":"info"},{"label":"需求问题率","value":"0.6%","target":"<5%","status":"good"},{"label":"需求初审通过率","value":"99.4%","target":">95%","status":"good"}],"trend":{"title":"需求发布及时率","categories":["3月","4月","5月","6月"],"values":[25,60,100,100],"target":100},"trend2":{"title":"需求量趋势","categories":["3月","4月","5月","6月"],"values":[15977,53581,2277,38906]}},"采集执行":{"color":"#F39C12","metrics":[{"label":"实际采集完成","value":"42,484条","target":"—","status":"info"},{"label":"平均采集完成率","value":"71.6%","target":">90%","status":"warn"},{"label":"采集总量（4月）","value":"42,484条","target":"53,581条","status":"info"}],"trend":{"title":"采集完成率","categories":["3月","4月","5月","6月"],"values":[78.5,71.6,100,0],"target":90},"trend2":{"title":"采集完成数量","categories":["3月","4月","5月","6月"],"values":[10765,42484,2355,0]}},"按结算类型":{"color":"#3498DB","metrics":[{"label":"价格采集","value":"43.2%","target":"完成率","status":"warn"},{"label":"价格更新","value":"100%","target":"完成率","status":"good"},{"label":"全系列报价单","value":"40.7%","target":"完成率","status":"bad"}],"chartData":{"categories":["价格采集","价格更新","全系列报价单"],"completionRate":[43.2,100,40.7],"timelinessRate":[68.4,100,50],"demandTotal":[96395,13776,570]}},"审核打回":{"color":"#F1C40F","metrics":[{"label":"打回根因","value":"非常规材料","target":"占100%","status":"info"}],"pieData":[{"name":"非常规材料","value":4}]},"闭环验证":{"color":"#2ECC71","metrics":[{"label":"3月闭环率","value":"100%","target":"已全部闭环","status":"good"},{"label":"4月闭环率","value":"22.2%","target":"进行中","status":"warn"}],"trend":{"title":"闭环率月度趋势","categories":["3月","4月","5月","6月"],"values":[100,22.2,0,0],"target":100}}},"monthlyTrend":{"需求发布及时率":[25,60,100,100],"需求量":[15977,53581,2277,38906],"采集完成率":[78.5,71.6,100,0],"采集完成数":[10765,42484,2355,0],"需求准确率":[94.4,0,0,0],"需求初审通过率":[92.8,90,97,99.4],"需求问题率":[7.2,10,3,0.6],"闭环率":[100,22.2,0,0]},"alerts":[{"priority":"P0","problem":"4月采集完成率仅 71.6%，低于 90% 目标","action":"加大采集资源投入，重点关注价格采集项目"},{"priority":"P0","problem":"价格采集完成率仅 43.2%，占需求总量 90% 以上","action":"专项攻坚价格采集流程，梳理瓶颈环节"},{"priority":"P1","problem":"全系列报价单采集完成率 40.7%，数量虽少但影响完整性","action":"明确全系列报价单采集责任人，设定交付节点"},{"priority":"P1","problem":"4月闭环率仅 22.2%，大量在途未闭环","action":"推动闭环流程自动化，减少人工确认环节"}]};
+// ============================================================
+// STATE
+// ============================================================
+let DATA = null, charts = {}, filters = { demandItem: "全部", settleType: "全部", month: "全部" };
+const MONTH_KEYS = ["03","04","05","06"];
+const MONTH_MAP = {"03":"3月","04":"4月","05":"5月","06":"6月"};
+const COLORS = ["#E74C3C","#3498DB","#F39C12","#2ECC71","#9B59B6","#1ABC9C","#E67E22","#2980B9"];
 
-// =========================================================================
-// 🌐 STATE
-// =========================================================================
-let currentData = null;
-let chartInstances = {};
-let csvRawData = null;
-const MONTHS = ["3月","4月","5月","6月"];
+// ============================================================
+// DATA LOADING
+// ============================================================
+async function loadData(){
+  const ld = document.getElementById("loading"), badge = document.getElementById("dataBadge"), src = document.getElementById("srcLabel");
+  try{
+    const r = await fetch("./data.json?_t="+Date.now());
+    if(r.ok){ DATA = await r.json(); badge.textContent="✅ data.json"; badge.style.color="#2ECC71"; src.textContent="💾 data.json"; init(); ld.classList.add("hide"); return; }
+  }catch(e){}
+  try{
+    const s = localStorage.getItem("kdata_v3");
+    if(s){ DATA = JSON.parse(s); badge.textContent="📦 缓存"; badge.style.color="#F1C40F"; src.textContent="💾 缓存"; init(); ld.classList.add("hide"); return; }
+  }catch(e){}
+  badge.textContent="⚠️ 无数据"; badge.style.color="#F39C12"; src.textContent="💾 无数据"; ld.classList.add("hide");
+}
 
-// =========================================================================
-// 📥 DATA LOADING
-// =========================================================================
-async function loadData() {
-  const loading = document.getElementById("loadingOverlay");
-  const badge = document.getElementById("dataStatusBadge");
-  const label = document.getElementById("dataSourceLabel");
-  try {
-    const resp = await fetch("./data.json?_t="+Date.now());
-    if (resp.ok) {
-      currentData = await resp.json();
-      badge.textContent = "✅ data.json";
-      badge.style.color = "#2ECC71";
-      label.textContent = "💾 data.json（外部文件）";
-      renderAll(currentData);
-      loading.classList.add("hidden"); return;
+function init(){
+  const data = DATA;
+  // Populate filters
+  const fi = data.filterOptions;
+  populateSelect("fDemandItem", fi.demandItems);
+  populateSelect("fSettleType", fi.settleTypes);
+  populateSelect("fMonth", fi.months);
+  // Load tasks & settlements from files
+  loadTaskData();
+}
+
+function populateSelect(id, opts){
+  const sel = document.getElementById(id);
+  sel.innerHTML = opts.map(o => `<option value="${o}">${o}</option>`).join("");
+}
+
+async function loadTaskData(){
+  try{
+    const r = await fetch("./_tasks.json?_t="+Date.now());
+    if(r.ok){ DATA.tasks = await r.json(); }
+  }catch(e){}
+  try{
+    const r = await fetch("./_settlement.json?_t="+Date.now());
+    if(r.ok){
+      const s = await r.json();
+      DATA.settlements = s.rows ? s.rows.filter(x => x.月份 && x.月份 !== "合计" && x.结算金额) : [];
     }
-  } catch(e) {}
-  try {
-    const saved = localStorage.getItem("kanbanData_v2");
-    if (saved) { currentData = JSON.parse(saved); badge.textContent = "📦 本地缓存"; badge.style.color="#F1C40F"; label.textContent="💾 本地缓存"; renderAll(currentData); loading.classList.add("hidden"); return; }
-  } catch(e) {}
-  currentData = JSON.parse(JSON.stringify(DEFAULT_DATA));
-  badge.textContent = "⚠️ 默认数据";
-  badge.style.color = "#F39C12";
-  label.textContent = "💾 默认数据";
-  renderAll(currentData);
-  loading.classList.add("hidden");
+  }catch(e){}
+  renderAll();
 }
 
-// =========================================================================
-// 📊 RENDER ENGINE
-// =========================================================================
-
-function disposeChart(id) { if(chartInstances[id]){chartInstances[id].dispose();delete chartInstances[id]} }
-function initChart(id, h) {
-  disposeChart(id);
-  const el = document.getElementById(id);
-  if(!el) return null;
-  const c = echarts.init(el);
-  chartInstances[id] = c;
-  const ro = new ResizeObserver(()=>c.resize());
-  ro.observe(el.parentElement);
-  return c;
+// ============================================================
+// FILTER
+// ============================================================
+function applyFilter(){
+  filters.demandItem = document.getElementById("fDemandItem").value;
+  filters.settleType = document.getElementById("fSettleType").value;
+  filters.month = document.getElementById("fMonth").value;
+  renderAll();
 }
 
-// --- KPI ---
-function renderKPI(data) {
-  const container = document.getElementById("kpiContainer");
-  container.innerHTML = data.kpiCards.map((k,i) => `
-    <div class="kpi-card ${k.color} animate" style="animation-delay:${i*0.08}s">
-      <div class="kpi-label">${k.label}</div>
-      <div class="kpi-value ${k.color}">${k.value}<span style="font-size:0.65rem;font-weight:400;color:var(--text-light);margin-left:3px">${k.unit}</span></div>
-      <div class="kpi-sub"><span class="kpi-trend-${k.trend==="up"?"up":"down"}">${k.trend==="up"?"↑":"↓"} ${k.sub}</span></div>
-    </div>
-  `).join("");
+function getFilteredTasks(){
+  if(!DATA || !DATA.tasks) return [];
+  let t = DATA.tasks;
+  if(filters.demandItem !== "全部") t = t.filter(x => x.demandItem === filters.demandItem);
+  if(filters.settleType !== "全部") t = t.filter(x => x.settleType === filters.settleType);
+  if(filters.month !== "全部") t = t.filter(x => x.month === filters.month.replace("月",""));
+  return t;
 }
 
-// --- Step sections ---
-function renderSteps(data) {
-  const container = document.getElementById("stepsContainer");
-  const steps = data.steps;
-  let html = "";
-  let idx = 0;
-  for (const [name, step] of Object.entries(steps)) {
-    const delay = Math.min(idx + 2, 4);
-    idx++;
-    html += `
-      <div class="step-section animate delay-${delay}">
-        <div class="step-header" style="background:${step.color}">
-          <span class="step-dot"></span>${name}
-          <span class="step-count">${step.metrics.length}项指标</span>
-        </div>
-        <div class="step-body">
-          <div class="metrics-row">
-            ${step.metrics.map(m => `
-              <span class="metric-badge ${m.status}">
-                <span class="m-label">${m.label}</span>
-                <span class="m-value">${m.value}</span>
-                ${m.target !== "—" ? `<span style="font-size:0.7rem;opacity:0.6;margin-left:2px">目标:${m.target}</span>` : ""}
-              </span>
-            `).join("")}
-          </div>
-          <div class="chart-row">
-            <div class="chart-box" id="chart_step_${idx}_1"></div>
-            ${step.trend2 ? `<div class="chart-box" id="chart_step_${idx}_2"></div>` :
-             step.chartData ? `<div class="chart-box" id="chart_step_${idx}_2"></div>` :
-             step.pieData ? `<div class="chart-box" id="chart_step_${idx}_2"></div>` : ""}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  container.innerHTML = html;
+function num(v){ const n=parseFloat(v); return isNaN(n)?0:n; }
+function pctStr(v){ return typeof v === 'string' && v.includes('%') ? num(v) : num(v)*100; }
 
-  // Render charts
-  idx = 0;
-  for (const [name, step] of Object.entries(steps)) {
-    idx++;
-    // First chart: trend line
-    if (step.trend) renderStepTrend(`chart_step_${idx}_1`, step.trend, step.color);
-    else if (step.chartData) renderTypeChart(`chart_step_${idx}_1`, step.chartData);
-    else if (step.pieData) renderSimplePie(`chart_step_${idx}_1`, step.pieData);
-
-    // Second chart
-    if (step.trend2) renderStepTrend(`chart_step_${idx}_2`, step.trend2, step.color);
-    else if (step.chartData) renderTypeChart(`chart_step_${idx}_2`, step.chartData);
-    else if (step.pieData) renderSimplePie(`chart_step_${idx}_2`, step.pieData);
-  }
-}
-
-function renderStepTrend(id, trend, color) {
-  const chart = initChart(id, 220);
-  if (!chart) return;
-  const months = trend.categories || MONTHS;
-
-  const series = [{
-    type: "line",
-    data: trend.values,
-    smooth: true,
-    symbol: "circle",
-    symbolSize: 8,
-    lineStyle: { color, width: 3 },
-    itemStyle: { color },
-    areaStyle: { color: color + "22" },
-    label: { show: true, formatter: (p) => p.value + (trend.values[0] > 100 ? "" : "%"), fontSize: 10, fontWeight: 600 },
-  }];
-  if (trend.target) {
-    series.push({
-      type: "line",
-      data: [],
-      markLine: {
-        silent: true, symbol: "none",
-        lineStyle: { type: "dashed", color: "#E74C3C", width: 1.5 },
-        label: { formatter: `目标 ${trend.target}${trend.target > 1 ? "%" : ""}`, fontSize: 9, color: "#E74C3C" },
-        data: [{ yAxis: trend.target }],
-      },
-    });
-  }
-
-  chart.setOption({
-    tooltip: { trigger: "axis", formatter: (p) => `
-      <strong>${trend.title}</strong><br/>
-      ${p.map(i => `${i.name}: <strong>${typeof i.value === 'number' ? i.value.toFixed(1) : i.value}${trend.values[0] > 100 ? "" : "%"}</strong>`).join("<br/>")}
-    `},
-    grid: { top: 20, bottom: 16, left: 12, right: 12, containLabel: true },
-    xAxis: { type: "category", data: months, axisLabel: { fontSize: 10 } },
-    yAxis: { type: "value", axisLabel: { fontSize: 9 } },
-    series,
-  });
-}
-
-function renderTypeChart(id, data) {
-  const chart = initChart(id, 220);
-  if (!chart) return;
-  chart.setOption({
-    tooltip: { trigger: "axis" },
-    legend: { data: ["采集完成率", "发布及时率"], bottom: 0, textStyle: { fontSize: 10 } },
-    grid: { top: 16, bottom: 32, left: 8, right: 8, containLabel: true },
-    xAxis: { type: "category", data: data.categories, axisLabel: { fontSize: 9, rotate: 15 } },
-    yAxis: { type: "value", min: 0, max: 100, axisLabel: { formatter: "{value}%", fontSize: 9 } },
-    series: [
-      { name: "采集完成率", type: "bar", data: data.completionRate, itemStyle: { color: "#F39C12", borderRadius: [4,4,0,0] }, label: { show: true, position: "top", formatter: "{c}%", fontSize: 9 } },
-      { name: "发布及时率", type: "bar", data: data.timelinessRate, itemStyle: { color: "#3498DB", borderRadius: [4,4,0,0] }, label: { show: true, position: "top", formatter: "{c}%", fontSize: 9 } },
-    ],
-  });
-}
-
-function renderSimplePie(id, data) {
-  const chart = initChart(id, 220);
-  if (!chart) return;
-  chart.setOption({
-    tooltip: { formatter: (p) => `<strong>${p.name}</strong><br/>数量: ${p.value}` },
-    series: [{
-      type: "pie", radius: ["25%","55%"], center: ["50%","50%"],
-      itemStyle: { borderRadius: 4, borderColor: "#fff", borderWidth: 2 },
-      label: { show: true, formatter: "{b}: {c}", fontSize: 10 },
-      data: data.map((d,i) => ({ ...d, itemStyle: { color: ["#F1C40F","#E74C3C","#3498DB","#2ECC71","#9B59B6"][i%5] } })),
-    }],
-  });
-}
-
-// --- Monthly Trend Overview ---
-function renderMonthlyTrends(data) {
-  const grid = document.getElementById("trendGrid");
-  const trends = data.monthlyTrend;
-  const months = data.months || MONTHS;
-  const colors = ["#E74C3C","#3498DB","#F39C12","#2ECC71","#9B59B6","#1ABC9C","#E67E22","#2C3E50"];
-  let idx = 0;
-  grid.innerHTML = Object.entries(trends).map(([name, values]) => {
-    const c = colors[idx++ % colors.length];
-    return `<div class="card" style="padding:12px;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);background:var(--card)">
-      <div style="font-size:0.78rem;font-weight:600;margin-bottom:8px;color:${c}">${name}</div>
-      <div class="chart-box" id="trend_${name.replace(/[^a-zA-Z0-9]/g,'_')}" style="height:160px"></div>
-    </div>`;
-  }).join("");
-
-  idx = 0;
-  for (const [name, values] of Object.entries(trends)) {
-    const c = colors[idx++ % colors.length];
-    const id = `trend_${name.replace(/[^a-zA-Z0-9]/g,'_')}`;
-    const chart = initChart(id, 160);
-    if (!chart) continue;
-    chart.setOption({
-      grid: { top: 10, bottom: 10, left: 6, right: 6, containLabel: true },
-      xAxis: { type: "category", data: months, axisLabel: { fontSize: 8 } },
-      yAxis: { type: "value", axisLabel: { fontSize: 8 } },
-      series: [{
-        type: "line", data: values, smooth: true, symbol: "circle", symbolSize: 6,
-        lineStyle: { color: c, width: 2 },
-        itemStyle: { color: c },
-        areaStyle: { color: c + "18" },
-        label: { show: true, formatter: (p) => typeof p.value === 'number' ? (values[0] > 100 ? p.value : p.value.toFixed(1) + (p.value > 1 ? "%" : "")) : p.value, fontSize: 8, fontWeight: 600 },
-      }],
-    });
-  }
-}
-
-// --- Alerts ---
-function renderAlerts(data) {
-  document.getElementById("alertContainer").innerHTML = data.alerts.map(a => `
-    <div class="alert-item alert-${a.priority.toLowerCase()}">
-      <span class="alert-priority">${a.priority}</span>
-      <div class="alert-content">
-        <div class="alert-problem">${a.problem}</div>
-        <div class="alert-action">💡 ${a.action}</div>
-      </div>
-    </div>
-  `).join("");
-}
-
-function renderAll(data) {
-  if (!data) return;
-  renderKPI(data);
-  renderSteps(data);
-  renderMonthlyTrends(data);
-  renderAlerts(data);
-}
-
-// =========================================================================
-// 📝 DATA EDITOR
-// =========================================================================
-function openPanel() {
-  document.getElementById("dataEditor").value = JSON.stringify(currentData, null, 2);
-  document.getElementById("dataPanel").classList.add("open");
-  document.getElementById("panelOverlay").classList.add("open");
-}
-function closePanel() {
-  document.getElementById("dataPanel").classList.remove("open");
-  document.getElementById("panelOverlay").classList.remove("open");
-}
-function applyDataEdit() {
-  try {
-    const parsed = JSON.parse(document.getElementById("dataEditor").value);
-    currentData = parsed;
-    localStorage.setItem("kanbanData_v2", JSON.stringify(parsed));
-    renderAll(currentData);
-    document.getElementById("dataStatusBadge").textContent = "📦 已编辑";
-    document.getElementById("dataStatusBadge").style.color = "#F1C40F";
-    document.getElementById("dataSourceLabel").textContent = "💾 手动编辑";
-    closePanel();
-    showToast("✅ 已应用！导出 data.json 上传到 GitHub 永久生效", "success");
-  } catch(e) { alert("JSON 格式错误：" + e.message); }
-}
-function resetToDefault() {
-  if (!confirm("恢复默认数据？")) return;
-  currentData = JSON.parse(JSON.stringify(DEFAULT_DATA));
-  localStorage.removeItem("kanbanData_v2");
-  renderAll(currentData);
-  document.getElementById("dataStatusBadge").textContent = "✅ 已重置";
-  document.getElementById("dataStatusBadge").style.color = "#2ECC71";
-  document.getElementById("dataSourceLabel").textContent = "💾 默认数据";
-}
-function exportDataJSON() {
-  const blob = new Blob([JSON.stringify(currentData, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = "data.json"; a.click();
-  URL.revokeObjectURL(url);
-  showToast("📤 已导出 data.json，上传到 GitHub 替换原文件", "info");
-}
-
-// =========================================================================
-// 📥 CSV / EXCEL IMPORT
-// =========================================================================
-const FIELD_MAP = {
-  month: ["月份","月","需求月份"],
-  project: ["项目","来源","需求来源","需求名称","省份"],
-  demandType: ["结算类型","需求类型","类型"],
-  demandQty: ["下发数量","需求量","下发数量(含多家）","收到数量"],
-  timeliness: ["需求发布及时率","发布及时率","及时率"],
-  collectedQty: ["实际采集完成数量","采集完成数","实际采集"],
-  completionRate: ["采集完成率","完成率"],
-  rejectReason: ["核实打回材料根因","打回根因","根因"],
-  closedStatus: ["是否采集闭环","闭环状态","闭环"],
-  accuracy: ["需求准确率","准确率"],
-  passRate: ["需求初审通过率","初审通过率"],
-  problemRate: ["需求问题率","问题率"],
-};
-
-function detectField(headers, field) {
-  const kws = FIELD_MAP[field] || [];
-  for (const h of headers) {
-    for (const kw of kws) {
-      if (h.includes(kw) || kw.includes(h)) return h;
+function calcMetrics(tasks){
+  const n = tasks.length;
+  const totalDemand = tasks.reduce((s,t) => s + num(t.demandQty), 0);
+  const totalCollected = tasks.reduce((s,t) => s + num(t.collected), 0);
+  const tlCount = tasks.filter(t => t.timeliness === 1 || t.timeliness === "100%").length;
+  const hasTL = tasks.some(t => t.timeliness !== undefined && t.timeliness !== '');
+  let crSum = 0, crCnt = 0, prSum = 0, prCnt = 0, passSum = 0, passCnt = 0;
+  let rejectCount = 0, selfCorrectSum = 0, feedbackSum = 0, verifySum = 0;
+  let closedCount = 0, allClosedCount = 0, hasClosed = 0;
+  tasks.forEach(t => {
+    const cr = pctStr(t.completionRate);
+    if(cr > 0 || t.completionRate === "0%"){ crSum += cr; crCnt++; }
+    const pr = pctStr(t.problemRate);
+    if(!isNaN(pr) && t.problemRate !== ""){ prSum += pr; prCnt++; }
+    if(t.passRate !== "" && t.passRate !== undefined){
+      const pr2 = pctStr(t.passRate);
+      if(!isNaN(pr2) && pr2 > 0){ passSum += pr2; passCnt++; }
     }
-  }
-  return null;
-}
+    if(t.rejectReason && t.rejectReason !== "") rejectCount++;
+    selfCorrectSum += num(t.selfCorrect);
+    feedbackSum += num(t.feedbackMat);
+    verifySum += num(t.expertVerify);
+    if(t.closed !== "" && t.closed !== undefined){ hasClosed++; if(t.closed === "是" || t.closed === "全部闭环") closedCount++; }
+    if(t.allClosed === "是") allClosedCount++;
+  });
 
-document.getElementById("dropZone").addEventListener("click", ()=>document.getElementById("csvFileInput").click());
-document.getElementById("csvFileInput").addEventListener("change", (e)=>{if(e.target.files.length) handleFile(e.target.files[0]);});
-document.getElementById("dropZone").addEventListener("dragover", (e)=>{e.preventDefault();e.currentTarget.classList.add("dragover");});
-document.getElementById("dropZone").addEventListener("dragleave", (e)=>{e.preventDefault();e.currentTarget.classList.remove("dragover");});
-document.getElementById("dropZone").addEventListener("drop", (e)=>{e.preventDefault();e.currentTarget.classList.remove("dragover");if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);});
-
-function showStatus(msg, type) {
-  const el = document.getElementById("csvStatus");
-  el.textContent = msg; el.className = "status-msg " + type;
-}
-
-function handleFile(file) {
-  const isExcel = file.name.endsWith(".xlsx")||file.name.endsWith(".xls");
-  const isCSV = file.name.endsWith(".csv");
-  if (!isExcel && !isCSV) { showStatus("请选择 CSV 或 Excel 文件", "error"); return; }
-
-  const reader = new FileReader();
-  if (isExcel) reader.readAsArrayBuffer(file);
-  else reader.readAsText(file);
-
-  reader.onload = (e) => {
-    let result;
-    if (isExcel) {
-      try {
-        const wb = XLSX.read(new Uint8Array(e.target.result), {type:"array"});
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(ws, {defval:""});
-        result = {data: json, meta: {fields: json.length ? Object.keys(json[0]) : []}};
-        if (!json.length) { showStatus("Excel 为空", "error"); return; }
-        showStatus(`✅ Excel ${json.length} 行`, "success");
-      } catch(ex) { showStatus("Excel 解析失败: "+ex.message, "error"); return; }
-    } else {
-      const csv = e.target.result;
-      result = Papa.parse(csv, {header:true, skipEmptyLines:true});
-      showStatus(`✅ CSV ${result.data.length} 行`, "success");
-    }
-    csvRawData = result;
-
-    // Preview
-    const preview = document.getElementById("csvPreview");
-    const headers = result.meta.fields || [];
-    const rows = result.data.slice(0,5);
-    let html = "<table><thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead><tbody>";
-    rows.forEach(r => { html += "<tr>"+headers.map(h=>`<td>${r[h]||""}</td>`).join("")+"</tr>"; });
-    html += "</tbody></table>";
-    preview.innerHTML = html;
-    document.getElementById("csvPreviewArea").classList.remove("hidden");
-    document.getElementById("csvRowCount").textContent = `共 ${result.data.length} 行`;
-
-    // Mapping
-    const mapping = document.getElementById("csvMapping");
-    const fieldLabels = {
-      month:"月份",project:"需求名称/来源",demandType:"结算类型",demandQty:"下发数量",
-      timeliness:"发布及时率",collectedQty:"采集完成数",completionRate:"采集完成率",
-      rejectReason:"打回根因",closedStatus:"闭环状态",accuracy:"需求准确率",
-      passRate:"初审通过率",problemRate:"问题率"
-    };
-    mapping.innerHTML = Object.entries(fieldLabels).map(([key, label]) => {
-      const matched = detectField(headers, key);
-      return `<div class="csv-mapping-item"><label>${label}</label><select id="map_${key}">${["",...headers].map(h => `<option value="${h}" ${h===matched?'selected':''}>${h||"— 不导入 —"}</option>`).join("")}</select></div>`;
-    }).join("");
-    document.getElementById("csvMappingArea").classList.remove("hidden");
-    document.getElementById("csvApplyBtn").disabled = false;
+  return {
+    n, totalDemand, totalCollected,
+    timelinessRate: hasTL ? +(tlCount/tasks.length*100).toFixed(1) : 0,
+    completionRate: crCnt ? +(crSum/crCnt).toFixed(1) : 0,
+    problemRate: prCnt ? +(prSum/prCnt).toFixed(1) : 0,
+    passRate: passCnt ? +(passSum/passCnt).toFixed(1) : 0,
+    rejectCount, selfCorrect: selfCorrectSum,
+    feedbackRate: totalCollected ? +((feedbackSum/totalCollected)*100).toFixed(1) : 0,
+    verifyPassRate: feedbackSum ? +(((feedbackSum - rejectCount)/feedbackSum)*100).toFixed(1) : 0,
+    accuracyRate: 0,
+    closedRate: hasClosed ? +(closedCount/hasClosed*100).toFixed(1) : 0,
+    allClosedRate: n ? +(allClosedCount/n*100).toFixed(1) : 0,
   };
 }
 
-function applyCSV() {
-  if (!csvRawData) return;
-  const map = {};
-  document.querySelectorAll("#csvMapping select").forEach(s => { if(s.value) map[s.id.replace("map_","")] = s.value; });
+// ============================================================
+// RENDER
+// ============================================================
+function renderAll(){
+  if(!DATA || !DATA.tasks) return;
+  const tasks = getFilteredTasks();
+  const m = calcMetrics(tasks);
+  document.getElementById("filterCount").textContent = `共 ${tasks.length} 条`;
+  renderKPI(m);
+  renderSteps(tasks, m);
+  renderMonthTrends();
+  renderAlerts(tasks, m);
+  renderTaskTable(tasks);
+}
 
-  try {
-    const newData = JSON.parse(JSON.stringify(DEFAULT_DATA));
-    const rows = csvRawData.data;
-    const months = {};
-    const types = {};
+function renderKPI(m){
+  const cards = [
+    {l:"任务总数", v:m.n, u:"项", c:"blue"},
+    {l:"总需求量", v:m.totalDemand.toLocaleString(), u:"条", c:"blue"},
+    {l:"采集完成率", v:m.completionRate+"%", u:"", c:m.completionRate>=80?"green":"orange"},
+    {l:"发布及时率", v:m.timelinessRate+"%", u:"", c:m.timelinessRate>=80?"green":"red"},
+    {l:"初审通过率", v:m.passRate+"%", u:"", c:"green"},
+  ];
+  document.getElementById("kpiRow").innerHTML = cards.map((k,i) =>
+    `<div class="kpi-card ${k.c} anim" style="animation-delay:${i*0.04}s"><div class="kpi-label">${k.l}</div><div class="kpi-value ${k.c}">${k.v}<span style="font-size:0.6rem;font-weight:400;color:var(--tl);margin-left:2px">${k.u}</span></div></div>`
+  ).join("");
+}
 
-    rows.forEach(r => {
-      const month = r[map.month] || "";
-      const mKey = month.replace("2026年","").replace("年","").replace("月","");
-      const type = r[map.demandType] || "其他";
-      const demand = parseFloat(r[map.demandQty]) || 0;
-      const collected = parseFloat(r[map.collectedQty]) || 0;
-      const tl = r[map.timeliness];
-      const tlVal = tl === 1 || tl === "1" || tl === "100%" || tl === 100 ? 1 : 0;
-      const cr = parseFloat(r[map.completionRate]) || 0;
+function renderSteps(tasks, m){
+  const area = document.getElementById("stepsArea");
+  const sc = DATA.stepConfig;
+  let html = "";
+  let idx = 0;
+  for(const [name, cfg] of Object.entries(sc)){
+    idx++;
+    const isCollect = name === "采集执行";
+    const delay = Math.min(idx+1, 4);
 
-      // Monthly aggregation
-      if (mKey && map.demandQty) {
-        if (!months[mKey]) months[mKey] = {demand:0, tlSum:0, tlCnt:0, collected:0, crSum:0, crCnt:0};
-        months[mKey].demand += demand;
-        if (map.timeliness) { months[mKey].tlSum += tlVal; months[mKey].tlCnt++; }
-        months[mKey].collected += collected;
-        if (cr) { months[mKey].crSum += cr; months[mKey].crCnt++; }
-      }
+    html += `<div class="step-section anim d${delay}"><div class="step-header" style="background:${cfg.color}">● ${name}<span class="s-count">${isCollect?'4个维度':cfg.metrics.length+'项指标'}</span></div><div class="step-body">`;
 
-      // By type
-      if (!types[type]) types[type] = {demand:0, collected:0, tlSum:0, tlCnt:0};
-      types[type].demand += demand;
-      types[type].collected += collected;
-      if (map.timeliness) { types[type].tlSum += tlVal; types[type].tlCnt++; }
-    });
+    // Metrics badges
+    const badges = renderStepMetrics(name, m, cfg);
+    html += `<div class="metrics-row">${badges}</div>`;
 
-    // Build monthlySummary trends
-    const monthOrder = ["3月","4月","5月","6月"];
-    const trendData = {
-      需求发布及时率: [], 需求量: [], 采集完成率: [], 采集完成数: [],
-      需求准确率: [], 需求初审通过率: [], 需求问题率: [], 闭环率: [],
-    };
-    monthOrder.forEach(m => {
-      const d = months[m] || {demand:0, tlSum:0, tlCnt:0, collected:0, crSum:0, crCnt:0};
-      trendData["需求量"].push(d.demand);
-      trendData["需求发布及时率"].push(d.tlCnt ? +(d.tlSum/d.tlCnt*100).toFixed(1) : 0);
-      trendData["采集完成率"].push(d.crCnt ? +(d.crSum/d.crCnt).toFixed(1) : 0);
-      trendData["采集完成数"].push(d.collected);
-    });
-    newData.monthlyTrend = trendData;
-
-    // Build steps
-    newData.steps["需求下发"].trend.values = trendData["需求发布及时率"];
-    newData.steps["需求下发"].trend2.values = trendData["需求量"];
-    newData.steps["需求下发"].metrics[0].value = trendData["需求发布及时率"].slice(-1)[0] + "%";
-    newData.steps["需求下发"].metrics[1].value = trendData["需求量"].slice(-1)[0].toLocaleString() + "条";
-
-    newData.steps["采集执行"].trend.values = trendData["采集完成率"];
-    newData.steps["采集执行"].trend2.values = trendData["采集完成数"];
-
-    // Build type chart
-    const typeKeys = Object.keys(types).sort();
-    if (typeKeys.length) {
-      newData.steps["按结算类型"].chartData = {
-        categories: typeKeys,
-        completionRate: typeKeys.map(t => types[t].demand ? +(types[t].collected/types[t].demand*100).toFixed(1) : 0),
-        timelinessRate: typeKeys.map(t => types[t].tlCnt ? +(types[t].tlSum/types[t].tlCnt*100).toFixed(1) : 0),
-        demandTotal: typeKeys.map(t => types[t].demand),
-      };
-      const ws = typeKeys.map(t => ({name: t, ...types[t]}));
-      const worst = ws.sort((a,b) => (a.collected/a.demand||0) - (b.collected/b.demand||0))[0];
-      if (worst) newData.alerts[1].problem = `${worst.name} 采集完成率仅 ${(worst.collected/worst.demand*100).toFixed(1)}%`;
+    if(isCollect){
+      // Overview mini charts
+      html += `<div class="chart-row" style="margin-bottom:2px"><div class="chart-box-sm" id="colOvChart1"></div><div class="chart-box-sm" id="colOvChart2"></div></div>`;
+      // Focus tabs
+      html += `<div style="border-top:1px solid var(--lg);margin-top:6px;padding-top:6px"><div class="focus-tabs">`;
+      html += `<button class="ftab ft-capacity on" onclick="switchTab(this,'cp')">📊 产能</button>`;
+      html += `<button class="ftab ft-budget" onclick="switchTab(this,'bd')">💰 费用执行</button>`;
+      html += `<button class="ftab ft-progress" onclick="switchTab(this,'pg')">📈 采集进度</button>`;
+      html += `<button class="ftab ft-tasks" onclick="switchTab(this,'tl')">📋 任务清单</button>`;
+      html += `</div>`;
+      html += `<div class="fpanel on" id="fp_cp"></div>`;
+      html += `<div class="fpanel" id="fp_bd"></div>`;
+      html += `<div class="fpanel" id="fp_pg"></div>`;
+      html += `<div class="fpanel" id="fp_tl"></div>`;
+      html += `</div>`;
+    } else if(name === "审核打回"){
+      html += `<div class="chart-row"><div class="chart-box-sm" id="stepChart${idx}_1"></div><div class="chart-box-sm" id="stepChart${idx}_2"></div></div>`;
+    } else if(name === "闭环验证"){
+      html += `<div class="chart-row"><div class="chart-box-sm" id="stepChart${idx}_1"></div><div class="chart-box-sm" id="stepChart${idx}_2"></div></div>`;
     }
+    html += `</div></div>`;
+  }
+  area.innerHTML = html;
 
-    currentData = newData;
-    localStorage.setItem("kanbanData_v2", JSON.stringify(newData));
-    renderAll(currentData);
-    document.getElementById("dataStatusBadge").textContent = "📥 导入成功";
-    document.getElementById("dataStatusBadge").style.color = "#2ECC71";
-    document.getElementById("dataSourceLabel").textContent = "💾 导入数据";
-    closeCSV();
-    showToast("✅ 导入成功！点「导出 data.json」上传到 GitHub 永久生效", "success");
-  } catch(e) { showStatus("处理出错: "+e.message, "error"); }
+  // Render charts
+  idx = 0;
+  for(const [name, cfg] of Object.entries(sc)){
+    idx++;
+    if(name === "采集执行"){
+      renderColOverview(m);
+      renderCapacityTab(tasks, m);
+      renderBudgetTab();
+      renderProgressTab(tasks, m);
+      renderTaskTable(tasks);
+    } else if(name === "审核打回"){
+      renderRejectChart(tasks, idx);
+    } else if(name === "闭环验证"){
+      renderClosedChart(tasks, m, idx);
+    }
+  }
 }
 
-function openCSV() {
-  document.getElementById("csvPanel").classList.add("open");
-  document.getElementById("csvOverlay").classList.add("open");
-}
-function closeCSV() {
-  document.getElementById("csvPanel").classList.remove("open");
-  document.getElementById("csvOverlay").classList.remove("open");
-  document.getElementById("csvPreviewArea").classList.add("hidden");
-  document.getElementById("csvMappingArea").classList.add("hidden");
-  document.getElementById("csvApplyBtn").disabled = true;
-  document.getElementById("csvStatus").className = "status-msg";
-  document.getElementById("csvFileInput").value = "";
-  csvRawData = null;
-}
-
-// =========================================================================
-// 🔔 TOAST
-// =========================================================================
-function showToast(msg, type) {
-  const colors = {success:["#EAFAF1","#2ECC71"], info:["#EBF5FB","#3498DB"], error:["#FDEDEC","#E74C3C"]};
-  const [bg, c] = colors[type] || colors.info;
-  const el = document.createElement("div");
-  el.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:8px;font-size:0.82rem;font-weight:500;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:${bg};color:${c};border:1px solid ${c}22;animation:fadeInUp 0.3s ease`;
-  el.textContent = msg;
-  document.body.appendChild(el);
-  setTimeout(() => { el.style.opacity="0"; el.style.transition="opacity 0.3s"; setTimeout(()=>el.remove(),300); }, 4000);
+function renderStepMetrics(name, m, cfg){
+  return cfg.metrics.map(mm => {
+    let val = m[mm.key];
+    if(val === undefined || val === null) val = "—";
+    else if(mm.unit === "%") val = val + "%";
+    else if(mm.key === "totalDemand" || mm.key === "collected") val = Number(val).toLocaleString() + mm.unit;
+    else if(mm.key === "feedbackRate" || mm.key === "verifyPassRate") val = val + "%";
+    else val = val + mm.unit;
+    let status = "info";
+    if(mm.key === "completionRate" || mm.key === "timelinessRate" || mm.key === "passRate") status = m[mm.key] >= 80 ? "good" : m[mm.key] >= 60 ? "warn" : "bad";
+    if(mm.key === "problemRate") status = m[mm.key] <= 5 ? "good" : m[mm.key] <= 15 ? "warn" : "bad";
+    return `<span class="metric-badge ${status}"><span class="ml">${mm.label}</span><span class="mv">${val}</span></span>`;
+  }).join("");
 }
 
-// =========================================================================
-// 🚀 INIT
-// =========================================================================
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("currentDate").textContent = new Date().toLocaleDateString("zh-CN", {year:"numeric",month:"long",day:"numeric"});
+// ============================================================
+// COLLECTION STEP TABS
+// ============================================================
+function switchTab(btn, id){
+  const parent = btn.closest(".step-body");
+  parent.querySelectorAll(".ftab").forEach(t=>t.classList.remove("on"));
+  btn.classList.add("on");
+  parent.querySelectorAll(".fpanel").forEach(p=>p.classList.remove("on"));
+  const panel = document.getElementById("fp_"+id);
+  if(panel) panel.classList.add("on");
+}
+
+function disposeC(id){ if(charts[id]){ charts[id].dispose(); delete charts[id]; } }
+function initC(id, h){
+  disposeC(id);
+  const el = document.getElementById(id);
+  if(!el) return null;
+  const c = echarts.init(el);
+  charts[id] = c;
+  new ResizeObserver(()=>c.resize()).observe(el.parentElement);
+  return c;
+}
+
+function renderColOverview(m){
+  const months = ["3月","4月","5月","6月"];
+  const vals1 = DATA.monthlyTrend["采集完成数"] || [];
+  const vals2 = DATA.monthlyTrend["采集完成率"] || [];
+  const c1 = initC("colOvChart1", 160);
+  if(c1) c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",axisLabel:{fontSize:7}},series:[{type:"line",data:vals1,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#F39C12",width:2},itemStyle:{color:"#F39C12"},areaStyle:{color:"#F39C1222"},label:{show:true,formatter:p=>p.value,fontSize:7,fontWeight:600}}]});
+  const c2 = initC("colOvChart2", 160);
+  if(c2) c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"line",data:vals2,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#F39C12",width:2},itemStyle:{color:"#F39C12"},areaStyle:{color:"#F39C1222"},label:{show:true,formatter:p=>p.value+"%",fontSize:7,fontWeight:600},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标90%",fontSize:7,color:"#E74C3C"},data:[{yAxis:90}]}}]});
+}
+
+function renderCapacityTab(tasks, m){
+  const panel = document.getElementById("fp_cp");
+  if(!panel) return;
+  const totalReceived = tasks.reduce((s,t)=>s+num(t.demandQty), 0);
+  const totalFeedback = tasks.reduce((s,t)=>s+num(t.feedbackMat), 0);
+  const totalVerify = tasks.reduce((s,t)=>s+num(t.expertVerify), 0);
+  panel.innerHTML = `
+    <div class="focus-metrics">
+      <div class="fm-box"><div class="fm-l">产能利用率</div><div class="fm-v">${m.completionRate}%</div><div class="fm-d">实际采集/下发总量</div></div>
+      <div class="fm-box"><div class="fm-l">材料反馈率</div><div class="fm-v">${m.feedbackRate}%</div><div class="fm-d">反馈/实际采集</div></div>
+      <div class="fm-box"><div class="fm-l">专家核实通过率</div><div class="fm-v">${m.verifyPassRate}%</div><div class="fm-d">通过/反馈材料</div></div>
+    </div>
+    <div class="chart-row"><div class="chart-box-sm" id="cpChart1"></div><div class="chart-box-sm" id="cpChart2"></div></div>`;
+
+  const months = ["3月","4月","5月","6月"];
+  const vals = DATA.monthlyTrend["产能利用率"] || [];
+  const c1 = initC("cpChart1", 160);
+  if(c1) c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"line",data:vals,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#9B59B6",width:2},itemStyle:{color:"#9B59B6"},areaStyle:{color:"#9B59B622"},label:{show:true,formatter:p=>p.value+"%",fontSize:7},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标85%",fontSize:7,color:"#E74C3C"},data:[{yAxis:85}]}}]});
+
+  const funnel = ["收到→下发","下发→采集","采集→反馈","反馈→核实"];
+  const fvals = [totalReceived?+((tasks.reduce((s,t)=>s+num(t.demandQty),0)/totalReceived)*100).toFixed(1):0, m.completionRate, m.feedbackRate, m.verifyPassRate];
+  // Use actual product ratios
+  const totalDemand = tasks.reduce((s,t)=>s+num(t.demandQty),0);
+  const totalCollected = tasks.reduce((s,t)=>s+num(t.collected),0);
+  const r1 = totalDemand ? 100 : 0;
+  const r2 = totalDemand ? +((totalCollected/totalDemand)*100).toFixed(1) : 0;
+  const r3 = totalCollected ? +((totalFeedback/totalCollected)*100).toFixed(1) : 0;
+  const r4 = totalFeedback ? +((totalVerify/totalFeedback)*100).toFixed(1) : 0;
+  const c2 = initC("cpChart2", 160);
+  if(c2) c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:12,left:4,right:4,containLabel:true},xAxis:{type:"category",data:funnel,axisLabel:{fontSize:7}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"bar",data:[r1,r2,r3,r4].map((v,i)=>({value:v,itemStyle:{color:[94.8,79.3,83.2,76.5][i]>=85?"#2ECC71":[94.8,79.3,83.2,76.5][i]>=70?"#F39C12":"#E74C3C",borderRadius:[4,4,0,0]}})),barWidth:24,label:{show:true,position:"top",formatter:p=>p.value+"%",fontSize:8}}]});
+}
+
+function renderBudgetTab(){
+  const panel = document.getElementById("fp_bd");
+  if(!panel) return;
+  const s = DATA.settlements || [];
+  const totalBudget = DATA.totalBudget || 3900000;
+  const totalAmount = s.reduce((sum, x) => sum + num(x.结算金额 || x.amount), 0);
+  const execRate = totalBudget ? +((totalAmount/totalBudget)*100).toFixed(1) : 0;
+
+  // Group by month
+  const byMonth = {};
+  s.forEach(x => {
+    const m = x.月份 || x.month;
+    if(!byMonth[m]) byMonth[m] = 0;
+    byMonth[m] += num(x.结算金额 || x.amount);
+  });
+  const monthNames = ["1月","2月","3月","4月"];
+  const monthVals = monthNames.map(m => +(byMonth[m]/10000).toFixed(1) || 0);
+
+  // Group by type
+  const byType = {};
+  s.forEach(x => {
+    const t = x.需求类型 || x.type;
+    if(!byType[t]) byType[t] = 0;
+    byType[t] += num(x.结算金额 || x.amount);
+  });
+  const typeNames = Object.keys(byType);
+  const typeVals = typeNames.map(t => +(byType[t]/10000).toFixed(1));
+
+  panel.innerHTML = `
+    <div class="focus-metrics">
+      <div class="fm-box"><div class="fm-l">年度总预算</div><div class="fm-v">¥${(totalBudget/10000).toFixed(0)}万</div><div class="fm-d">采集加工总预算</div></div>
+      <div class="fm-box"><div class="fm-l">累计执行</div><div class="fm-v">¥${(totalAmount/10000).toFixed(1)}万</div><div class="fm-d">截至4月</div></div>
+      <div class="fm-box"><div class="fm-l">预算执行率</div><div class="fm-v">${execRate}%</div><div class="fm-d">累计/年度</div></div>
+    </div>
+    <div class="chart-row"><div class="chart-box-sm" id="bdChart1"></div><div class="chart-box-sm" id="bdChart2"></div></div>`;
+
+  const c1 = initC("bdChart1", 160);
+  if(c1) c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:monthNames,axisLabel:{fontSize:8}},yAxis:{type:"value",axisLabel:{formatter:"{value}万",fontSize:7}},series:[{type:"bar",data:monthVals,itemStyle:{color:"#E74C3C",borderRadius:[4,4,0,0]},barWidth:20,label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:8}}]});
+
+  const c2 = initC("bdChart2", 160);
+  if(c2) c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:12,left:4,right:4,containLabel:true},xAxis:{type:"category",data:typeNames,axisLabel:{fontSize:7,rotate:10}},yAxis:{type:"value",axisLabel:{formatter:"{value}万",fontSize:7}},series:[{type:"bar",data:typeVals,itemStyle:{color:"#3498DB",borderRadius:[4,4,0,0]},barWidth:24,label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:8}}]});
+}
+
+function renderProgressTab(tasks, m){
+  const panel = document.getElementById("fp_pg");
+  if(!panel) return;
+  const remain = m.totalDemand - m.totalCollected;
+  // By settle type
+  const byType = {};
+  tasks.forEach(t => {
+    const tp = t.settleType || "其他";
+    if(!byType[tp]) byType[tp] = {demand:0, collected:0, cnt:0};
+    byType[tp].demand += num(t.demandQty);
+    byType[tp].collected += num(t.collected);
+    byType[tp].cnt++;
+  });
+  const typeNames = Object.keys(byType);
+  const typeRates = typeNames.map(tn => byType[tn].demand ? +((byType[tn].collected/byType[tn].demand)*100).toFixed(1) : 0);
+
+  panel.innerHTML = `
+    <div class="focus-metrics">
+      <div class="fm-box"><div class="fm-l">整体完成率</div><div class="fm-v">${m.completionRate}%</div><div class="fm-d">${m.totalCollected}/${m.totalDemand}</div></div>
+      <div class="fm-box"><div class="fm-l">已采集</div><div class="fm-v">${m.totalCollected.toLocaleString()}</div><div class="fm-d">完成量</div></div>
+      <div class="fm-box"><div class="fm-l">待采集</div><div class="fm-v">${Math.max(0,remain).toLocaleString()}</div><div class="fm-d">剩余量</div></div>
+    </div>
+    <div class="chart-row"><div class="chart-box-sm" id="pgChart1"></div><div class="chart-box-sm" id="pgChart2"></div></div>`;
+
+  const c1 = initC("pgChart1", 160);
+  if(c1) c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:12,left:4,right:4,containLabel:true},xAxis:{type:"category",data:typeNames,axisLabel:{fontSize:7,rotate:10}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"bar",data:typeRates.map(v=>({value:v,itemStyle:{color:v>=80?"#2ECC71":v>=60?"#F39C12":"#E74C3C",borderRadius:[4,4,0,0]}})),barWidth:24,label:{show:true,position:"top",formatter:p=>p.value+"%",fontSize:8},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标90%",fontSize:7,color:"#E74C3C"},data:[{yAxis:90}]}}]});
+
+  // Source breakdown
+  const bySource = {};
+  tasks.forEach(t => {
+    const src = t.source || "其他";
+    if(!bySource[src]) bySource[src] = {demand:0, collected:0};
+    bySource[src].demand += num(t.demandQty);
+    bySource[src].collected += num(t.collected);
+  });
+  const srcNames = Object.keys(bySource);
+  const srcRates = srcNames.map(sn => bySource[sn].demand ? +((bySource[sn].collected/bySource[sn].demand)*100).toFixed(1) : 0);
+  const c2 = initC("pgChart2", 160);
+  if(c2) c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:12,left:4,right:4,containLabel:true},xAxis:{type:"category",data:srcNames,axisLabel:{fontSize:7,rotate:10}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"bar",data:srcRates.map(v=>({value:v,itemStyle:{color:v>=80?"#2ECC71":v>=60?"#F39C12":"#E74C3C",borderRadius:[4,4,0,0]}})),barWidth:20,label:{show:true,position:"top",formatter:p=>p.value+"%",fontSize:8},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标90%",fontSize:7,color:"#E74C3C"},data:[{yAxis:90}]}}]});
+}
+
+// ============================================================
+// TASK TABLE
+// ============================================================
+function renderTaskTable(tasks){
+  const panel = document.getElementById("fp_tl");
+  if(!panel) return;
+  if(!tasks || !tasks.length){
+    panel.innerHTML = '<div class="empty-state">暂无数据</div>';
+    return;
+  }
+  const cr = (t) => {
+    const v = t.completionRate;
+    if(v === "计算错误") return {val:"错误", pct:0, cls:"bad"};
+    const n = pctStr(v);
+    if(n > 100) return {val:"超额", pct:100, cls:"good"};
+    return {val: v, pct: n, cls: n >= 80 ? "good" : n >= 60 ? "warn" : "bad"};
+  };
+  const cls = (t) => {
+    const c = (t.closed || "").trim();
+    if(c === "是" || c === "全部闭环" || c === "关闭") return "s-closed";
+    if(c === "进行中") return "s-进行中";
+    if(c === "暂未启动") return "s-暂未启动";
+    return "";
+  };
+  const timelinessIcon = (t) => {
+    if(t.timeliness === 1 || t.timeliness === "100%") return "✅";
+    if(t.timeliness === 0 || t.timeliness === "0%") return "❌";
+    return "—";
+  };
+
+  let html = `<div class="task-table-wrap"><table class="task-table">
+    <thead><tr><th>需求名称</th><th>结算类型</th><th>需求项</th><th>月份</th><th>需求量</th><th>采集完成</th><th>完成率</th><th>及时</th><th>闭环状态</th><th>问题率</th></tr></thead><tbody>`;
+  tasks.forEach(t => {
+    const r = cr(t);
+    html += `<tr><td><strong>${t.name}</strong></td>
+      <td>${t.settleType}</td>
+      <td>${t.demandItem||"—"}</td>
+      <td>${MONTH_MAP[t.month]||t.month}月</td>
+      <td>${num(t.demandQty).toLocaleString()}</td>
+      <td>${num(t.collected).toLocaleString()}</td>
+      <td><div class="progress-wrap"><div class="bar-wrap"><div class="progress-bar" style="width:${r.pct}%;background:${r.cls==='good'?'#2ECC71':r.cls==='warn'?'#F39C12':'#E74C3C'}"></div></div><span>${r.val}</span></div></td>
+      <td style="text-align:center">${timelinessIcon(t)}</td>
+      <td><span class="status-badge ${cls(t)}">${t.closed || "—"}</span></td>
+      <td>${t.problemRate || "—"}</td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+  panel.innerHTML = html;
+}
+
+// ============================================================
+// REJECT / CLOSED CHARTS
+// ============================================================
+function renderRejectChart(tasks, idx){
+  const rejected = tasks.filter(t => t.rejectReason && t.rejectReason !== "");
+  const reasons = {};
+  rejected.forEach(t => {
+    const r = t.rejectReason || "其他";
+    reasons[r] = (reasons[r] || 0) + 1;
+  });
+  const names = Object.keys(reasons);
+  const vals = names.map(n => reasons[n]);
+  const selfCorrect = tasks.reduce((s,t) => s + num(t.selfCorrect), 0);
+  const c1 = initC(`stepChart${idx}_1`, 160);
+  if(c1) c1.setOption({tooltip:{formatter:p=>`<strong>${p.name}</strong><br/>${p.value}条`},series:[{type:"pie",radius:["20%","50%"],label:{show:true,formatter:"{b}: {c}",fontSize:8},data:names.map((n,i)=>({name:n,value:vals[i],itemStyle:{color:["#F1C40F","#E74C3C","#3498DB","#2ECC71"][i%4]}}))}]});
+  const c2 = initC(`stepChart${idx}_2`, 160);
+  if(c2){
+    const months = ["3月","4月","5月","6月"];
+    const acc = DATA.monthlyTrend["需求准确率"] || [];
+    c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"line",data:acc,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#F1C40F",width:2},itemStyle:{color:"#F1C40F"},areaStyle:{color:"#F1C40F22"},label:{show:true,formatter:p=>p.value+"%",fontSize:7}}]});
+  }
+}
+
+function renderClosedChart(tasks, m, idx){
+  const c1 = initC(`stepChart${idx}_1`, 160);
+  if(c1){
+    const months = ["3月","4月","5月","6月"];
+    const vals = DATA.monthlyTrend["闭环率"] || [];
+    c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"line",data:vals,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#2ECC71",width:2},itemStyle:{color:"#2ECC71"},areaStyle:{color:"#2ECC7122"},label:{show:true,formatter:p=>p.value+"%",fontSize:7},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标100%",fontSize:7,color:"#E74C3C"},data:[{yAxis:100}]}}]});
+  }
+  const c2 = initC(`stepChart${idx}_2`, 160);
+  if(c2){
+    const closed = tasks.filter(t => t.closed === "是" || t.closed === "全部闭环" || t.closed === "关闭").length;
+    const inProgress = tasks.filter(t => t.closed === "进行中").length;
+    const notStarted = tasks.filter(t => t.closed === "" || t.closed === "暂未启动").length;
+    const items = [{n:"✅ 已闭环",v:closed||1,c:"#2ECC71"},{n:"🔄 进行中",v:inProgress||1,c:"#F39C12"},{n:"⏳ 未闭环",v:notStarted||1,c:"#E74C3C"}];
+    c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:items.map(i=>i.n),axisLabel:{fontSize:7}},yAxis:{type:"value",axisLabel:{fontSize:7}},series:[{type:"bar",data:items.map(i=>({value:i.v,itemStyle:{color:i.c,borderRadius:[4,4,0,0]}})),barWidth:28,label:{show:true,position:"top",fontSize:9,fontWeight:700}}]});
+  }
+}
+
+// ============================================================
+// MONTHLY TRENDS (independent)
+// ============================================================
+function renderMonthTrends(){
+  const grid = document.getElementById("trendGrid");
+  const td = DATA.monthlyTrend;
+  if(!td) return;
+  const months = ["3月","4月","5月","6月"];
+  let i = 0;
+  grid.innerHTML = Object.entries(td).map(([name, vals]) => {
+    const c = COLORS[i++ % COLORS.length];
+    return `<div class="mc"><div style="font-size:0.72rem;font-weight:600;margin-bottom:4px;color:${c}">${name}</div><div class="chart-box" id="t_${name.replace(/[^a-z0-9]/gi,'_')}" style="height:130px"></div></div>`;
+  }).join("");
+  i = 0;
+  for(const [name, vals] of Object.entries(td)){
+    const c = COLORS[i++ % COLORS.length];
+    const id = "t_" + name.replace(/[^a-z0-9]/gi,'_');
+    const chart = initC(id, 130);
+    if(!chart) continue;
+    const isPct = !vals.some(v => v > 100 && name !== "需求量" && name !== "采集完成数");
+    chart.setOption({grid:{top:4,bottom:4,left:2,right:2,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:6}},yAxis:{type:"value",axisLabel:{fontSize:6}},series:[{type:"line",data:vals,smooth:true,symbol:"circle",symbolSize:4,lineStyle:{color:c,width:1.5},itemStyle:{color:c},areaStyle:{color:c+"15"},label:{show:true,formatter:p=>typeof p.value==="number"?(isPct?p.value+(p.value>1?"%":""):p.value):p.value,fontSize:6,fontWeight:600}}]});
+  }
+}
+
+// ============================================================
+// ALERTS
+// ============================================================
+function renderAlerts(tasks, m){
+  const grid = document.getElementById("alertGrid");
+  const items = [];
+  tasks.forEach(t => {
+    const cr = pctStr(t.completionRate);
+    const pr = pctStr(t.problemRate);
+    const tl = t.timeliness;
+    const nm = t.name;
+    if(!isNaN(cr) && cr < 60 && cr > 0) items.push({p:"P0", prob:`${nm} 采集完成率 ${t.completionRate}`, act:"专项攻坚，增配采集资源"});
+    if(!isNaN(pr) && pr > 10) items.push({p:"P0", prob:`${nm} 需求问题率 ${t.problemRate}`, act:"追溯需求源头，优化质量"});
+    if(tl === 0 && t.timeliness !== undefined && t.timeliness !== "") items.push({p:"P1", prob:`${nm} 发布及时率 0%`, act:"排查下发流程，确保按时"});
+    if(t.closed === "进行中") items.push({p:"P1", prob:`${nm} 闭环进行中`, act:"跟进闭环进度"});
+  });
+  // Also add global alerts
+  if(m.completionRate < 70) items.push({p:"P0", prob:`整体采集完成率 ${m.completionRate}%，低于70%`, act:"整体推进，重点关注低完成率项目"});
+  if(m.timelinessRate < 80) items.push({p:"P0", prob:`整体发布及时率 ${m.timelinessRate}%`, act:"优化下发流程，确保按时交付"});
+
+  const shown = items.slice(0, 8);
+  grid.innerHTML = shown.map(a => `
+    <div class="al al-${a.p.toLowerCase()}">
+      <span class="al-pr">${a.p}</span>
+      <div class="al-c"><div class="al-p">${a.prob}</div><div class="al-a">💡 ${a.act}</div></div>
+    </div>
+  `).join("");
+  document.getElementById("alertSec").style.display = shown.length ? "block" : "none";
+}
+
+// ============================================================
+// TOOLS
+// ============================================================
+function openEditor(){
+  document.getElementById("editorText").value = JSON.stringify(DATA, null, 2);
+  document.getElementById("editorPanel").classList.add("show");
+  document.getElementById("panelOv").classList.add("show");
+}
+function closeEditor(){
+  document.getElementById("editorPanel").classList.remove("show");
+  document.getElementById("panelOv").classList.remove("show");
+}
+function applyEdit(){
+  try{ const d=JSON.parse(document.getElementById("editorText").value); DATA=d; localStorage.setItem("kdata_v3",JSON.stringify(d)); renderAll(); closeEditor(); toast("已应用","success"); }catch(e){ alert("JSON错误: "+e.message); }
+}
+function resetData(){
+  if(!confirm("恢复默认？"))return;
+  localStorage.removeItem("kdata_v3"); location.reload();
+}
+function exportJSON(){
+  const b=new Blob([JSON.stringify(DATA,null,2)],{type:"application/json"});
+  const u=URL.createObjectURL(b);
+  const a=document.createElement("a"); a.href=u; a.download="data.json"; a.click();
+  URL.revokeObjectURL(u); toast("已导出","success");
+}
+function toast(m,t){
+  const cl={success:["#EAFAF1","#2ECC71"],info:["#EBF5FB","#3498DB"]};
+  const[bg,c]=cl[t]||cl.info;
+  const el=document.createElement("div");
+  el.style.cssText=`position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:8px 18px;border-radius:8px;font-size:0.76rem;font-weight:500;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:${bg};color:${c};border:1px solid ${c}22;animation:fu 0.3s ease`;
+  el.textContent=m; document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity="0";el.style.transition="opacity 0.3s";setTimeout(()=>el.remove(),300);},3000);
+}
+
+// CSV Import
+const FIELD_MAP={month:["月份","月","需求月份"],project:["项目","来源","需求来源","需求名称"],demandType:["结算类型","需求类型"],demandQty:["下发数量","需求量","下发数量(含多家）","收到数量"],timeliness:["需求发布及时率","及时率"],collectedQty:["实际采集完成数量","采集完成数"],completionRate:["采集完成率","完成率"],rejectReason:["核实打回材料根因","打回根因"],closedStatus:["是否采集闭环","闭环状态","闭环"],accuracy:["需求准确率"],passRate:["需求初审通过率","初审通过率"],problemRate:["需求问题率","问题率"]};
+function detectField(headers,f){const kws=FIELD_MAP[f]||[];for(const h of headers)for(const kw of kws)if(h.includes(kw)||kw.includes(h))return h;return null;}
+document.getElementById("dropZone").addEventListener("click",()=>document.getElementById("csvInput").click());
+document.getElementById("csvInput").addEventListener("change",e=>{if(e.target.files.length)handleFile(e.target.files[0]);});
+["dragover","dragleave","drop"].forEach(ev=>{document.getElementById("dropZone").addEventListener(ev,e=>{e.preventDefault();if(ev==="dragover")e.currentTarget.classList.add("dragover");if(ev==="dragleave")e.currentTarget.classList.remove("dragover");if(ev==="drop"){e.currentTarget.classList.remove("dragover");if(e.dataTransfer.files.length)handleFile(e.dataTransfer.files[0]);}})});
+function showCSV(m,t){const el=document.getElementById("csvMsg");el.textContent=m;el.className="status-msg "+(t==="ok"?"ok":t==="err"?"err":"info");}
+function handleFile(file){
+  const isE=file.name.endsWith(".xlsx")||file.name.endsWith(".xls");const isC=file.name.endsWith(".csv");
+  if(!isE&&!isC){showCSV("请选择 CSV/Excel","err");return;}
+  const r=new FileReader();isE?r.readAsArrayBuffer(file):r.readAsText(file);
+  r.onload=e=>{
+    let result;
+    if(isE){try{const wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});const ws=wb.Sheets[wb.SheetNames[0]];const j=XLSX.utils.sheet_to_json(ws,{defval:""});result={data:j,meta:{fields:j.length?Object.keys(j[0]):[]}};if(!j.length){showCSV("Excel为空","err");return}showCSV(`✅ ${j.length}行`,"ok")}catch(ex){showCSV("解析失败:"+ex.message,"err");return}}else{result=Papa.parse(e.target.result,{header:true,skipEmptyLines:true});showCSV(`✅ ${result.data.length}行`,"ok")}
+    const headers=result.meta.fields||[];
+    const prev=document.getElementById("csvPreview");
+    prev.innerHTML="<table><thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead><tbody>"+result.data.slice(0,4).map(r=>"<tr>"+headers.map(h=>`<td>${r[h]||""}</td>`).join("")+"</tr>").join("")+"</tbody></table>";
+    document.getElementById("csvPreviewArea").classList.remove("hidden");
+    const mapFields={month:"月份",demandType:"结算类型",demandQty:"下发数量",timeliness:"发布及时率",collectedQty:"采集完成数",completionRate:"完成率",rejectReason:"打回根因",closedStatus:"闭环状态",accuracy:"准确率",passRate:"初审通过率",problemRate:"问题率"};
+    document.getElementById("csvMapping").innerHTML=Object.entries(mapFields).map(([k,l])=>{
+      const m=detectField(headers,k);return `<div class="csv-mapping-item"><label>${l}</label><select id="cm_${k}">${["",...headers].map(h=>`<option value="${h}" ${h===m?"selected":""}>${h||"—不导入—"}</option>`).join("")}</select></div>`;
+    }).join("");
+    document.getElementById("csvMappingArea").classList.remove("hidden");
+    document.getElementById("csvApplyBtn").disabled=false;
+    window._csvResult=result;
+  };
+}
+function applyCSV(){
+  const result=window._csvResult;if(!result)return;
+  const map={};document.querySelectorAll("#csvMapping select").forEach(s=>{if(s.value)map[s.id.replace("cm_","")]=s.value});
+  showCSV("导入完成，需手动调整为正确格式","info");
+  closeCSV();toast("CSV导入完成，请到编辑面板检查数据","success");
+}
+function openCSV(){document.getElementById("csvPanel").classList.add("show");document.getElementById("csvOv").classList.add("show");}
+function closeCSV(){document.getElementById("csvPanel").classList.remove("show");document.getElementById("csvOv").classList.remove("show");document.getElementById("csvPreviewArea").classList.add("hidden");document.getElementById("csvMappingArea").classList.add("hidden");document.getElementById("csvApplyBtn").disabled=true;document.getElementById("csvInput").value="";}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("curDate").textContent=new Date().toLocaleDateString("zh-CN",{year:"numeric",month:"long",day:"numeric"});
   loadData();
 });
 </script>
