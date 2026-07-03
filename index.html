@@ -287,10 +287,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
   <!-- ===== 看板 1：流程总览 ===== -->
   <div style="margin-bottom:14px">
-    <div class="sec-title">📋 全链路流程总览 <span class="st-badge">看板 1 · 战略总览</span></div>
-    <!-- 第一层：主业务四环节 -->
+    <div class="sec-title">360237223213 345205250351223276350267257346265201347250213346200273350247210 <span class="st-badge">347234213346235277 1 302267 344270211351203250345210206</span></div>
+    <!-- Part 1: 6347216257350212202346240270345277203346214207346240207 -->
+    <div id="stageRow" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px"></div>
+    <!-- Part 2: 345220204346265201347250213350257246347273206346214207346240207 -->
     <div id="flowRow" class="flow-row"></div>
-    <!-- 第二层：三大专项 -->
+    <!-- Part 3: 344270211345244247344270223351241271 -->
     <div id="specialRow" class="special-row"></div>
   </div>
 
@@ -1661,6 +1663,7 @@ function renderAll(){
   const m = calcMetrics(tasks);
   document.getElementById("filterCount").textContent = `共 ${tasks.length} 条`;
   renderDataInsights(tasks, m);
+  renderStageOverview(tasks, m);
   renderFlowKPIs(tasks, m);
   renderSpecialProjects(tasks, m);
   renderCollectionSection(tasks, m);
@@ -1671,6 +1674,93 @@ function renderAll(){
 }
 
 // === 看板 1：流程总览 — 四环节 KPI 卡片 ===
+// === Part 1: 6环节核心指标卡片（按用户指定格式）===
+function renderStageOverview(tasks, m){
+  const row = document.getElementById('stageRow');
+  if(!row || !tasks.length){ if(row) row.innerHTML=''; return; }
+
+  // 预审/抽审数据
+  const pr = DATA.preReview;
+  const prPass = pr && pr.total ? pr.passRate : null;
+  const qr = DATA.qualityReview || {};
+  const gz = qr['公章抽审'];
+  const gzPassRate = gz && gz.审核 ? +((gz.初审通过||0)/gz.审核*100).toFixed(1) : null;
+  const bj = qr['报价抽审'];
+  const bjRate = bj && bj.抽审量 ? +(bj.报价量/bj.抽审量*100).toFixed(1) : null;
+
+  // 问题反馈数据
+  const fb = DATA.issueFeedback;
+  const fbTotal = fb ? fb.问题反馈量 : 0;
+  const consRate = fb && fb.问题反馈量 ? +(fb.双方共识量/fb.问题反馈量*100).toFixed(1) : null;
+
+  // 计算指标
+  const totalPts = (tasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2) + 'W';
+  const timelyV = m.timelyRate != null ? m.timelyRate + '%' : '—';
+  const reviewIssW = (tasks.reduce((s,t)=>s+(t.reviewIssues||0),0)/10000).toFixed(2) + 'W';
+  const issueRate = m.reviewIssueRate != null ? m.reviewIssueRate + '%' : '—';
+
+  // 6月数据
+  const juneTasks = tasks.filter(t=>t.month==='06月');
+  const junePts = juneTasks.length ? (juneTasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2) + 'W' : '—';
+  const juneComp = juneTasks.length && juneTasks.reduce((s,t)=>s+(t.issuedQty||0),0) > 0
+    ? +(juneTasks.reduce((s,t)=>s+(t.collected||0),0)/juneTasks.reduce((s,t)=>s+(t.issuedQty||0),0)*100).toFixed(1) + '%'
+    : '—';
+
+  const consensus = consRate != null ? consRate + '%' : '—';
+  const gzPass = gzPassRate != null ? gzPassRate + '%' : '—';
+  const bjValid = bj && bj.高质量报价 != null ? +(bj.高质量报价*100).toFixed(1) + '%' : '—';
+  const prPassStr = prPass != null ? prPass + '%' : '—';
+  const pubData = m.publishedData != null ? m.publishedData + '条' : '—';
+
+  const stages = [
+    { name:'需求下发', sub:'', color:'#E74C3C', icon:'📋',
+      k1:{label:'需求总量', val:totalPts, cls:''},
+      k2:{label:'需求及时率', val:timelyV, cls:''} },
+    { name:'需求校核', sub:'前置校验环节', color:'#E67E22', icon:'🔍',
+      k1:{label:'反馈问题', val:reviewIssW, cls:''},
+      k2:{label:'需求问题率', val:issueRate, cls:''} },
+    { name:'数据采集', sub:'核心执行环节', color:'#F39C12', icon:'🔧',
+      k1:{label:'6月承接', val:junePts, cls:''},
+      k2:{label:'采集完成率', val:juneComp, cls:''} },
+    { name:'问题闭环', sub:'过程纠偏环节', color:'#2ECC71', icon:'✅',
+      k1:{label:'采集反馈问题', val:fbTotal ? fbTotal+'条' : '—', cls:''},
+      k2:{label:'双方有效共识', val:consensus, cls:''} },
+    { name:'质量审核', sub:'质量管控环节', color:'#9B59B6', icon:'📊',
+      k1:{label:'公章预审通过率', val:gzPass, cls:''},
+      k2:{label:'价格抽审合理性', val:bjValid, cls:''} },
+    { name:'加工审核发布', sub:'入库交付环节', color:'#3498DB', icon:'🚀',
+      k1:{label:'入库通过率', val:prPassStr, cls:''},
+      k2:{label:'发布数据', val:pubData, cls:''} },
+  ];
+
+  function sc(v){
+    if(v==null||v==='—') return 'var(--gray)';
+    const n = parseFloat(v);
+    if(isNaN(n)) return 'var(--gray)';
+    return n>=80?'#2ECC71':n>=60?'#F39C12':'#E74C3C';
+  }
+
+  row.innerHTML = stages.map(s => {
+    const c1 = sc(parseFloat(s.k1.val));
+    const c2 = sc(parseFloat(s.k2.val));
+    return '<div class="flow-card" style="min-width:0">' +
+      '<div class="flow-card-header" style="background:'+s.color+';padding:6px 8px;font-size:0.7rem;flex-wrap:wrap">' +
+        s.icon+' '+s.name+
+        (s.sub?' <span style="font-size:0.55rem;opacity:0.7;font-weight:400">'+s.sub+'</span>':'') +
+      '</div>' +
+      '<div class="flow-card-body" style="padding:6px 8px">' +
+        '<div class="fm" style="padding:2px 0;font-size:0.66rem">' +
+          '<span class="fl">'+s.k1.label+'</span>' +
+          '<span class="fv" style="color:'+c1+';font-size:0.85rem">'+s.k1.val+'</span>' +
+        '</div>' +
+        '<div class="fm" style="padding:2px 0;font-size:0.66rem;border-bottom:none">' +
+          '<span class="fl">'+s.k2.label+'</span>' +
+          '<span class="fv" style="color:'+c2+';font-size:0.85rem">'+s.k2.val+'</span>' +
+        '</div>' +
+      '</div></div>';
+  }).join('');
+}
+
 function renderFlowKPIs(tasks, m){
   const sc = DATA.stepConfig;
   if(!sc) return;
@@ -1773,7 +1863,8 @@ function renderRadarChart(tasks, m){
   c.setOption({
     tooltip:{formatter:p=>`<strong>${p.name}</strong><br/>得分: ${p.value.toFixed(1)}`},
     radar:{
-      indicator:dims.map(d=>({name:d.name+`\n${d.val.toFixed(0)}分`,max:d.max})),
+      indicator:dims.map(d=>({name:d.name+`
+${d.val.toFixed(0)}分`,max:d.max})),
       radius:"60%",center:["50%","50%"],
       axisName:{fontSize:9,color:"#2C3E50",fontWeight:600},
       splitArea:{areaStyle:{color:["#F5F7FA","#ECF0F1"]}}
