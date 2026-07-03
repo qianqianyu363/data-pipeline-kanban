@@ -253,6 +253,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     </div>
   </div>
 
+  <!-- ===== 看板 0：数据洞察（领导看板） ===== -->
+  <div class="trend-section" id="insightsSec">
+    <div class="trend-header">
+      <div>
+        <div class="trend-title">🧠 数据洞察 · 核心结论</div>
+        <div class="trend-sub">基于当前数据自动分析 · 面向管理层</div>
+      </div>
+    </div>
+    <div id="insightsGrid" class="health-grid" style="grid-template-columns:1fr 1fr 1fr"></div>
+    <div id="insightsWarnings" style="margin-top:8px"></div>
+  </div>
+
   <!-- Toolbar -->
   <div class="toolbar">
     <button class="btn btn-outline btn-sm" onclick="openCSV()">📥 导入</button>
@@ -1648,6 +1660,7 @@ function renderAll(){
   const tasks = getFilteredTasks();
   const m = calcMetrics(tasks);
   document.getElementById("filterCount").textContent = `共 ${tasks.length} 条`;
+  renderDataInsights(tasks, m);
   renderFlowKPIs(tasks, m);
   renderSpecialProjects(tasks, m);
   renderCollectionSection(tasks, m);
@@ -2071,6 +2084,89 @@ function renderMonthTrends(){
     const isPct = !vals.some(v => v > 100 && name !== "需求量" && name !== "采集完成数");
     chart.setOption({grid:{top:4,bottom:4,left:2,right:2,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:6}},yAxis:{type:"value",axisLabel:{fontSize:6}},series:[{type:"line",data:vals,smooth:true,symbol:"circle",symbolSize:4,lineStyle:{color:c,width:1.5},itemStyle:{color:c},areaStyle:{color:c+"15"},label:{show:true,formatter:p=>typeof p.value==="number"?(isPct?p.value+(p.value>1?"%":""):p.value):p.value,fontSize:6,fontWeight:600}}]});
   }
+}
+
+// ============================================================
+// DATA INSIGHTS — 自动分析结论
+// ============================================================
+function renderDataInsights(tasks, m){
+  const grid = document.getElementById("insightsGrid");
+  const warnDiv = document.getElementById("insightsWarnings");
+  if(!grid || !warnDiv) return;
+  const n = tasks.length;
+  if(!n){ grid.innerHTML=''; warnDiv.innerHTML=''; return; }
+
+  // 核心指标
+  const timelyRate = m.timelyRate || 0;
+  const totalPts = tasks.reduce((s,t)=>s+num(t.totalPoints),0);
+  const totalCol = tasks.reduce((s,t)=>s+num(t.collected),0);
+  const compRate = totalPts ? +((totalCol/totalPts)*100).toFixed(1) : 0;
+  const totalIssues = tasks.reduce((s,t)=>s+num(t.reviewIssues),0);
+  const totalInvalid = tasks.reduce((s,t)=>s+num(t.invalidData),0);
+
+  // 预算
+  const s = DATA.settlements||[];
+  const totalCost = s.reduce((x,y) => x + num(y.结算金额||y.amount), 0);
+  const budget = DATA.totalBudget||3900000;
+  const budgetRate = budget ? +((totalCost/budget)*100).toFixed(1) : 0;
+
+  // 预审
+  const pr = DATA.preReview;
+  const prPass = pr && pr.total ? pr.passRate : null;
+
+  // 反馈
+  const fb = DATA.issueFeedback;
+  const consRate = fb && fb.问题反馈量 ? +(fb.双方共识量/fb.问题反馈量*100).toFixed(1) : null;
+  const fbTotal = fb ? fb.问题反馈量 : 0;
+
+  // 高危任务
+  const highRisk = tasks.filter(t => {
+    const cr = t.collected && t.issuedQty ? (t.collected/t.issuedQty)*100 : (t.completionRate||0);
+    return cr > 0 && cr < 60;
+  }).sort((a,b)=>{
+    const ca = a.collected&&a.issuedQty?(a.collected/a.issuedQty)*100:(a.completionRate||100);
+    const cb = b.collected&&b.issuedQty?(b.collected/b.issuedQty)*100:(b.completionRate||100);
+    return ca-cb;
+  });
+
+  // 问题最多TOP3
+  const topIssues = [...tasks].filter(t=>t.reviewIssues>0).sort((a,b)=>b.reviewIssues-a.reviewIssues).slice(0,3);
+
+  // 月度趋势（上升/下降）
+  const trendMonths = getTrendMonths();
+  const trendVals = DATA.monthlyTrend ? DATA.monthlyTrend['采集完成率'] || [] : [];
+  const trendDir = trendVals.length>=2 && trendVals[trendVals.length-1] < trendVals[0] ? '📉 下降' : '📈 上升';
+  const trendChange = trendVals.length>=2 ? (trendVals[trendVals.length-1] - trendVals[0]).toFixed(1) : '0';
+
+  function card(label, value, unit, color, note){
+    return `<div class="ac" style="text-align:center;padding:10px 8px"><div style="font-size:0.65rem;color:var(--tl);margin-bottom:2px">${label}</div><div style="font-size:1.3rem;font-weight:700;color:${color}">${value}${unit||''}</div>${note?`<div style="font-size:0.6rem;color:var(--tl);margin-top:2px">${note}</div>`:''}</div>`;
+  }
+  function warnCard(level, title, desc){
+    return `<div class="alert-item ${level}"><span class="alert-tag">${level==='p0'?'P0':'P1'}</span><div class="alert-text"><div class="at-p">${title}</div><div class="at-a">${desc}</div></div></div>`;
+  }
+
+  grid.innerHTML = `
+    ${card('采集完成率', compRate, '%', compRate>=80?'#2ECC71':compRate>=60?'#F39C12':'#E74C3C', `目标90% · 差距${(90-compRate).toFixed(1)}%`)}
+    ${card('发布及时率', timelyRate, '%', timelyRate>=80?'#2ECC71':timelyRate>=60?'#F39C12':'#E74C3C', `${tasks.filter(t=>t.timelyRate===1).length}/${tasks.filter(t=>t.timelyRate!==null).length}项及时`)}
+    ${card('预算执行率', budgetRate, '%', budgetRate>75?'#E74C3C':budgetRate>50?'#F39C12':'#3498DB', `${(totalCost/10000).toFixed(0)}万/${(budget/10000).toFixed(0)}万`)}
+    ${card('预审通过率', prPass||'—', prPass?'%':'', prPass&&prPass>=99?'#2ECC71':'#F39C12', pr?`${pr.passed}/${pr.total}通过`:'暂无数据')}
+    ${fbTotal ? card('反馈共识率', consRate, '%', consRate>=60?'#2ECC71':consRate>=30?'#F39C12':'#E74C3C', `${fb.双方共识量}/${fbTotal}达成共识`) : ''}
+    ${totalInvalid ? card('无效数据', totalInvalid, '条', totalInvalid>500?'#E74C3C':totalInvalid>100?'#F39C12':'#2ECC71', '需排查整改') : ''}
+    ${card('采集趋势', trendDir+trendChange, 'pp', trendChange>=0?'#2ECC71':'#E74C3C', trendMonths.length?`${trendMonths[0]}→${trendMonths[trendMonths.length-1]}`:'')}
+    ${card('初审问题', totalIssues, '条', totalIssues>1000?'#E74C3C':totalIssues>500?'#F39C12':'#2ECC71', topIssues.length?`最多:${topIssues[0].name}`:'')}
+  `.split('undefined').join('');
+
+  // 警告区
+  let warns = '';
+  if(compRate < 80) warns += warnCard('p0', `整体采集完成率${compRate}%，低于目标90%`, `差距${(90-compRate).toFixed(1)}%，需加强${highRisk.slice(0,2).map(t=>t.name).join('、')}等${highRisk.length}项重点攻坚`);
+  if(timelyRate < 80) warns += warnCard('p1', `发布及时率${timelyRate}%，${tasks.filter(t=>t.timelyRate===0).length}项未及时发布`, '需关注需求下发时效性');
+  if(totalInvalid > 0) warns += warnCard('p1', `存在${totalInvalid}条无效数据`, `涉及${tasks.filter(t=>t.invalidData>0).length}项任务，需排查原因`);
+  if(consRate !== null && consRate < 50) warns += warnCard('p0', `反馈共识率仅${consRate}%，${fb.双方未达成共识量||0}条未达成共识`, '大量问题未与采集方达成一致，需加强沟通闭环');
+  if(highRisk.length) warns += warnCard('p0', `${highRisk.length}项任务采集率低于60%`, highRisk.map(t=>`${t.name}(${t.collected&&t.issuedQty?((t.collected/t.issuedQty)*100).toFixed(1):t.completionRate||0}%)`).join('、'));
+  if(topIssues.length) warns += warnCard('p1', `初审问题集中：${topIssues[0].name}(${topIssues[0].reviewIssues}条)等${topIssues.length}项`, '需追溯源头优化需求质量');
+  if(budgetRate < 50 && trendMonths.length >= 6) warns += warnCard('p1', `半年预算执行率仅${budgetRate}%`, '进度偏慢，需评估下半年预算使用计划');
+
+  warnDiv.innerHTML = warns ? `<div class="alert-action" style="grid-template-columns:1fr 1fr">${warns}</div>` : '<div style="text-align:center;padding:8px;color:var(--green);font-size:0.74rem">✅ 整体数据健康，无明显异常</div>';
 }
 
 // ============================================================
