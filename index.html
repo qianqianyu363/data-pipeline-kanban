@@ -139,19 +139,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .pred-box .pb-item .pb-l{color:var(--tl)}
 .pred-box .pb-item .pb-v{font-weight:700;font-size:0.8rem}
 
-.alert-section{background:var(--card);border-radius:var(--r-md);padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px;border-left:4px solid var(--red)}
-.alert-title{display:flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:600;color:var(--red);margin-bottom:10px}
-.alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-@media(max-width:800px){.alert-grid{grid-template-columns:1fr}}
-.al{background:#f8f9fa;border-radius:var(--r-sm);padding:8px 12px;display:flex;align-items:flex-start;gap:6px}
-.al-p0{border-left:3px solid var(--red)}
-.al-p1{border-left:3px solid var(--orange)}
-.al-pr{font-size:0.6rem;font-weight:700;padding:1px 5px;border-radius:6px;white-space:nowrap;flex-shrink:0;margin-top:1px}
-.al-p0 .al-pr{background:#FDEDEC;color:var(--red)}
-.al-p1 .al-pr{background:#FEF5E7;color:var(--orange)}
-.al-c{flex:1}
-.al-p{font-weight:600;font-size:0.78rem;margin-bottom:1px}
-.al-a{font-size:0.68rem;color:var(--tl)}
+
 
 .footer{text-align:center;padding:12px;color:var(--tl);font-size:0.65rem}
 
@@ -252,8 +240,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .chart-box-md{height:200px}
 
 /* Alert */
-.alert-action{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
-@media(max-width:800px){.alert-action{grid-template-columns:1fr}}
 .alert-item{background:#f8f9fa;border-radius:var(--r-sm);padding:8px 12px;display:flex;align-items:flex-start;gap:8px}
 .alert-item.p0{border-left:3px solid var(--red)}
 .alert-item.p1{border-left:3px solid var(--orange)}
@@ -346,11 +332,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     </div>
   </div>
 
-  <!-- ===== 预警行动区 ===== -->
-  <div class="alert-section" id="alertSec" style="display:none">
-    <div class="alert-title">🚨 预警与整改行动 <span class="st-badge" style="background:rgba(231,76,60,0.1);color:var(--red);margin-left:6px;font-size:0.6rem">面向领导 · 落地输出</span></div>
-    <div class="alert-action" id="alertGrid"></div>
-  </div>
 
   <div class="footer">需求下发登记全链路看板 · 数据仅供内部参考</div>
 </div>
@@ -1648,7 +1629,6 @@ function renderAll(){
   renderCollectionSection(tasks, m);
   renderMonthlyTrendOverview(tasks, m);
   renderRadarChart(tasks, m);
-  renderAlerts(tasks, m);
 }
 
 // === 看板 1：6流程卡片（Part1核心指标+Part2详细指标合并展示）===
@@ -2306,29 +2286,6 @@ function renderMonthlyTrendOverview(tasks, m){
 // ============================================================
 // ALERTS
 // ============================================================
-function renderAlerts(tasks, m){
-  const grid = document.getElementById("alertGrid");
-  const items = [];
-  tasks.forEach(t => {
-    const nm = t.name;
-    const cr = t.collected && t.issuedQty ? (t.collected/t.issuedQty)*100 : 0;
-    if(cr > 0 && cr < 60) items.push({p:"P0", prob:nm+" 采集完成率 "+cr.toFixed(1)+"%", act:"专项攻坚，增配采集资源"});
-    if(t.reviewIssues > 0) items.push({p:"P1", prob:nm+" 初审问题数 "+t.reviewIssues, act:"追溯源头，优化需求质量"});
-    if(t.supplierRejects > 10) items.push({p:"P1", prob:nm+" 供应商不通过 "+t.supplierRejects+"条", act:"排查原因，协同供应商确认"});
-    if(t.closed === "进行中") items.push({p:"P1", prob:nm+" 闭环进行中", act:"跟进闭环进度"});
-  });
-  if(m.completionRate < 70) items.push({p:"P0", prob:"整体采集完成率 "+m.completionRate+"%，低于70%", act:"整体推进，重点关注低完成率项目"});
-
-  const shown = items.slice(0, 8);
-  grid.innerHTML = shown.map(a => `
-    <div class="al al-${a.p.toLowerCase()}">
-      <span class="al-pr">${a.p}</span>
-      <div class="al-c"><div class="al-p">${a.prob}</div><div class="al-a">💡 ${a.act}</div></div>
-    </div>
-  `).join("");
-  document.getElementById("alertSec").style.display = shown.length ? "block" : "none";
-}
-
 // ============================================================
 // TOOLS
 // ============================================================
