@@ -1929,8 +1929,8 @@ function renderProgressTab(tasks, m){
 
   panel.innerHTML = `
     <div class="focus-metrics">
-      <div class="fm-box"><div class="fm-l">整体完成率</div><div class="fm-v">${m.completionRate}%</div><div class="fm-d">${m.totalCollected.toLocaleString()}/${m.totalDemand.toLocaleString()}</div></div>
-      <div class="fm-box"><div class="fm-l">已采集</div><div class="fm-v">${m.totalCollected.toLocaleString()}</div><div class="fm-d">完成总量</div></div>
+      <div class="fm-box"><div class="fm-l">整体完成率</div><div class="fm-v">${m.completionRate}%</div><div class="fm-d">${(m.collected||0).toLocaleString()}/${(m.totalDemand||0).toLocaleString()}</div></div>
+      <div class="fm-box"><div class="fm-l">已采集</div><div class="fm-v">${(m.collected||0).toLocaleString()}</div><div class="fm-d">完成总量</div></div>
       <div class="fm-box"><div class="fm-l">待采集</div><div class="fm-v">${Math.max(0,m.issuedQty-m.collected).toLocaleString()}</div><div class="fm-d">剩余总量</div></div>
     </div>
     <div class="chart-row"><div class="chart-box-sm" id="pgChart1"></div><div class="chart-box-sm" id="pgChart2"></div></div>
