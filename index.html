@@ -1496,6 +1496,24 @@ const MONTH_KEYS_FULL = {"03月":"03","04月":"04","05月":"05","06月":"06"};
 const MONTH_MAP = {"03":"3月","04":"4月","05":"5月","06":"6月"};
 const COLORS = ["#E74C3C","#3498DB","#F39C12","#2ECC71","#9B59B6","#1ABC9C","#E67E22","#2980B9"];
 
+// 动态月份获取
+function getSettlementMonths(){
+  const s = DATA.settlements||[];
+  const m = [...new Set(s.map(x=>x.月份||x.month).filter(Boolean))];
+  return m.sort((a,b)=>parseInt(a)-parseInt(b));
+}
+function getTrendMonths(){
+  // 从tasks的实际月份获取
+  const taskMonths = (DATA.tasks||[]).map(t=>t.month).filter(Boolean);
+  if(!taskMonths.length){
+    const td = DATA.monthlyTrend;
+    const first = td ? Object.keys(td)[0] : null;
+    if(!first) return [];
+    return (td[first]||[]).map((_,i)=>`${i+3}月`); // fallback
+  }
+  return [...new Set(taskMonths)].sort((a,b)=>parseInt(a)-parseInt(b));
+}
+
 // ============================================================
 // DATA LOADING
 // ============================================================
@@ -1770,7 +1788,8 @@ function renderRadarChart(tasks, m){
 function renderBudgetTrendChart(){
   const c = initC("budgetTrendChart",200);
   if(!c) return;
-  const months = ["1月","2月","3月","4月"];
+  const months = getSettlementMonths();
+  if(!months.length) return;
   const s = DATA.settlements||[];
   const byMonth={};
   s.forEach(x=>{ const m=x.月份||x.month; byMonth[m]=(byMonth[m]||0)+num(x.结算金额||x.amount); });
@@ -1854,7 +1873,8 @@ function initC(id, h){
 }
 
 function renderColOverview(m){
-  const months = ["3月","4月","5月","6月"];
+  const months = getTrendMonths();
+  if(!months.length) months.push("3月");
   const vals1 = DATA.monthlyTrend["采集完成数"] || [];
   const vals2 = DATA.monthlyTrend["采集完成率"] || [];
   const c1 = initC("colOvChart1", 160);
@@ -1877,7 +1897,8 @@ function renderCapacityTab(tasks, m){
     </div>
     <div class="chart-row"><div class="chart-box-sm" id="cpChart1"></div><div class="chart-box-sm" id="cpChart2"></div></div>`;
 
-  const months = ["3月","4月","5月","6月"];
+  const months = getTrendMonths();
+  if(!months.length) months.push("3月");
   const vals = DATA.monthlyTrend["产能利用率"] || [];
   const c1 = initC("cpChart1", 160);
   if(c1) c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"line",data:vals,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#9B59B6",width:2},itemStyle:{color:"#9B59B6"},areaStyle:{color:"#9B59B622"},label:{show:true,formatter:p=>p.value+"%",fontSize:7},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标85%",fontSize:7,color:"#E74C3C"},data:[{yAxis:85}]}}]});
@@ -1914,7 +1935,7 @@ function renderBudgetTab(){
     if(!byMonth[m]) byMonth[m] = 0;
     byMonth[m] += num(x.结算金额 || x.amount);
   });
-  const monthNames = ["1月","2月","3月","4月"];
+  const monthNames = getSettlementMonths();
   const monthVals = monthNames.map(m => +(byMonth[m]/10000).toFixed(1) || 0);
 
   // Group by type
@@ -1930,7 +1951,7 @@ function renderBudgetTab(){
   panel.innerHTML = `
     <div class="focus-metrics">
       <div class="fm-box"><div class="fm-l">年度总预算</div><div class="fm-v">¥${(totalBudget/10000).toFixed(0)}万</div><div class="fm-d">采集加工总预算</div></div>
-      <div class="fm-box"><div class="fm-l">累计执行</div><div class="fm-v">¥${(totalAmount/10000).toFixed(1)}万</div><div class="fm-d">截至4月</div></div>
+      <div class="fm-box"><div class="fm-l">累计执行</div><div class="fm-v">¥${(totalAmount/10000).toFixed(1)}万</div><div class="fm-d">截至${monthNames[monthNames.length-1]||"4月"}</div></div>
       <div class="fm-box"><div class="fm-l">预算执行率</div><div class="fm-v">${execRate}%</div><div class="fm-d">累计/年度</div></div>
     </div>
     <div class="chart-row"><div class="chart-box-sm" id="bdChart1"></div><div class="chart-box-sm" id="bdChart2"></div></div>`;
@@ -2034,7 +2055,8 @@ function renderMonthTrends(){
   const grid = document.getElementById("trendGrid");
   const td = DATA.monthlyTrend;
   if(!td) return;
-  const months = ["3月","4月","5月","6月"];
+  const months = getTrendMonths();
+  if(!months.length) months.push("3月");
   let i = 0;
   grid.innerHTML = Object.entries(td).map(([name, vals]) => {
     const c = COLORS[i++ % COLORS.length];
