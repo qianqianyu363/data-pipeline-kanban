@@ -332,6 +332,39 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div class="alert-action" id="alertGrid"></div>
   </div>
 
+  <!-- ===== 新模板扩展数据：问题反馈 ===== -->
+  <div class="trend-section" id="issueFeedbackSec" style="display:none">
+    <div class="trend-header">
+      <div>
+        <div class="trend-title">📋 问题反馈统计</div>
+        <div class="trend-sub">看板 3 · 新模板扩展数据</div>
+      </div>
+    </div>
+    <div id="issueFeedbackGrid" class="health-grid"></div>
+  </div>
+
+  <!-- ===== 新模板扩展数据：加工预审 ===== -->
+  <div class="trend-section" id="preReviewSec" style="display:none">
+    <div class="trend-header">
+      <div>
+        <div class="trend-title">🔍 加工预审统计</div>
+        <div class="trend-sub">看板 3 · 新模板扩展数据</div>
+      </div>
+    </div>
+    <div id="preReviewGrid" class="health-grid"></div>
+  </div>
+
+  <!-- ===== 新模板扩展数据：质量抽审 ===== -->
+  <div class="trend-section" id="qualityReviewSec" style="display:none">
+    <div class="trend-header">
+      <div>
+        <div class="trend-title">📊 质量抽审统计</div>
+        <div class="trend-sub">看板 3 · 新模板扩展数据</div>
+      </div>
+    </div>
+    <div id="qualityReviewGrid" class="health-grid"></div>
+  </div>
+
   <div class="footer">需求下发登记全链路看板 · 数据仅供内部参考</div>
 </div>
 
@@ -375,7 +408,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <script id="dataEmbed" type="application/json">
 {
   "title": "需求下发登记全链路看板",
-  "updateDate": "2026-06-16",
+  "updateDate": "2026-07-02",
   "months": [
     "03月",
     "04月",
@@ -385,23 +418,29 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     "08月"
   ],
   "monthNames": {
-    "03": "3月",
-    "04": "4月",
-    "05": "5月",
-    "06": "6月"
+    "03": "03月",
+    "04": "04月",
+    "05": "05月",
+    "06": "06月"
   },
   "filterOptions": {
     "demandItems": [
       "全部",
-      "市场价",
-      "采购建议价"
+      "市场价"
     ],
     "settleTypes": [
       "全部",
-      "价格采集",
       "价格更新",
+      "价格采集",
+      "全系列报价单"
+    ],
+    "sources": [
+      "全部",
+      "AI比价",
       "全系列报价单",
-      "聚合比价"
+      "地区特性",
+      "更新",
+      "聚合1:3"
     ],
     "months": [
       "全部",
@@ -415,6 +454,30 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   },
   "tasks": [
     {
+      "name": "北京比价",
+      "settleType": "价格采集",
+      "source": "AI比价",
+      "demandItem": "市场价",
+      "month": "03月",
+      "totalPoints": 6642,
+      "itemCount": 1413,
+      "reviewIssues": 770,
+      "issuedQty": 6642,
+      "collected": 5881,
+      "completionRate": 88.5,
+      "accuracyRate": 48.3,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": 5464,
+      "timelyRate": 0,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
+    },
+    {
       "name": "四川比价",
       "settleType": "价格采集",
       "source": "AI比价",
@@ -422,33 +485,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "month": "03月",
       "totalPoints": 5761,
       "itemCount": 2681,
-      "reviewIssues": 0,
+      "reviewIssues": 528,
       "issuedQty": 5761,
-      "collected": 3812,
+      "collected": 5109,
+      "completionRate": 88.7,
+      "accuracyRate": 100.0,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": 5109,
+      "timelyRate": 0,
       "feedbackMat": null,
-      "expertVerify": 34,
-      "supplierRejects": 40,
+      "expertVerify": null,
+      "supplierRejects": null,
       "closed": null,
       "allClosed": null,
       "notes": null
-    },
-    {
-      "name": "北京比价",
-      "settleType": "价格采集",
-      "source": "AI比价",
-      "demandItem": "市场价",
-      "month": "03月",
-      "totalPoints": 8784,
-      "itemCount": 2928,
-      "reviewIssues": 2142,
-      "issuedQty": 6642,
-      "collected": 3637,
-      "feedbackMat": null,
-      "expertVerify": 50,
-      "supplierRejects": 18,
-      "closed": "否",
-      "allClosed": null,
-      "notes": "剩余材料挑选部分做重新采集"
     },
     {
       "name": "河北比价",
@@ -456,47 +507,89 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "03月",
-      "totalPoints": 3669,
-      "itemCount": 1223,
-      "reviewIssues": 180,
-      "issuedQty": 3489,
-      "collected": 3231,
+      "totalPoints": 5223,
+      "itemCount": 1741,
+      "reviewIssues": 506,
+      "issuedQty": 5223,
+      "collected": 4605,
+      "completionRate": 88.2,
+      "accuracyRate": 77.5,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": 4605,
+      "timelyRate": 0,
       "feedbackMat": null,
-      "expertVerify": 77,
-      "supplierRejects": 31,
-      "closed": "否",
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
       "allClosed": null,
-      "notes": "剩余材料挑选部分做重新采集"
+      "notes": null
     },
     {
-      "name": "山东&上海",
+      "name": "1:3-管材管件",
+      "settleType": "价格采集",
+      "source": "聚合1:3",
+      "demandItem": "市场价",
+      "month": "04月",
+      "totalPoints": 2923,
+      "itemCount": 988,
+      "reviewIssues": 0,
+      "issuedQty": 2923,
+      "collected": 2841,
+      "completionRate": 97.2,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 0,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
+    },
+    {
+      "name": "全国",
+      "settleType": "全系列报价单",
+      "source": "全系列报价单",
+      "demandItem": "市场价",
+      "month": "04月",
+      "totalPoints": 570,
+      "itemCount": null,
+      "reviewIssues": null,
+      "issuedQty": 570,
+      "collected": 232,
+      "completionRate": 40.7,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 0,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
+    },
+    {
+      "name": "日常更新/精准需求",
       "settleType": "价格采集",
       "source": null,
-      "demandItem": "采购建议价",
-      "month": "03月",
-      "totalPoints": 85,
-      "itemCount": null,
-      "reviewIssues": 0,
-      "issuedQty": 85,
-      "collected": 85,
-      "feedbackMat": null,
-      "expertVerify": null,
-      "supplierRejects": null,
-      "closed": null,
-      "allClosed": null,
-      "notes": null
-    },
-    {
-      "name": "北京比价试点",
-      "settleType": "价格采集",
-      "source": "AI比价",
       "demandItem": "市场价",
       "month": "04月",
-      "totalPoints": 606,
-      "itemCount": 202,
-      "reviewIssues": 0,
-      "issuedQty": 606,
-      "collected": 591,
+      "totalPoints": 1269,
+      "itemCount": 1269,
+      "reviewIssues": null,
+      "issuedQty": 1269,
+      "collected": 1269,
+      "completionRate": null,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -505,39 +598,27 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "notes": null
     },
     {
-      "name": "河北比价试点",
-      "settleType": "价格采集",
-      "source": "AI比价",
-      "demandItem": "市场价",
-      "month": "04月",
-      "totalPoints": 234,
-      "itemCount": 79,
-      "reviewIssues": 0,
-      "issuedQty": 234,
-      "collected": 161,
-      "feedbackMat": null,
-      "expertVerify": null,
-      "supplierRejects": null,
-      "closed": null,
-      "allClosed": null,
-      "notes": null
-    },
-    {
-      "name": "海南更新",
+      "name": "江苏比价更新",
       "settleType": "价格更新",
-      "source": "更新",
+      "source": "AI比价",
       "demandItem": "市场价",
       "month": "04月",
-      "totalPoints": 13716,
-      "itemCount": null,
+      "totalPoints": 16594,
+      "itemCount": 16594,
       "reviewIssues": 0,
-      "issuedQty": 13716,
-      "collected": 13716,
+      "issuedQty": 16594,
+      "collected": 16594,
+      "completionRate": 100.0,
+      "accuracyRate": 100.0,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 0,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
-      "closed": "否",
-      "allClosed": "是",
+      "closed": null,
+      "allClosed": null,
       "notes": null
     },
     {
@@ -547,64 +628,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "demandItem": "市场价",
       "month": "04月",
       "totalPoints": 60,
-      "itemCount": null,
+      "itemCount": 60,
       "reviewIssues": 0,
       "issuedQty": 60,
       "collected": 60,
-      "feedbackMat": null,
-      "expertVerify": null,
-      "supplierRejects": null,
-      "closed": "否",
-      "allClosed": "是",
-      "notes": null
-    },
-    {
-      "name": "全国",
-      "settleType": "全系列报价单",
-      "source": null,
-      "demandItem": "市场价",
-      "month": "04月",
-      "totalPoints": 1662,
-      "itemCount": null,
-      "reviewIssues": null,
-      "issuedQty": 570,
-      "collected": 232,
-      "feedbackMat": null,
-      "expertVerify": null,
-      "supplierRejects": null,
-      "closed": null,
-      "allClosed": null,
-      "notes": null
-    },
-    {
-      "name": "1:3",
-      "settleType": "价格采集",
-      "source": "聚合1:3",
-      "demandItem": "市场价",
-      "month": "04月",
-      "totalPoints": 19910,
-      "itemCount": null,
-      "reviewIssues": 0,
-      "issuedQty": 19910,
-      "collected": 9739,
-      "feedbackMat": null,
-      "expertVerify": null,
-      "supplierRejects": null,
-      "closed": null,
-      "allClosed": null,
-      "notes": null
-    },
-    {
-      "name": "山东",
-      "settleType": "价格采集",
-      "source": null,
-      "demandItem": "采购建议价",
-      "month": "04月",
-      "totalPoints": 286,
-      "itemCount": null,
-      "reviewIssues": 0,
-      "issuedQty": 286,
-      "collected": 0,
+      "completionRate": 100.0,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -623,24 +656,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "reviewIssues": 0,
       "issuedQty": 1605,
       "collected": 1391,
-      "feedbackMat": null,
-      "expertVerify": 11,
-      "supplierRejects": null,
-      "closed": null,
-      "allClosed": null,
-      "notes": null
-    },
-    {
-      "name": "江苏比价更新",
-      "settleType": "价格采集",
-      "source": "AI比价",
-      "demandItem": "市场价",
-      "month": "04月",
-      "totalPoints": 16594,
-      "itemCount": 16594,
-      "reviewIssues": 0,
-      "issuedQty": 16594,
-      "collected": 16594,
+      "completionRate": 86.7,
+      "accuracyRate": 100.0,
+      "invalidData": 17,
+      "invalidRate": null,
+      "publishedData": 1571,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -649,16 +670,46 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "notes": null
     },
     {
-      "name": "1:3-管材管件",
+      "name": "海南更新",
+      "settleType": "价格更新",
+      "source": "更新",
+      "demandItem": "市场价",
+      "month": "04月",
+      "totalPoints": 13716,
+      "itemCount": 13716,
+      "reviewIssues": 0,
+      "issuedQty": 13716,
+      "collected": 13716,
+      "completionRate": 100.0,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 1,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
+    },
+    {
+      "name": "聚合1:3",
       "settleType": "价格采集",
       "source": "聚合1:3",
       "demandItem": "市场价",
       "month": "04月",
-      "totalPoints": 3161,
-      "itemCount": null,
-      "reviewIssues": null,
-      "issuedQty": null,
-      "collected": null,
+      "totalPoints": 19910,
+      "itemCount": 19910,
+      "reviewIssues": 0,
+      "issuedQty": 19910,
+      "collected": 9739,
+      "completionRate": 48.9,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 0,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -669,14 +720,44 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     {
       "name": "新疆",
       "settleType": "全系列报价单",
+      "source": "全系列报价单",
+      "demandItem": "市场价",
+      "month": "05月",
+      "totalPoints": 702,
+      "itemCount": 234,
+      "reviewIssues": 0,
+      "issuedQty": 702,
+      "collected": 669,
+      "completionRate": 95.3,
+      "accuracyRate": 100.0,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 1,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
+    },
+    {
+      "name": "日常更新/精准需求",
+      "settleType": "价格采集",
       "source": null,
       "demandItem": "市场价",
       "month": "05月",
-      "totalPoints": null,
-      "itemCount": null,
-      "reviewIssues": 0,
-      "issuedQty": null,
-      "collected": null,
+      "totalPoints": 1802,
+      "itemCount": 1802,
+      "reviewIssues": null,
+      "issuedQty": 1802,
+      "collected": 1802,
+      "completionRate": null,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": 534,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -690,11 +771,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "05月",
-      "totalPoints": 2355,
-      "itemCount": 785,
-      "reviewIssues": 78,
+      "totalPoints": 2277,
+      "itemCount": 759,
+      "reviewIssues": 76,
       "issuedQty": 2277,
       "collected": 2355,
+      "completionRate": 103.4,
+      "accuracyRate": 96.7,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": 2242,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -708,11 +795,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "06月",
-      "totalPoints": 14562,
-      "itemCount": 4854,
-      "reviewIssues": 462,
-      "issuedQty": 14100,
-      "collected": null,
+      "totalPoints": 16482,
+      "itemCount": 5494,
+      "reviewIssues": 918,
+      "issuedQty": 16482,
+      "collected": 16386,
+      "completionRate": 99.4,
+      "accuracyRate": 96.9,
+      "invalidData": 32,
+      "invalidRate": 0.6,
+      "publishedData": 15623,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -721,16 +814,22 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "notes": null
     },
     {
-      "name": "淄博价目表",
+      "name": "市场价top200",
       "settleType": "价格采集",
       "source": "地区特性",
       "demandItem": "市场价",
       "month": "06月",
-      "totalPoints": 5889,
-      "itemCount": 5889,
-      "reviewIssues": 34,
-      "issuedQty": 5855,
-      "collected": null,
+      "totalPoints": 2934,
+      "itemCount": 978,
+      "reviewIssues": 28,
+      "issuedQty": 2934,
+      "collected": 2078,
+      "completionRate": 70.8,
+      "accuracyRate": 100.0,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": 1689,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -744,11 +843,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "AI比价",
       "demandItem": "市场价",
       "month": "06月",
-      "totalPoints": 14106,
-      "itemCount": 4702,
-      "reviewIssues": 42,
-      "issuedQty": 14064,
-      "collected": null,
+      "totalPoints": 18651,
+      "itemCount": 6217,
+      "reviewIssues": 838,
+      "issuedQty": 18651,
+      "collected": 2328,
+      "completionRate": 12.5,
+      "accuracyRate": 93.0,
+      "invalidData": null,
+      "invalidRate": 0.0,
+      "publishedData": null,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -757,16 +862,46 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "notes": null
     },
     {
-      "name": "山东比价",
+      "name": "广西多层级清单",
       "settleType": "价格采集",
-      "source": "AI比价",
+      "source": "地区特性",
       "demandItem": "市场价",
       "month": "06月",
-      "totalPoints": 2115,
-      "itemCount": 705,
+      "totalPoints": 3109,
+      "itemCount": 3109,
       "reviewIssues": 0,
-      "issuedQty": 2115,
-      "collected": null,
+      "issuedQty": 3109,
+      "collected": 2920,
+      "completionRate": 93.9,
+      "accuracyRate": 100.0,
+      "invalidData": 189,
+      "invalidRate": 6.1,
+      "publishedData": 2441,
+      "timelyRate": 1,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
+    },
+    {
+      "name": "日常更新/精准需求",
+      "settleType": "价格采集",
+      "source": null,
+      "demandItem": "市场价",
+      "month": "06月",
+      "totalPoints": 874,
+      "itemCount": 874,
+      "reviewIssues": null,
+      "issuedQty": 874,
+      "collected": 225,
+      "completionRate": null,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -780,29 +915,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "地区特性",
       "demandItem": "市场价",
       "month": "06月",
-      "totalPoints": 771,
-      "itemCount": 771,
-      "reviewIssues": 0,
-      "issuedQty": 771,
-      "collected": null,
-      "feedbackMat": null,
-      "expertVerify": null,
-      "supplierRejects": null,
-      "closed": null,
-      "allClosed": null,
-      "notes": null
-    },
-    {
-      "name": "广东比价",
-      "settleType": "价格采集",
-      "source": "AI比价",
-      "demandItem": "市场价",
-      "month": "06月",
-      "totalPoints": 2001,
-      "itemCount": 667,
-      "reviewIssues": 0,
-      "issuedQty": 2001,
-      "collected": null,
+      "totalPoints": 6626,
+      "itemCount": 6626,
+      "reviewIssues": 1193,
+      "issuedQty": 6626,
+      "collected": 6058,
+      "completionRate": 91.4,
+      "accuracyRate": 99.5,
+      "invalidData": 568,
+      "invalidRate": 8.6,
+      "publishedData": 5137,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -816,11 +939,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "source": "地区特性",
       "demandItem": "市场价",
       "month": "06月",
-      "totalPoints": 646,
-      "itemCount": 646,
+      "totalPoints": 802,
+      "itemCount": 802,
       "reviewIssues": 0,
-      "issuedQty": 646,
+      "issuedQty": 802,
       "collected": null,
+      "completionRate": 0.0,
+      "accuracyRate": 100.0,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -835,8 +964,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "产品模块": "市场价",
       "需求类型": "价格采集",
       "需求数量": 3821,
-      "结算单价": 5,
-      "结算金额": 19105
+      "结算单价": 5.0,
+      "结算金额": 19105.0
     },
     {
       "月份": "1月",
@@ -851,8 +980,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "产品模块": "市场价",
       "需求类型": "全系列报价单",
       "需求数量": 460,
-      "结算单价": 150,
-      "结算金额": 69000
+      "结算单价": 150.0,
+      "结算金额": 69000.0
     },
     {
       "月份": "1月",
@@ -867,8 +996,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "产品模块": "市场价",
       "需求类型": "价格采集",
       "需求数量": 17279,
-      "结算单价": 5,
-      "结算金额": 86395
+      "结算单价": 5.0,
+      "结算金额": 86395.0
     },
     {
       "月份": "2月",
@@ -883,8 +1012,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "产品模块": "市场价",
       "需求类型": "全系列报价单",
       "需求数量": 2,
-      "结算单价": 150,
-      "结算金额": 300
+      "结算单价": 150.0,
+      "结算金额": 300.0
     },
     {
       "月份": "2月",
@@ -892,15 +1021,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "需求类型": "价格采集",
       "需求数量": 390,
       "结算单价": 2.3,
-      "结算金额": 897
+      "结算金额": 897.0
     },
     {
       "月份": "3月",
       "产品模块": "市场价",
       "需求类型": "价格采集",
       "需求数量": 25896,
-      "结算单价": 5,
-      "结算金额": 129480
+      "结算单价": 5.0,
+      "结算金额": 129480.0
     },
     {
       "月份": "3月",
@@ -915,8 +1044,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "产品模块": "市场价",
       "需求类型": "全系列报价单",
       "需求数量": 5,
-      "结算单价": 150,
-      "结算金额": 750
+      "结算单价": 150.0,
+      "结算金额": 750.0
     },
     {
       "月份": "3月",
@@ -930,9 +1059,113 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "月份": "4月",
       "产品模块": "市场价",
       "需求类型": "价格采集",
-      "需求数量": 19910,
-      "结算单价": 0,
-      "结算金额": 0
+      "需求数量": 15139,
+      "结算单价": 5.0,
+      "结算金额": 75695.0
+    },
+    {
+      "月份": "4月",
+      "产品模块": "市场价",
+      "需求类型": "价格更新",
+      "需求数量": 10752,
+      "结算单价": 2.3,
+      "结算金额": 24729.6
+    },
+    {
+      "月份": "4月",
+      "产品模块": "市场价",
+      "需求类型": "全系列报价单",
+      "需求数量": 251,
+      "结算单价": 150.0,
+      "结算金额": 37650.0
+    },
+    {
+      "月份": "4月",
+      "产品模块": "信息价采集",
+      "需求类型": "价格采集",
+      "需求数量": 2598,
+      "结算单价": 2.3,
+      "结算金额": 5975.4
+    },
+    {
+      "月份": "4月",
+      "产品模块": "市场价",
+      "需求类型": "额外激励",
+      "需求数量": 4812,
+      "结算单价": 4.55,
+      "结算金额": 21894.6
+    },
+    {
+      "月份": "4月",
+      "产品模块": "市场价",
+      "需求类型": "额外激励",
+      "需求数量": 17,
+      "结算单价": 2.0,
+      "结算金额": 34.0
+    },
+    {
+      "月份": "5月",
+      "产品模块": "市场价",
+      "需求类型": "价格采集",
+      "需求数量": 15684,
+      "结算单价": 5.0,
+      "结算金额": 78420.0
+    },
+    {
+      "月份": "5月",
+      "产品模块": "市场价",
+      "需求类型": "价格更新",
+      "需求数量": 32832,
+      "结算单价": 2.3,
+      "结算金额": 75513.6
+    },
+    {
+      "月份": "5月",
+      "产品模块": "市场价",
+      "需求类型": "全系列报价单",
+      "需求数量": 356,
+      "结算单价": 150.0,
+      "结算金额": 53400.0
+    },
+    {
+      "月份": "5月",
+      "产品模块": "信息价采集",
+      "需求类型": "价格采集",
+      "需求数量": 1703,
+      "结算单价": 2.3,
+      "结算金额": 3916.9
+    },
+    {
+      "月份": "5月",
+      "产品模块": "市场价",
+      "需求类型": "额外激励",
+      "需求数量": 2355,
+      "结算单价": 5.0,
+      "结算金额": 11775.0
+    },
+    {
+      "月份": "6月",
+      "产品模块": "市场价",
+      "需求类型": "价格采集",
+      "需求数量": 28723,
+      "结算单价": 5.0,
+      "结算金额": 143615.0
+    },
+    {
+      "月份": "6月",
+      "产品模块": "市场价",
+      "需求类型": "价格更新",
+      "需求数量": 3215,
+      "结算单价": 2.3,
+      "结算金额": 7394.5
+    },
+    {
+      "月份": "6月",
+      "产品模块": "市场价",
+      "需求类型": "全系列报价单",
+      "需求数量": 93,
+      "结算单价": 150.0,
+      "结算金额": 13950.0
     }
   ],
   "totalBudget": 3900000,
@@ -960,6 +1193,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           "key": "reviewIssueRate",
           "label": "初审问题率",
           "unit": "%"
+        },
+        {
+          "key": "reviewPassRate",
+          "label": "初审通过率",
+          "unit": "%"
+        },
+        {
+          "key": "reviewPassRate",
+          "label": "初审通过率",
+          "unit": "%"
+        },
+        {
+          "key": "timelyRate",
+          "label": "发布及时率",
+          "unit": "%"
         }
       ]
     },
@@ -983,8 +1231,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           "unit": "%"
         },
         {
-          "key": "feedbackMat",
-          "label": "材料反馈数",
+          "key": "invalidData",
+          "label": "无效数据",
+          "unit": "条"
+        },
+        {
+          "key": "publishedData",
+          "label": "发布数据",
           "unit": "条"
         }
       ]
@@ -994,6 +1247,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "icon": "🔍",
       "metrics": [
         {
+          "key": "accuracyRate",
+          "label": "需求准确率",
+          "unit": "%"
+        },
+        {
           "key": "feedbackMat",
           "label": "材料反馈数",
           "unit": "条"
@@ -1002,21 +1260,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           "key": "expertVerify",
           "label": "专家核实通过数",
           "unit": "条"
-        },
-        {
-          "key": "verifyPassRate",
-          "label": "核实通过率",
-          "unit": "%"
-        },
-        {
-          "key": "supplierRejects",
-          "label": "供应商确认不通过数",
-          "unit": "条"
-        },
-        {
-          "key": "accuracyRate",
-          "label": "需求准确率",
-          "unit": "%"
         }
       ]
     },
@@ -1038,23 +1281,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     }
   },
   "specialProjects": {
-    "供采试点": {
-      "color": "#3498DB",
-      "icon": "🔵",
-      "desc": "外包试点项目（浙江/广东试点，外包咬合、付费匹配）",
-      "metrics": [
-        {
-          "key": "pilotCompletion",
-          "label": "试点完成率",
-          "unit": "%"
-        },
-        {
-          "key": "pilotProgress",
-          "label": "试点进度",
-          "unit": "%"
-        }
-      ]
-    },
     "采购价更新": {
       "color": "#9B59B6",
       "icon": "🟣",
@@ -1104,73 +1330,159 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "action": "追溯源头，优化需求质量"
     },
     {
-      "condition": "closed=进行中",
+      "condition": "invalidData>0",
       "priority": "P1",
-      "problem": "{name} 闭环进行中",
-      "action": "跟进闭环进度"
-    },
-    {
-      "condition": "supplierRejects>10",
-      "priority": "P1",
-      "problem": "{name} 供应商不通过 {value}",
-      "action": "排查原因，协同供应商确认"
+      "problem": "{name} 无效数据 {value} 条",
+      "action": "排查无效数据原因，提升数据质量"
     }
   ],
   "monthlyTrend": {
     "需求总条数": [
-      15977,
-      53581,
-      2277,
-      38906
+      17626,
+      56647,
+      4781,
+      49478
     ],
     "采集下发数": [
-      15977,
-      53581,
-      2277,
-      38906
-    ],
-    "采集完成率": [
-      78.5,
-      71.6,
-      100,
-      0
+      17626,
+      56647,
+      4781,
+      49478
     ],
     "采集完成数": [
-      10765,
-      42484,
-      2355,
-      0
+      15595,
+      45842,
+      4826,
+      29995
     ],
-    "预算执行率": [
-      8.6,
-      14.5,
-      18.2,
-      20.8
+    "采集完成率": [
+      88.5,
+      80.9,
+      100.9,
+      60.6
     ],
     "需求准确率": [
-      94.4,
-      0,
-      0,
-      0
+      89.8,
+      100.0,
+      98.4,
+      94.0
     ],
-    "闭环率": [
-      100,
-      22.2,
+    "无效数据数": [
       0,
-      0
+      17,
+      0,
+      789
     ],
-    "产能利用率": [
-      67.3,
-      79.3,
-      100,
-      0
+    "无效数据率": [
+      0.0,
+      0.0,
+      0.0,
+      2.6
+    ],
+    "预算执行率": [
+      8.9,
+      13.2,
+      18.9,
+      23.1
     ],
     "成本执行率": [
-      8.6,
-      14.5,
-      18.2,
-      20.8
+      8.9,
+      13.2,
+      18.9,
+      23.1
     ]
+  },
+  "qualityReview": {
+    "公章抽审": {
+      "审核": 663,
+      "初审通过": 567,
+      "初审不通过": 96,
+      "初审通过率": 0.855203619909502,
+      "无问题采集员": 8,
+      "问题采集员": 1
+    },
+    "报价抽审": {
+      "抽审量": 76,
+      "报价量": 38
+    },
+    "抽审任务": {
+      "月份": "月份",
+      "项": "值"
+    }
+  },
+  "preReview": {
+    "total": 3725,
+    "passed": 3717,
+    "failed": 8,
+    "by_reviewer": {
+      "杨倩楠": {
+        "total": 1569,
+        "passed": 1568,
+        "passRate": 99.9
+      },
+      "姜恩慧": {
+        "total": 2156,
+        "passed": 2149,
+        "passRate": 99.7
+      }
+    },
+    "by_month": {
+      "1月": {
+        "total": 537,
+        "passed": 535,
+        "passRate": 99.6
+      },
+      "2月": {
+        "total": 155,
+        "passed": 154,
+        "passRate": 99.4
+      },
+      "3月": {
+        "total": 613,
+        "passed": 613,
+        "passRate": 100.0
+      },
+      "4月": {
+        "total": 858,
+        "passed": 855,
+        "passRate": 99.7
+      },
+      "5月": {
+        "total": 781,
+        "passed": 781,
+        "passRate": 100.0
+      },
+      "6月": {
+        "total": 781,
+        "passed": 779,
+        "passRate": 99.7
+      }
+    },
+    "fail_reasons": {
+      "品牌不能是地名，给供应商打电话不配合审核，说的什么没听懂，是福建的号，请确认电话是否正确": 1,
+      "电话多次拨打不接，联系不上供应商": 1,
+      "报价单和报价说明印章与公司名称不符，这样的电子章不合格，请盖实体章": 1,
+      "商贸公司品牌不能从公司名里摘字/后台发布地区是地级市只能发布到保定，报价说明需要改成保定": 1,
+      "供应商说运费是半挂整车配送含运费，请修改报价说明": 1,
+      "运费需要到地级市请补充到保定的运费算法": 1,
+      "供应商签名错误": 1,
+      "请勾选登记表纳税人类型；请补充报价说明税率": 1
+    },
+    "new_enterprise": 1295,
+    "passRate": 99.8
+  },
+  "issueFeedback": {
+    "问题反馈量": 1000,
+    "双方共识量": 278,
+    "双方未达成共识量": 722,
+    "已共识问题标签": {
+      "参数不全无法报价": 1,
+      "参数有误": 152,
+      "非通用参数": 43,
+      "其他": 9,
+      "已淘汰参数": 5,
+      "找不到资源": 68
+    }
   }
 }
 </script>
@@ -1286,10 +1598,16 @@ function calcMetrics(tasks){
   const vpRate = totalFeedback ? +((totalVerify/totalFeedback)*100).toFixed(1) : 0;
   const accRate = totalPoints ? +((1 - totalReviewIssues/totalPoints)*100).toFixed(1) : 0;
   const riRate = totalPoints ? +((totalReviewIssues/totalPoints)*100).toFixed(1) : 0;
+  // 发布及时率: 统计 timelyRate=1 的任务占比
+  const timelyTasks = tasks.filter(t => t.timelyRate === 1 || t.timelyRate === '1');
+  const timelyRate = tasks.length ? +((timelyTasks.length / tasks.length) * 100).toFixed(1) : 0;
+  // 发布及时率(加权): 按下发量加权
+  const timelyWeighted = totalIssued ? +(tasks.reduce((s,t) => s + (t.timelyRate === 1 || t.timelyRate === '1' ? num(t.issuedQty||t.totalPoints) : 0), 0) / totalIssued * 100).toFixed(1) : 0;
 
   return {
     n,
     totalPoints, itemCount, reviewIssues: totalReviewIssues, reviewIssueRate: riRate,
+    reviewPassRate: riRate ? +(100 - riRate).toFixed(1) : 0,
     issuedQty: totalIssued, collected: totalCollected,
     completionRate: compRate,
     feedbackMat: totalFeedback, feedbackRate: fbRate,
@@ -1298,23 +1616,9 @@ function calcMetrics(tasks){
     accuracyRate: accRate,
     closedRate: hasClosed ? +(closedCount/hasClosed*100).toFixed(1) : 0,
     allClosedRate: n ? +(allClosedCount/n*100).toFixed(1) : 0,
-    totalDemand: totalIssued
-  };
-});
-
-  return {
-    n, totalDemand, totalCollected,
-    timelinessRate: hasTL ? +(tlCount/tasks.length*100).toFixed(1) : 0,
-    completionRate: crCnt ? +(crSum/crCnt).toFixed(1) : 0,
-    problemRate: prCnt ? +(prSum/prCnt).toFixed(1) : 0,
-    passRate: passCnt ? +(passSum/passCnt).toFixed(1) : 0,
-    rejectCount, selfCorrect: selfCorrectSum,
-    feedbackRate: totalCollected ? +((feedbackSum/totalCollected)*100).toFixed(1) : 0,
-    verifyPassRate: feedbackSum ? +(((feedbackSum - rejectCount)/feedbackSum)*100).toFixed(1) : 0,
-    accuracyRate: passCnt ? +(passSum/passCnt).toFixed(1) : 0,
-    rejectRate: verifySum ? +((rejectCount/verifySum)*100).toFixed(1) : 0,
-    closedRate: hasClosed ? +(closedCount/hasClosed*100).toFixed(1) : 0,
-    allClosedRate: n ? +(allClosedCount/n*100).toFixed(1) : 0,
+    totalDemand: totalIssued,
+    timelyRate: timelyRate,
+    timelyWeightedRate: timelyWeighted
   };
 }
 
@@ -1332,26 +1636,41 @@ function renderAll(){
   renderMonthTrends();
   renderAnalysisCharts(tasks, m);
   renderAlerts(tasks, m);
+  renderNewSections();
 }
 
 // === 看板 1：流程总览 — 四环节 KPI 卡片 ===
 function renderFlowKPIs(tasks, m){
   const sc = DATA.stepConfig;
   if(!sc) return;
+  // 检测哪些字段在所有task中有实际数据
+  const hasData = {};
+  tasks.forEach(t => {
+    Object.keys(t).forEach(k => {
+      if(t[k] !== null && t[k] !== undefined && t[k] !== '') hasData[k] = true;
+    });
+  });
   let html = "";
   for(const [name, cfg] of Object.entries(sc)){
     const metricsHtml = cfg.metrics.map(mm => {
       let raw = m[mm.key];
-      if(raw === undefined || raw === null) raw = "—";
+      // 没数据来源 → 显示"—"
+      const noSource = !hasData[mm.key] && (raw === 0 || raw === undefined || raw === null);
+      if(raw === undefined || raw === null || noSource) raw = "—";
       else if(mm.unit === "%") raw = raw + "%";
-      else if(["totalPoints","itemCount","issuedQty","collected","totalDemand","totalCollected","feedbackMat","expertVerify","supplierRejects","reviewIssues"].includes(mm.key)) raw = Number(raw).toLocaleString();
       else raw = raw + (mm.unit ? " "+mm.unit : "");
       let cls = "";
-      if(["completionRate","verifyPassRate","accuracyRate","closedRate","allClosedRate"].includes(mm.key))
+      if(["completionRate","verifyPassRate","accuracyRate","closedRate","allClosedRate","timelyRate"].includes(mm.key))
         cls = m[mm.key] >= 80 ? "good" : m[mm.key] >= 60 ? "warn" : "bad";
       if(mm.key === "reviewIssueRate") cls = m[mm.key] <= 5 ? "good" : m[mm.key] <= 15 ? "warn" : "bad";
       return `<div class="fm"><span class="fl">${mm.label}</span><span class="fv ${cls}">${raw}</span></div>`;
     }).join("");
+    // 整张卡全空 → 跳过（不展示空卡）
+    const allEmpty = cfg.metrics.every(mm => {
+      const v = m[mm.key];
+      return v === undefined || v === null || v === 0 || !hasData[mm.key];
+    });
+    if(allEmpty) continue;
     html += `<div class="flow-card"><div class="flow-card-header" style="background:${cfg.color}">${cfg.icon||''} ${name}</div><div class="flow-card-body">${metricsHtml}</div></div>`;
   }
   document.getElementById("flowRow").innerHTML = html;
@@ -1361,17 +1680,14 @@ function renderFlowKPIs(tasks, m){
 function renderSpecialProjects(tasks, m){
   const sp = DATA.specialProjects;
   if(!sp) return;
-  const pilotTasks = tasks.filter(t => t.source && (t.source.includes("试点")||t.name.includes("试点")));
+  // 采购价更新专项
   const updateTasks = tasks.filter(t => t.settleType === "价格更新");
-  const pilotCol = pilotTasks.reduce((s,t) => s + num(t.collected), 0);
-  const pilotDem = pilotTasks.reduce((s,t) => s + num(t.issuedQty||t.totalPoints), 0);
   const updCol = updateTasks.reduce((s,t) => s + num(t.collected), 0);
   const updDem = updateTasks.reduce((s,t) => s + num(t.issuedQty||t.totalPoints), 0);
+  // 结算与成本
   const s = DATA.settlements||[];
   const totalAmt = s.reduce((x,y) => x + num(y.结算金额||y.amount), 0);
   const budget = DATA.totalBudget||3900000;
-  m.pilotCompletion = pilotDem ? +((pilotCol/pilotDem)*100).toFixed(1) : 0;
-  m.pilotProgress = m.pilotCompletion;
   m.updateCompletion = updDem ? +((updCol/updDem)*100).toFixed(1) : 0;
   m.updateDemand = updDem;
   m.budgetRate = budget ? +((totalAmt/budget)*100).toFixed(1) : 0;
@@ -1420,7 +1736,6 @@ function renderRadarChart(tasks, m){
     {name:"采集执行", max:100, val: m.completionRate||0},
     {name:"数据加工", max:100, val: Math.min(100, (m.accuracyRate*0.6 + (m.verifyPassRate||0)*0.4))},
     {name:"上线发布", max:100, val: m.closedRate||0},
-    {name:"供采试点", max:100, val: m.pilotCompletion||0},
     {name:"结算成本", max:100, val: Math.min(100, 100-(m.budgetRate||0))},
   ];
   const avg = dims.reduce((s,d)=>s+d.val,0)/dims.length;
@@ -1584,6 +1899,10 @@ function renderBudgetTab(){
   const panel = document.getElementById("fp_bd");
   if(!panel) return;
   const s = DATA.settlements || [];
+  if(!s.length){
+    panel.innerHTML = '<div class="empty-state">📭 暂无结算数据<br/><span style="font-size:0.65rem;color:var(--tl)">浏览器导入仅含任务数据，预算结算请运行 python parse_template.py</span></div>';
+    return;
+  }
   const totalBudget = DATA.totalBudget || 3900000;
   const totalAmount = s.reduce((sum, x) => sum + num(x.结算金额 || x.amount), 0);
   const execRate = totalBudget ? +((totalAmount/totalBudget)*100).toFixed(1) : 0;
@@ -1759,6 +2078,122 @@ function renderAlerts(tasks, m){
 }
 
 // ============================================================
+// NEW DATA SECTIONS (问题反馈 / 加工预审 / 质量抽审)
+// ============================================================
+function renderNewSections(){
+  renderIssueFeedback();
+  renderPreReview();
+  renderQualityReview();
+}
+
+function renderIssueFeedback(){
+  const sec = document.getElementById("issueFeedbackSec");
+  const grid = document.getElementById("issueFeedbackGrid");
+  if(!sec || !grid) return;
+  const fb = DATA.issueFeedback;
+  if(!fb || !fb.问题反馈量){
+    sec.style.display = "none"; return;
+  }
+  sec.style.display = "block";
+  const total = fb.问题反馈量 || 0;
+  const agreed = fb.双方共识量 || 0;
+  const notAgreed = fb.双方未达成共识量 || 0;
+  const labels = fb.已共识问题标签 || {};
+
+  // 问题标签分布
+  const labelKeys = Object.keys(labels);
+  const labelHtml = labelKeys.length ? `
+    <div class="ac"><div class="ac-title">📌 已共识问题标签</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:4px">
+      ${labelKeys.map(k => `<div class="fm-box"><div class="fm-l">${k}</div><div class="fm-v">${labels[k]}</div></div>`).join('')}
+    </div></div>` : '';
+
+  grid.innerHTML = `
+    <div class="ac"><div class="ac-title">📊 问题反馈总览</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">总反馈量</div><div style="font-size:1.3rem;font-weight:700;color:var(--red)">${total.toLocaleString()}</div></div>
+        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">双方共识</div><div style="font-size:1.3rem;font-weight:700;color:var(--green)">${agreed.toLocaleString()}</div></div>
+        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">未共识</div><div style="font-size:1.3rem;font-weight:700;color:var(--orange)">${notAgreed.toLocaleString()}</div></div>
+        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">共识率</div><div style="font-size:1.3rem;font-weight:700;color:var(--blue)">${total ? (agreed/total*100).toFixed(1) : 0}%</div></div>
+      </div>
+    </div>
+    ${labelHtml}
+  `;
+}
+
+function renderPreReview(){
+  const sec = document.getElementById("preReviewSec");
+  const grid = document.getElementById("preReviewGrid");
+  if(!sec || !grid) return;
+  const pr = DATA.preReview;
+  if(!pr || !pr.total){
+    sec.style.display = "none"; return;
+  }
+  sec.style.display = "block";
+
+  // 各审核人统计
+  const reviewerEntries = Object.entries(pr.by_reviewer || {});
+  const reviewerHtml = reviewerEntries.length ? `
+    <div class="ac"><div class="ac-title">👤 审核人工作量</div>
+    <div style="overflow-x:auto"><table class="task-table" style="font-size:0.68rem">
+      <thead><tr><th>审核人</th><th>审核量</th><th>通过量</th><th>通过率</th></tr></thead>
+      <tbody>${reviewerEntries.sort((a,b)=>b[1].total-a[1].total).map(([name, stats]) =>
+        `<tr><td>${name}</td><td>${stats.total}</td><td>${stats.passed}</td><td>${stats.passRate || 0}%</td></tr>`
+      ).join('')}</tbody></table></div></div>
+  ` : '';
+
+  // 不通过原因
+  const reasonEntries = Object.entries(pr.fail_reasons || {});
+  const reasonHtml = reasonEntries.length ? `
+    <div class="ac"><div class="ac-title">⚠️ 不通过原因分布</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:4px">
+      ${reasonEntries.sort((a,b)=>b[1]-a[1]).map(([r, c]) =>
+        `<div class="fm-box"><div class="fm-l">${r}</div><div class="fm-v">${c}</div></div>`
+      ).join('')}
+    </div></div>
+  ` : '';
+
+  grid.innerHTML = `
+    <div class="ac"><div class="ac-title">📊 加工预审总览</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">审核总量</div><div style="font-size:1.3rem;font-weight:700;color:var(--blue)">${pr.total.toLocaleString()}</div></div>
+        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">通过</div><div style="font-size:1.3rem;font-weight:700;color:var(--green)">${pr.passed.toLocaleString()}</div></div>
+        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">不通过</div><div style="font-size:1.3rem;font-weight:700;color:var(--red)">${pr.failed.toLocaleString()}</div></div>
+        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">通过率</div><div style="font-size:1.3rem;font-weight:700;color:var(--green)">${pr.passRate || 0}%</div></div>
+        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">新增企业</div><div style="font-size:1.3rem;font-weight:700;color:var(--purple)">${pr.new_enterprise || 0}</div></div>
+      </div>
+    </div>
+    ${reviewerHtml}
+    ${reasonHtml}
+  `;
+}
+
+function renderQualityReview(){
+  const sec = document.getElementById("qualityReviewSec");
+  const grid = document.getElementById("qualityReviewGrid");
+  if(!sec || !grid) return;
+  const qr = DATA.qualityReview;
+  if(!qr || !Object.keys(qr).length){
+    sec.style.display = "none"; return;
+  }
+  sec.style.display = "block";
+
+  const cards = Object.entries(qr).map(([name, data]) => {
+    const items = Object.entries(data)
+      .filter(([k]) => k !== '月份' && k !== 'month')
+      .map(([k, v]) => {
+        const val = typeof v === 'number' ? (v > 1 ? v.toFixed(0) : (v*100).toFixed(1)+'%') : v;
+        return `<div class="fm-box"><div class="fm-l">${k}</div><div class="fm-v">${val}</div></div>`;
+      }).join('');
+    const month = data.月份 || data.month || '';
+    return `<div class="ac"><div class="ac-title">${name} ${month}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${items}</div></div>`;
+  }).join('');
+
+  grid.innerHTML = cards;
+}
+
+// ============================================================
 // TOOLS
 // ============================================================
 function openEditor(){
@@ -1792,9 +2227,216 @@ function toast(m,t){
   setTimeout(()=>{el.style.opacity="0";el.style.transition="opacity 0.3s";setTimeout(()=>el.remove(),300);},3000);
 }
 
-// CSV Import
-const FIELD_MAP={month:["月份","月","需求月份"],project:["项目","来源","需求来源","需求名称"],demandType:["结算类型","需求类型"],totalPoints:["需求总条数","总条数","总点数"],itemCount:["需求项数","项数"],issuedQty:["采集下发数","下发数","下发数量"],collectedQty:["采集完成数","实际采集完成数"],feedbackMat:["材料反馈数","反馈数"],expertVerify:["专家核实通过数","核实通过数"],supplierRejects:["供应商确认不通过数","不通过数"],completionRate:["采集完成率","完成率"],accuracy:["需求准确率","准确率"],closedStatus:["是否闭环","闭环状态","闭环"],allClosed:["是否全部闭环","全部闭环"]};
+// CSV Import — 适配新模板"看板数据录入模板-调整"的列名
+const FIELD_MAP={
+  month:["月份","月"],
+  demandItem:["需求项"],
+  demandType:["结算类型","需求类型"],
+  project:["需求名称","任务名称","项目"],
+  source:["需求来源","数据来源"],
+  totalPoints:["下发数量(含多家）","需求总条数","下发数量"],
+  itemCount:["下发材料","材料数量","需求项数"],
+  reviewIssues:["预审问题数据","初审问题数"],
+  reviewFeedbackRate:["需求反馈率","初审通过率"],
+  issuedQty:["下发数量(含多家）","采集下发数","下发数"],
+  collectedQty:["实际采集完成量","采集完成数","实际采集完成数"],
+  completionRate:["采集完成率","完成率"],
+  accuracy:["需求准确率","准确率"],
+  invalidData:["无效数据"],
+  invalidRate:["无效数据占比"],
+  publishedData:["发布数据"],
+  timelyRate:["需求发布及时率"],
+};
 function detectField(headers,f){const kws=FIELD_MAP[f]||[];for(const h of headers)for(const kw of kws)if(h.includes(kw)||kw.includes(h))return h;return null;}
+
+// ============================================================
+// 模板自动导入 — 解析全部5个Sheet
+// ============================================================
+const TPL_COL = {
+  // 各项需求跟踪 → 0-indexed 列号
+  tasks: { month:0, demandItem:1, settleType:2, name:3, source:4, timelyRate:9,
+           totalPoints:10, itemCount:11, reviewIssues:12, accuracyRate:15,
+           collected:19, completionRate:21, invalidData:22, invalidRate:23, publishedData:24 }
+};
+
+function parseTasksSheet(aoa){
+  const tasks = [], seen = new Set(), col = TPL_COL.tasks;
+  for(let r=1; r<aoa.length; r++){ // skip header row (index 0)
+    const row = aoa[r]; if(!row) continue;
+    const name = row[col.name]; if(!name || String(name).trim()==='') continue;
+    const dedup = String(name).trim() + '|' + (row[col.month]||'');
+    if(seen.has(dedup)) continue; seen.add(dedup);
+
+    const monthRaw = String(row[col.month]||'').trim();
+    let month = '';
+    if(monthRaw.includes('月')){
+      const n = parseInt(monthRaw.replace('月','').trim());
+      month = String(n).padStart(2,'0')+'月';
+    }
+    const totalPts = parseFloat(row[col.totalPoints]) || 0;
+    const completed = row[col.completionRate];
+    const accuracy = row[col.accuracyRate];
+    const invRate = row[col.invalidRate];
+    const timely = row[col.timelyRate];
+
+    tasks.push({
+      name: String(name).trim(),
+      settleType: String(row[col.settleType]||'').trim(),
+      source: String(row[col.source]||'').trim() || null,
+      demandItem: String(row[col.demandItem]||'').trim(),
+      month,
+      totalPoints: totalPts || null,
+      itemCount: parseInt(row[col.itemCount]) || null,
+      reviewIssues: parseInt(row[col.reviewIssues]) || 0,
+      issuedQty: totalPts || null,
+      collected: parseFloat(row[col.collected]) || null,
+      completionRate: completed!=null ? +(parseFloat(completed)*100).toFixed(1) : null,
+      accuracyRate: accuracy!=null ? +(parseFloat(accuracy)*100).toFixed(1) : null,
+      invalidData: parseInt(row[col.invalidData]) || null,
+      invalidRate: invRate!=null ? +(parseFloat(invRate)*100).toFixed(1) : null,
+      publishedData: parseInt(row[col.publishedData]) || null,
+      timelyRate: timely!=null ? (parseFloat(timely)===1?1:0) : null,
+      feedbackMat: null, expertVerify: null, supplierRejects: null,
+      closed: null, allClosed: null, notes: null,
+    });
+  }
+  return tasks;
+}
+
+function parseSettlementsSheet(aoa){
+  const settlements = [];
+  for(let r=2; r<aoa.length; r++){ // skip rows 0(title),1(header),2→data
+    const row = aoa[r]; if(!row) continue;
+    const month=row[0], module=row[1], type=row[2];
+    if(!month || !module || !type) continue;
+    settlements.push({
+      "月份":String(month).trim(), "产品模块":String(module).trim(),
+      "需求类型":String(type).trim(), "需求数量":parseInt(row[3])||0,
+      "结算单价":parseFloat(row[4])||0, "结算金额":parseFloat(row[5])||0,
+    });
+  }
+  return settlements;
+}
+
+function parseQualitySheet(aoa){
+  const qr = {}; let cur = null;
+  for(let r=1; r<aoa.length; r++){ // skip header row
+    const row = aoa[r]; if(!row) continue;
+    const a=row[0], b=row[1], d=row[3], e=row[4];
+    if(a && b && String(a).trim() !== '月份') {
+      const key = String(b).trim();
+      // 已有同key任务则合并月份+追加数据，不覆盖
+      if(!qr[key]) qr[key] = {月份:String(a).trim()};
+      cur = key;
+    }
+    if(cur && d!=null && e!=null) qr[cur][String(d).trim()] = e;
+  }
+  return qr;
+}
+
+function parsePreReviewSheet(aoa){
+  const stats = {total:0, passed:0, failed:0, by_reviewer:{}, by_month:{}, fail_reasons:{}, new_enterprise:0};
+  let has = false;
+  for(let r=2; r<aoa.length; r++){ // skip header row (index 1), start from data
+    const row = aoa[r]; if(!row) continue;
+    const reviewer=row[2], passed=String(row[7]||'').trim(), month=row[1], reason=row[8], isNew=row[6];
+    if(!reviewer) continue;
+    has = true; stats.total++;
+    const ok = passed === '是';
+    if(ok) stats.passed++; else stats.failed++;
+    const rn = String(reviewer).trim();
+    stats.by_reviewer[rn] = stats.by_reviewer[rn] || {total:0, passed:0, passRate:0};
+    stats.by_reviewer[rn].total++;
+    if(ok) stats.by_reviewer[rn].passed++;
+    const m = String(month||'').trim();
+    if(m){
+      stats.by_month[m] = stats.by_month[m] || {total:0, passed:0, passRate:0};
+      stats.by_month[m].total++;
+      if(ok) stats.by_month[m].passed++;
+    }
+    if(reason && !ok){ const rs=String(reason).trim(); if(rs) stats.fail_reasons[rs] = (stats.fail_reasons[rs]||0)+1; }
+    if(isNew && (String(isNew).trim()==='是'||String(isNew).trim()==='新增')) stats.new_enterprise++;
+  }
+  if(!has) return null;
+  stats.passRate = stats.total ? +(stats.passed/stats.total*100).toFixed(1) : 0;
+  Object.values(stats.by_reviewer).forEach(v => { v.passRate = v.total ? +(v.passed/v.total*100).toFixed(1) : 0; });
+  Object.values(stats.by_month).forEach(v => { v.passRate = v.total ? +(v.passed/v.total*100).toFixed(1) : 0; });
+  return stats;
+}
+
+function parseFeedbackSheet(aoa){
+  const fb = {}, labels = {}; let section = 'main';
+  for(let r=1; r<aoa.length; r++){
+    const row = aoa[r]; if(!row) continue;
+    const label = String(row[0]||'').trim();
+    if(!label || label === '数量') continue;
+    if(label === '已共识问题标签'){ section='labels'; continue; }
+    const val = row[1];
+    if(section === 'main') fb[label] = parseInt(val)||val;
+    else labels[label] = parseInt(val)||val;
+  }
+  if(Object.keys(labels).length) fb['已共识问题标签'] = labels;
+  return Object.keys(fb).length ? fb : null;
+}
+
+function computeMonthlyTrend(tasks){
+  const trend = {}, months = [...new Set(tasks.map(t=>t.month).filter(Boolean))].sort((a,b)=>parseInt(a)-parseInt(b));
+  trend['需求总条数']=[]; trend['采集下发数']=[]; trend['采集完成数']=[];
+  trend['采集完成率']=[]; trend['需求准确率']=[]; trend['无效数据数']=[]; trend['无效数据率']=[];
+  months.forEach(m => {
+    const mt = tasks.filter(t=>t.month===m);
+    const tp = mt.reduce((s,t)=>s+num(t.totalPoints),0);
+    const ti = mt.reduce((s,t)=>s+num(t.issuedQty),0);
+    const tc = mt.reduce((s,t)=>s+num(t.collected),0);
+    const tr = mt.reduce((s,t)=>s+num(t.reviewIssues),0);
+    const ti2 = mt.reduce((s,t)=>s+num(t.invalidData),0);
+    trend['需求总条数'].push(tp);
+    trend['采集下发数'].push(ti);
+    trend['采集完成数'].push(tc);
+    trend['采集完成率'].push(ti ? +(tc/ti*100).toFixed(1) : 0);
+    trend['需求准确率'].push(tp ? +((1-tr/tp)*100).toFixed(1) : 0);
+    trend['无效数据数'].push(ti2);
+    trend['无效数据率'].push(tc ? +(ti2/tc*100).toFixed(1) : 0);
+  });
+  return trend;
+}
+
+function autoImportTemplate(wb){
+  // 解析全部5个Sheet
+  const tasks = parseTasksSheet(XLSX.utils.sheet_to_json(wb.Sheets['各项需求跟踪'], {header:1, defval:null}));
+  const settlements = parseSettlementsSheet(XLSX.utils.sheet_to_json(wb.Sheets['预算与结算'], {header:1, defval:null}));
+  const qualityReview = parseQualitySheet(XLSX.utils.sheet_to_json(wb.Sheets['质量抽审'], {header:1, defval:null}));
+  const preReview = parsePreReviewSheet(XLSX.utils.sheet_to_json(wb.Sheets['加工预审'], {header:1, defval:null}));
+  const issueFeedback = parseFeedbackSheet(XLSX.utils.sheet_to_json(wb.Sheets['问题反馈'], {header:1, defval:null}));
+  const monthlyTrend = computeMonthlyTrend(tasks);
+
+  // 更新 DATA
+  DATA.tasks = tasks;
+  if(settlements.length) DATA.settlements = settlements;
+  if(Object.keys(qualityReview).length) DATA.qualityReview = qualityReview;
+  if(preReview) DATA.preReview = preReview;
+  if(issueFeedback && issueFeedback.问题反馈量) DATA.issueFeedback = issueFeedback;
+  DATA.monthlyTrend = monthlyTrend;
+  // 更新 filterOptions (收集唯一值)
+  const di = [...new Set(tasks.map(t=>t.demandItem).filter(Boolean))].sort();
+  const st = [...new Set(tasks.map(t=>t.settleType).filter(Boolean))].sort();
+  const sr = [...new Set(tasks.map(t=>t.source).filter(Boolean))].sort();
+  const mo = [...new Set(tasks.map(t=>t.month).filter(Boolean))].sort();
+  DATA.filterOptions = DATA.filterOptions || {};
+  DATA.filterOptions.demandItems = ['全部', ...di];
+  DATA.filterOptions.settleTypes = ['全部', ...st];
+  DATA.filterOptions.sources = ['全部', ...sr];
+  DATA.filterOptions.months = ['全部', ...mo];
+  // 更新月份和月名
+  DATA.months = mo;
+  DATA.monthNames = {};
+  mo.forEach(m => { const k = m.replace('月','').padStart(2,'0'); DATA.monthNames[k] = m; });
+
+  localStorage.setItem('kdata_v3', JSON.stringify(DATA));
+  renderAll();
+  return tasks.length + settlements.length;
+}
+
 document.getElementById("dropZone").addEventListener("click",()=>document.getElementById("csvInput").click());
 document.getElementById("csvInput").addEventListener("change",e=>{if(e.target.files.length)handleFile(e.target.files[0]);});
 ["dragover","dragleave","drop"].forEach(ev=>{document.getElementById("dropZone").addEventListener(ev,e=>{e.preventDefault();if(ev==="dragover")e.currentTarget.classList.add("dragover");if(ev==="dragleave")e.currentTarget.classList.remove("dragover");if(ev==="drop"){e.currentTarget.classList.remove("dragover");if(e.dataTransfer.files.length)handleFile(e.dataTransfer.files[0]);}})});
@@ -1804,13 +2446,35 @@ function handleFile(file){
   if(!isE&&!isC){showCSV("请选择 CSV/Excel","err");return;}
   const r=new FileReader();isE?r.readAsArrayBuffer(file):r.readAsText(file);
   r.onload=e=>{
+    // 检测模板文件（含多项需求跟踪/预算与结算Sheet）
+    if(isE){
+      try{
+        const wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});
+        const sn=wb.SheetNames;
+        if(sn.includes('各项需求跟踪') && sn.includes('预算与结算')){
+          showCSV(`📋 检测到模板文件(${sn.length}个Sheet)，自动解析中...`,"ok");
+          const total = autoImportTemplate(wb);
+          showCSV(`🎉 导入完成: ${total} 条任务/结算/预审/抽审/反馈`,"ok");
+          setTimeout(()=>{ closeCSV(); toast("模板全Sheet导入成功!","success"); },600);
+          return;
+        }
+      }catch(ex){ showCSV("解析失败:"+ex.message,"err"); return; }
+    }
+    // 非模板 → 原有导入流程
     let result;
     if(isE){try{const wb=XLSX.read(new Uint8Array(e.target.result),{type:"array"});const ws=wb.Sheets[wb.SheetNames[0]];const j=XLSX.utils.sheet_to_json(ws,{defval:""});result={data:j,meta:{fields:j.length?Object.keys(j[0]):[]}};if(!j.length){showCSV("Excel为空","err");return}showCSV(`✅ ${j.length}行`,"ok")}catch(ex){showCSV("解析失败:"+ex.message,"err");return}}else{result=Papa.parse(e.target.result,{header:true,skipEmptyLines:true});showCSV(`✅ ${result.data.length}行`,"ok")}
     const headers=result.meta.fields||[];
     const prev=document.getElementById("csvPreview");
     prev.innerHTML="<table><thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead><tbody>"+result.data.slice(0,4).map(r=>"<tr>"+headers.map(h=>`<td>${r[h]||""}</td>`).join("")+"</tr>").join("")+"</tbody></table>";
     document.getElementById("csvPreviewArea").classList.remove("hidden");
-    const mapFields={month:"月份",demandType:"结算类型",totalPoints:"需求总条数",itemCount:"需求项数",issuedQty:"采集下发数",collectedQty:"采集完成数",feedbackMat:"材料反馈数",expertVerify:"专家核实通过数",supplierRejects:"供应商不通过数",completionRate:"完成率",accuracy:"准确率",closedStatus:"闭环状态",allClosed:"全部闭环"};
+    const mapFields={
+      month:"月份", demandItem:"需求项", demandType:"结算类型", project:"需求名称", source:"需求来源",
+      totalPoints:"下发数量", itemCount:"材料数量", reviewIssues:"预审问题数据",
+      reviewFeedbackRate:"需求反馈率",
+      issuedQty:"下发数量", collectedQty:"实际采集完成量",
+      completionRate:"采集完成率", accuracy:"需求准确率",
+      invalidData:"无效数据", invalidRate:"无效数据占比", publishedData:"发布数据", timelyRate:"发布及时率",
+    };
     document.getElementById("csvMapping").innerHTML=Object.entries(mapFields).map(([k,l])=>{
       const m=detectField(headers,k);return `<div class="csv-mapping-item"><label>${l}</label><select id="cm_${k}">${["",...headers].map(h=>`<option value="${h}" ${h===m?"selected":""}>${h||"—不导入—"}</option>`).join("")}</select></div>`;
     }).join("");
@@ -1822,8 +2486,60 @@ function handleFile(file){
 function applyCSV(){
   const result=window._csvResult;if(!result)return;
   const map={};document.querySelectorAll("#csvMapping select").forEach(s=>{if(s.value)map[s.id.replace("cm_","")]=s.value});
-  showCSV("导入完成，需手动调整为正确格式","info");
-  closeCSV();toast("CSV导入完成，请到编辑面板检查数据","success");
+  try{
+    const tasks = result.data.map(row => {
+      function v(k){ const col=map[k]; return col ? row[col] : undefined; }
+      // 月份格式化: "3月" → "03月"
+      let monthRaw = (v('month') || '').toString().trim();
+      let month = '';
+      if(monthRaw.includes('月')){
+        const num = parseInt(monthRaw.replace('月','').trim());
+        month = String(num).padStart(2,'0')+'月';
+      } else if(monthRaw){
+        month = String(parseInt(monthRaw)).padStart(2,'0')+'月';
+      }
+      const totalPts = parseFloat(v('totalPoints'));
+      const hasTotal = v('totalPoints') !== undefined && v('totalPoints') !== '';
+      return {
+        name: (v('project') || '').toString().trim(),
+        settleType: (v('demandType') || '').toString().trim(),
+        source: (v('source') || '').toString().trim() || null,
+        demandItem: (v('demandItem') || '').toString().trim(),
+        month: month,
+        totalPoints: hasTotal && !isNaN(totalPts) ? totalPts : null,
+        itemCount: (v('itemCount')!==undefined && v('itemCount')!=='') ? parseFloat(v('itemCount')) : null,
+        reviewIssues: (v('reviewIssues')!==undefined && v('reviewIssues')!=='') ? parseFloat(v('reviewIssues')) : 0,
+        reviewFeedbackRate: (v('reviewFeedbackRate')!==undefined && v('reviewFeedbackRate')!=='') ? parseFloat(v('reviewFeedbackRate')) : null,
+        issuedQty: hasTotal && !isNaN(totalPts) ? totalPts : null,
+        collected: (v('collectedQty')!==undefined && v('collectedQty')!=='') ? parseFloat(v('collectedQty')) : null,
+        completionRate: (v('completionRate')!==undefined && v('completionRate')!=='') ? parseFloat(v('completionRate')) : null,
+        accuracyRate: (v('accuracy')!==undefined && v('accuracy')!=='') ? parseFloat(v('accuracy')) : null,
+        invalidData: (v('invalidData')!==undefined && v('invalidData')!=='') ? parseFloat(v('invalidData')) : null,
+        invalidRate: (v('invalidRate')!==undefined && v('invalidRate')!=='') ? parseFloat(v('invalidRate')) : null,
+        publishedData: (v('publishedData')!==undefined && v('publishedData')!=='') ? parseFloat(v('publishedData')) : null,
+        timelyRate: (v('timelyRate')!==undefined && v('timelyRate')!=='') ? parseFloat(v('timelyRate')) : null,
+        feedbackMat: null, expertVerify: null, supplierRejects: null,
+        closed: null, allClosed: null, notes: null,
+      };
+    }).filter(t => t.name);
+
+    if(!tasks.length){ showCSV("没有有效数据行","err"); return; }
+    DATA.tasks = tasks;
+    // 非模板导入也更新 filterOptions
+    const di = [...new Set(tasks.map(t=>t.demandItem).filter(Boolean))].sort();
+    const st = [...new Set(tasks.map(t=>t.settleType).filter(Boolean))].sort();
+    const sr = [...new Set(tasks.map(t=>t.source).filter(Boolean))].sort();
+    const mo = [...new Set(tasks.map(t=>t.month).filter(Boolean))].sort();
+    DATA.filterOptions = DATA.filterOptions || {};
+    DATA.filterOptions.demandItems = ['全部', ...di];
+    DATA.filterOptions.settleTypes = ['全部', ...st];
+    DATA.filterOptions.sources = ['全部', ...sr];
+    DATA.filterOptions.months = ['全部', ...mo];
+    localStorage.setItem("kdata_v3",JSON.stringify(DATA));
+    renderAll();
+    showCSV(`🎉 成功导入 ${tasks.length} 条任务`,"ok");
+    setTimeout(()=>{ closeCSV(); toast(`已导入 ${tasks.length} 条任务`,"success"); },800);
+  }catch(ex){ showCSV("导入出错: "+ex.message,"err"); }
 }
 function openCSV(){document.getElementById("csvPanel").classList.add("show");document.getElementById("csvOv").classList.add("show");}
 function closeCSV(){document.getElementById("csvPanel").classList.remove("show");document.getElementById("csvOv").classList.remove("show");document.getElementById("csvPreviewArea").classList.add("hidden");document.getElementById("csvMappingArea").classList.add("hidden");document.getElementById("csvApplyBtn").disabled=true;document.getElementById("csvInput").value="";}
