@@ -1605,6 +1605,7 @@ function calcMetrics(tasks){
   const totalFeedback = tasks.reduce((s,t) => s + num(t.feedbackMat), 0);
   const totalVerify = tasks.reduce((s,t) => s + num(t.expertVerify), 0);
   const totalRejects = tasks.reduce((s,t) => s + num(t.supplierRejects), 0);
+  const totalPublished = tasks.reduce((s,t) => s + num(t.publishedData), 0);
   let closedCount = 0, allClosedCount = 0, hasClosed = 0;
 
   tasks.forEach(t => {
@@ -1633,6 +1634,7 @@ function calcMetrics(tasks){
     expertVerify: totalVerify, verifyPassRate: vpRate,
     supplierRejects: totalRejects,
     accuracyRate: accRate,
+    publishedData: totalPublished,
     closedRate: hasClosed ? +(closedCount/hasClosed*100).toFixed(1) : 0,
     allClosedRate: n ? +(allClosedCount/n*100).toFixed(1) : 0,
     totalDemand: totalIssued,
