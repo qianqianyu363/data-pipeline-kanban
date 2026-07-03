@@ -208,9 +208,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .empty-state{padding:30px;text-align:center;color:var(--tl);font-size:0.8rem}
 
 /* === Flow Cards === */
-.flow-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-@media(max-width:1000px){.flow-row{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.flow-row{grid-template-columns:1fr}}
+.flow-row{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:1200px){.flow-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.flow-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:450px){.flow-row{grid-template-columns:1fr}}
 .flow-card{background:var(--card);border-radius:var(--r-md);box-shadow:var(--shadow);overflow:hidden;transition:transform 0.15s}
 .flow-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-h)}
 .flow-card-header{padding:8px 12px;color:#fff;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:6px;letter-spacing:0.5px}
@@ -316,11 +317,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <!-- ===== 看板 1：流程总览 ===== -->
   <div style="margin-bottom:14px">
     <div class="sec-title">360237223213 345205250351223276350267257346265201347250213346200273350247210 <span class="st-badge">347234213346235277 1 302267 344270211351203250345210206</span></div>
-    <!-- Part 1: 6347216257350212202346240270345277203346214207346240207 -->
-    <div id="stageRow" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px"></div>
-    <!-- Part 2: 345220204346265201347250213350257246347273206346214207346240207 -->
+    <!-- 6流程核心指标+详细指标（合并展示） -->
     <div id="flowRow" class="flow-row"></div>
-    <!-- Part 3: 344270211345244247344270223351241271 -->
     <div id="specialRow" class="special-row"></div>
   </div>
 
@@ -366,39 +364,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="alert-section" id="alertSec" style="display:none">
     <div class="alert-title">🚨 预警与整改行动 <span class="st-badge" style="background:rgba(231,76,60,0.1);color:var(--red);margin-left:6px;font-size:0.6rem">面向领导 · 落地输出</span></div>
     <div class="alert-action" id="alertGrid"></div>
-  </div>
-
-  <!-- ===== 新模板扩展数据：问题反馈 ===== -->
-  <div class="trend-section" id="issueFeedbackSec" style="display:none">
-    <div class="trend-header">
-      <div>
-        <div class="trend-title">📋 问题反馈统计</div>
-        <div class="trend-sub">看板 3 · 新模板扩展数据</div>
-      </div>
-    </div>
-    <div id="issueFeedbackGrid" class="health-grid"></div>
-  </div>
-
-  <!-- ===== 新模板扩展数据：加工预审 ===== -->
-  <div class="trend-section" id="preReviewSec" style="display:none">
-    <div class="trend-header">
-      <div>
-        <div class="trend-title">🔍 加工预审统计</div>
-        <div class="trend-sub">看板 3 · 新模板扩展数据</div>
-      </div>
-    </div>
-    <div id="preReviewGrid" class="health-grid"></div>
-  </div>
-
-  <!-- ===== 新模板扩展数据：质量抽审 ===== -->
-  <div class="trend-section" id="qualityReviewSec" style="display:none">
-    <div class="trend-header">
-      <div>
-        <div class="trend-title">📊 质量抽审统计</div>
-        <div class="trend-sub">看板 3 · 新模板扩展数据</div>
-      </div>
-    </div>
-    <div id="qualityReviewGrid" class="health-grid"></div>
   </div>
 
   <div class="footer">需求下发登记全链路看板 · 数据仅供内部参考</div>
@@ -1684,137 +1649,132 @@ function renderAll(){
   const tasks = getFilteredTasks();
   const m = calcMetrics(tasks);
   document.getElementById("filterCount").textContent = `共 ${tasks.length} 条`;
-  renderStageOverview(tasks, m);
   renderFlowKPIs(tasks, m);
   renderSpecialProjects(tasks, m);
   renderCollectionSection(tasks, m);
   renderMonthlyTrendOverview(tasks, m);
   renderRadarChart(tasks, m);
   renderAlerts(tasks, m);
-  renderNewSections();
 }
 
-// === 看板 1：流程总览 — 四环节 KPI 卡片 ===
-// === Part 1: 6环节核心指标卡片（按用户指定格式）===
-function renderStageOverview(tasks, m){
-  const row = document.getElementById('stageRow');
-  if(!row || !tasks.length){ if(row) row.innerHTML=''; return; }
-
-  // 预审/抽审数据
+// === 看板 1：6流程卡片（Part1核心指标+Part2详细指标合并展示）===
+function renderFlowKPIs(tasks, m){
+  // 预审/抽审/反馈数据
   const pr = DATA.preReview;
   const prPass = pr && pr.total ? pr.passRate : null;
   const qr = DATA.qualityReview || {};
   const gz = qr['公章抽审'];
   const gzPassRate = gz && gz.审核 ? +((gz.初审通过||0)/gz.审核*100).toFixed(1) : null;
-  const bj = qr['报价抽审'];
-  const bjRate = bj && bj.抽审量 ? +(bj.报价量/bj.抽审量*100).toFixed(1) : null;
-
-  // 问题反馈数据
   const fb = DATA.issueFeedback;
   const fbTotal = fb ? fb.问题反馈量 : 0;
   const consRate = fb && fb.问题反馈量 ? +(fb.双方共识量/fb.问题反馈量*100).toFixed(1) : null;
 
-  // 计算指标
-  const totalPts = (tasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2) + 'W';
-  const timelyV = m.timelyRate != null ? m.timelyRate + '%' : '—';
-  const reviewIssW = (tasks.reduce((s,t)=>s+(t.reviewIssues||0),0)/10000).toFixed(2) + 'W';
-  const issueRate = m.reviewIssueRate != null ? m.reviewIssueRate + '%' : '—';
-
-  // 6月数据
-  const juneTasks = tasks.filter(t=>t.month==='06月');
-  const junePts = juneTasks.length ? (juneTasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2) + 'W' : '—';
-  const juneComp = juneTasks.length && juneTasks.reduce((s,t)=>s+(t.issuedQty||0),0) > 0
-    ? +(juneTasks.reduce((s,t)=>s+(t.collected||0),0)/juneTasks.reduce((s,t)=>s+(t.issuedQty||0),0)*100).toFixed(1) + '%'
-    : '—';
-
-  const consensus = consRate != null ? consRate + '%' : '—';
-  const gzPass = gzPassRate != null ? gzPassRate + '%' : '—';
-  const bjValid = bj && bj.高质量报价 != null ? +(bj.高质量报价*100).toFixed(1) + '%' : '—';
-  const prPassStr = prPass != null ? prPass + '%' : '—';
-  const pubData = m.publishedData != null ? m.publishedData + '条' : '—';
-
-  const stages = [
-    { name:'需求下发', sub:'', color:'#E74C3C', icon:'📋',
-      k1:{label:'需求总量', val:totalPts, cls:''},
-      k2:{label:'需求及时率', val:timelyV, cls:''} },
-    { name:'需求校核', sub:'前置校验环节', color:'#E67E22', icon:'🔍',
-      k1:{label:'反馈问题', val:reviewIssW, cls:''},
-      k2:{label:'需求问题率', val:issueRate, cls:''} },
-    { name:'数据采集', sub:'核心执行环节', color:'#F39C12', icon:'🔧',
-      k1:{label:'6月承接', val:junePts, cls:''},
-      k2:{label:'采集完成率', val:juneComp, cls:''} },
-    { name:'问题闭环', sub:'过程纠偏环节', color:'#2ECC71', icon:'✅',
-      k1:{label:'采集反馈问题', val:fbTotal ? fbTotal+'条' : '—', cls:''},
-      k2:{label:'双方有效共识', val:consensus, cls:''} },
-    { name:'质量审核', sub:'质量管控环节', color:'#9B59B6', icon:'📊',
-      k1:{label:'公章预审通过率', val:gzPass, cls:''},
-      k2:{label:'价格抽审合理性', val:bjValid, cls:''} },
-    { name:'加工审核发布', sub:'入库交付环节', color:'#3498DB', icon:'🚀',
-      k1:{label:'入库通过率', val:prPassStr, cls:''},
-      k2:{label:'发布数据', val:pubData, cls:''} },
-  ];
-
-  function sc(v){
+  // 颜色辅助
+  function clr(v, inv){
     if(v==null||v==='—') return 'var(--gray)';
-    const n = parseFloat(v);
-    if(isNaN(n)) return 'var(--gray)';
+    const n=parseFloat(v); if(isNaN(n)) return 'var(--gray)';
+    if(inv) return n<=5?'#2ECC71':n<=15?'#F39C12':'#E74C3C';
     return n>=80?'#2ECC71':n>=60?'#F39C12':'#E74C3C';
   }
 
-  row.innerHTML = stages.map(s => {
-    const c1 = sc(parseFloat(s.k1.val));
-    const c2 = sc(parseFloat(s.k2.val));
-    return '<div class="flow-card" style="min-width:0">' +
-      '<div class="flow-card-header" style="background:'+s.color+';padding:6px 8px;font-size:0.7rem;flex-wrap:wrap">' +
-        s.icon+' '+s.name+
-        (s.sub?' <span style="font-size:0.55rem;opacity:0.7;font-weight:400">'+s.sub+'</span>':'') +
-      '</div>' +
-      '<div class="flow-card-body" style="padding:6px 8px">' +
-        '<div class="fm" style="padding:2px 0;font-size:0.66rem">' +
-          '<span class="fl">'+s.k1.label+'</span>' +
-          '<span class="fv" style="color:'+c1+';font-size:0.85rem">'+s.k1.val+'</span>' +
-        '</div>' +
-        '<div class="fm" style="padding:2px 0;font-size:0.66rem;border-bottom:none">' +
-          '<span class="fl">'+s.k2.label+'</span>' +
-          '<span class="fv" style="color:'+c2+';font-size:0.85rem">'+s.k2.val+'</span>' +
-        '</div>' +
-      '</div></div>';
-  }).join('');
-}
+  // 6流程卡片定义（核心指标在前，颜色标注）
+  const juneTasks = tasks.filter(t=>t.month==='06月');
+  const junePts = juneTasks.length ? (juneTasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2)+'W' : '—';
+  const juneComp = juneTasks.length && juneTasks.reduce((s,t)=>s+(t.issuedQty||0),0)>0
+    ? +(juneTasks.reduce((s,t)=>s+(t.collected||0),0)/juneTasks.reduce((s,t)=>s+(t.issuedQty||0),0)*100).toFixed(1)+'%' : '—';
 
-function renderFlowKPIs(tasks, m){
-  const sc = DATA.stepConfig;
-  if(!sc) return;
-  // 检测哪些字段在所有task中有实际数据
-  const hasData = {};
-  tasks.forEach(t => {
-    Object.keys(t).forEach(k => {
-      if(t[k] !== null && t[k] !== undefined && t[k] !== '') hasData[k] = true;
-    });
-  });
-  let html = "";
-  for(const [name, cfg] of Object.entries(sc)){
-    const metricsHtml = cfg.metrics.map(mm => {
-      let raw = m[mm.key];
-      // 没数据来源 → 显示"—"
-      const noSource = !hasData[mm.key] && (raw === 0 || raw === undefined || raw === null);
-      if(raw === undefined || raw === null || noSource) raw = "—";
-      else if(mm.unit === "%") raw = raw + "%";
-      else raw = raw + (mm.unit ? " "+mm.unit : "");
-      let cls = "";
-      if(["completionRate","verifyPassRate","accuracyRate","closedRate","allClosedRate","timelyRate"].includes(mm.key))
-        cls = m[mm.key] >= 80 ? "good" : m[mm.key] >= 60 ? "warn" : "bad";
-      if(mm.key === "reviewIssueRate") cls = m[mm.key] <= 5 ? "good" : m[mm.key] <= 15 ? "warn" : "bad";
-      return `<div class="fm"><span class="fl">${mm.label}</span><span class="fv ${cls}">${raw}</span></div>`;
-    }).join("");
-    // 整张卡全空 → 跳过（不展示空卡）
-    const allEmpty = cfg.metrics.every(mm => {
-      const v = m[mm.key];
-      return v === undefined || v === null || v === 0 || !hasData[mm.key];
-    });
-    if(allEmpty) continue;
-    html += `<div class="flow-card"><div class="flow-card-header" style="background:${cfg.color}">${cfg.icon||''} ${name}</div><div class="flow-card-body">${metricsHtml}</div></div>`;
+  const stages = [
+    { name:'需求下发', color:'#E74C3C', icon:'📋',
+      items:[
+        {l:'需求总量', v:(tasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2)+'W', c:''},
+        {l:'需求及时率', v:m.timelyRate!=null?m.timelyRate+'%':'—', c:clr(m.timelyRate)},
+        {l:'需求总条数', v:m.totalPoints?m.totalPoints+'条':'—', c:''},
+        {l:'需求项数', v:m.itemCount?m.itemCount+'项':'—', c:''},
+        {l:'初审问题数', v:m.reviewIssues?m.reviewIssues+'条':'—', c:m.reviewIssues?'#E74C3C':''},
+        {l:'初审通过率', v:m.reviewPassRate?m.reviewPassRate+'%':'—', c:clr(m.reviewPassRate)},
+      ]},
+    { name:'需求校核', sub:'前置校验', color:'#E67E22', icon:'🔍',
+      items:[
+        {l:'反馈问题', v:m.reviewIssues?(m.reviewIssues/10000).toFixed(2)+'W':'—', c:m.reviewIssues?'#E74C3C':''},
+        {l:'需求问题率', v:m.reviewIssueRate!=null?m.reviewIssueRate+'%':'—', c:clr(m.reviewIssueRate,true)},
+        {l:'初审问题数', v:m.reviewIssues?m.reviewIssues+'条':'—', c:m.reviewIssues?'#E74C3C':''},
+        {l:'初审问题率', v:m.reviewIssueRate!=null?m.reviewIssueRate+'%':'—', c:clr(m.reviewIssueRate,true)},
+      ]},
+    { name:'数据采集', sub:'核心执行', color:'#F39C12', icon:'🔧',
+      items:[
+        {l:'当月承接', v:junePts, c:''},
+        {l:'采集完成率', v:m.completionRate!=null?m.completionRate+'%':'—', c:clr(m.completionRate)},
+        {l:'采集下发数', v:m.issuedQty?m.issuedQty+'条':'—', c:''},
+        {l:'采集完成数', v:m.collected?m.collected+'条':'—', c:''},
+        {l:'无效数据', v:m.invalidData?m.invalidData+'条':'—', c:m.invalidData?'#E74C3C':''},
+        {l:'发布数据', v:m.publishedData?m.publishedData+'条':'—', c:''},
+      ]},
+    { name:'问题闭环', sub:'过程纠偏', color:'#2ECC71', icon:'✅',
+      items:[
+        {l:'采集反馈问题', v:fbTotal?fbTotal+'条':'—', c:fbTotal?'#E74C3C':''},
+        {l:'双方有效共识率', v:consRate!=null?consRate+'%':'—', c:clr(consRate)},
+        {l:'总反馈量', v:fbTotal?fbTotal.toLocaleString():'—', c:''},
+        {l:'共识量', v:fb?fb.双方共识量.toLocaleString():'—', c:'#2ECC71'},
+        {l:'未共识量', v:fb?fb.双方未达成共识量.toLocaleString():'—', c:'#F39C12'},
+        {l:'共识率', v:consRate!=null?consRate+'%':'—', c:clr(consRate)},
+      ]},
+    { name:'质量审核', sub:'质量管控', color:'#9B59B6', icon:'📊',
+      items:[
+        {l:'公章预审通过率', v:gzPassRate!=null?gzPassRate+'%':'—', c:clr(gzPassRate)},
+        {l:'需求准确率', v:m.accuracyRate!=null?m.accuracyRate+'%':'—', c:clr(m.accuracyRate)},
+      ]},
+    { name:'加工审核发布', sub:'入库交付', color:'#3498DB', icon:'🚀',
+      items:[
+        {l:'入库通过率', v:prPass!=null?prPass+'%':'—', c:clr(prPass)},
+        {l:'发布数据', v:m.publishedData?m.publishedData+'条':'—', c:''},
+        {l:'审核总量', v:pr?pr.total.toLocaleString():'—', c:'#3498DB'},
+        {l:'预审通过率', v:pr?(pr.passRate||0)+'%':'—', c:clr(pr.passRate)},
+      ]},
+  ];
+
+  // 问题反馈标签（有数据则追加）
+  if(fb && fb.问题反馈量){
+    const labels = fb.已共识问题标签 || {};
+    const lk = Object.keys(labels);
+    if(lk.length){
+      stages[3].items.push({l:'', v:'<div style="margin-top:4px;padding-top:4px;border-top:1px dashed #eee;font-size:0.6rem;font-weight:600;color:var(--tl)">📌 已共识标签</div>', c:'', raw:true});
+      lk.forEach(k => stages[3].items.push({l:k, v:labels[k].toString(), c:'', raw:false}));
+    }
   }
+  // 加工预审审核人详情
+  if(pr && pr.total){
+    const revs = Object.entries(pr.by_reviewer||{});
+    if(revs.length){
+      stages[5].items.push({l:'', v:'<div style="margin-top:4px;padding-top:4px;border-top:1px dashed #eee;font-size:0.6rem;font-weight:600;color:var(--tl)">👤 审核人</div>', c:'', raw:true});
+      revs.sort((a,b)=>b[1].total-a[1].total).forEach(([n,s]) =>
+        stages[5].items.push({l:n, v:s.total+'条/'+(s.passRate||0)+'%', c:'', raw:false})
+      );
+    }
+  }
+  // 质量抽审详情
+  const qrData = DATA.qualityReview;
+  if(qrData && Object.keys(qrData).length){
+    Object.entries(qrData).forEach(([nm, data]) => {
+      if(nm==='抽审任务') return;
+      stages[4].items.push({l:'', v:'<div style="margin-top:4px;padding-top:4px;border-top:1px dashed #eee;font-size:0.6rem;font-weight:600;color:var(--dark)">📊 '+nm+'</div>', c:'', raw:true});
+      Object.entries(data).filter(([k])=>k!=='月份'&&k!=='month').forEach(([k,v]) => {
+        const val = typeof v==='number'?(v>1?v.toFixed(0):(v*100).toFixed(1)+'%'):v;
+        stages[4].items.push({l:k, v:val, c:'', raw:false});
+      });
+    });
+  }
+
+  // 渲染卡片
+  let html = stages.map(s => {
+    const itemsHtml = s.items.map(it => {
+      if(it.raw) return it.v;
+      const cStyle = it.c ? `color:${it.c};` : '';
+      return `<div class="fm" style="padding:2px 0;font-size:0.66rem"><span class="fl">${it.l}</span><span class="fv" style="${cStyle}font-size:0.85rem">${it.v}</span></div>`;
+    }).join('');
+    const sub = s.sub ? ` <span style="font-size:0.55rem;opacity:0.7;font-weight:400">${s.sub}</span>` : '';
+    return `<div class="flow-card"><div class="flow-card-header" style="background:${s.color};padding:6px 8px;font-size:0.7rem;flex-wrap:wrap">${s.icon} ${s.name}${sub}</div><div class="flow-card-body" style="padding:6px 8px">${itemsHtml}</div></div>`;
+  }).join('');
+
   document.getElementById("flowRow").innerHTML = html;
 }
 
@@ -2408,122 +2368,6 @@ function renderAlerts(tasks, m){
     </div>
   `).join("");
   document.getElementById("alertSec").style.display = shown.length ? "block" : "none";
-}
-
-// ============================================================
-// NEW DATA SECTIONS (问题反馈 / 加工预审 / 质量抽审)
-// ============================================================
-function renderNewSections(){
-  renderIssueFeedback();
-  renderPreReview();
-  renderQualityReview();
-}
-
-function renderIssueFeedback(){
-  const sec = document.getElementById("issueFeedbackSec");
-  const grid = document.getElementById("issueFeedbackGrid");
-  if(!sec || !grid) return;
-  const fb = DATA.issueFeedback;
-  if(!fb || !fb.问题反馈量){
-    sec.style.display = "none"; return;
-  }
-  sec.style.display = "block";
-  const total = fb.问题反馈量 || 0;
-  const agreed = fb.双方共识量 || 0;
-  const notAgreed = fb.双方未达成共识量 || 0;
-  const labels = fb.已共识问题标签 || {};
-
-  // 问题标签分布
-  const labelKeys = Object.keys(labels);
-  const labelHtml = labelKeys.length ? `
-    <div class="ac"><div class="ac-title">📌 已共识问题标签</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:4px">
-      ${labelKeys.map(k => `<div class="fm-box"><div class="fm-l">${k}</div><div class="fm-v">${labels[k]}</div></div>`).join('')}
-    </div></div>` : '';
-
-  grid.innerHTML = `
-    <div class="ac"><div class="ac-title">📊 问题反馈总览</div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">总反馈量</div><div style="font-size:1.3rem;font-weight:700;color:var(--red)">${total.toLocaleString()}</div></div>
-        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">双方共识</div><div style="font-size:1.3rem;font-weight:700;color:var(--green)">${agreed.toLocaleString()}</div></div>
-        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">未共识</div><div style="font-size:1.3rem;font-weight:700;color:var(--orange)">${notAgreed.toLocaleString()}</div></div>
-        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">共识率</div><div style="font-size:1.3rem;font-weight:700;color:var(--blue)">${total ? (agreed/total*100).toFixed(1) : 0}%</div></div>
-      </div>
-    </div>
-    ${labelHtml}
-  `;
-}
-
-function renderPreReview(){
-  const sec = document.getElementById("preReviewSec");
-  const grid = document.getElementById("preReviewGrid");
-  if(!sec || !grid) return;
-  const pr = DATA.preReview;
-  if(!pr || !pr.total){
-    sec.style.display = "none"; return;
-  }
-  sec.style.display = "block";
-
-  // 各审核人统计
-  const reviewerEntries = Object.entries(pr.by_reviewer || {});
-  const reviewerHtml = reviewerEntries.length ? `
-    <div class="ac"><div class="ac-title">👤 审核人工作量</div>
-    <div style="overflow-x:auto"><table class="task-table" style="font-size:0.68rem">
-      <thead><tr><th>审核人</th><th>审核量</th><th>通过量</th><th>通过率</th></tr></thead>
-      <tbody>${reviewerEntries.sort((a,b)=>b[1].total-a[1].total).map(([name, stats]) =>
-        `<tr><td>${name}</td><td>${stats.total}</td><td>${stats.passed}</td><td>${stats.passRate || 0}%</td></tr>`
-      ).join('')}</tbody></table></div></div>
-  ` : '';
-
-  // 不通过原因
-  const reasonEntries = Object.entries(pr.fail_reasons || {});
-  const reasonHtml = reasonEntries.length ? `
-    <div class="ac"><div class="ac-title">⚠️ 不通过原因分布</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:4px">
-      ${reasonEntries.sort((a,b)=>b[1]-a[1]).map(([r, c]) =>
-        `<div class="fm-box"><div class="fm-l">${r}</div><div class="fm-v">${c}</div></div>`
-      ).join('')}
-    </div></div>
-  ` : '';
-
-  grid.innerHTML = `
-    <div class="ac"><div class="ac-title">📊 加工预审总览</div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">审核总量</div><div style="font-size:1.3rem;font-weight:700;color:var(--blue)">${pr.total.toLocaleString()}</div></div>
-        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">通过</div><div style="font-size:1.3rem;font-weight:700;color:var(--green)">${pr.passed.toLocaleString()}</div></div>
-        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">不通过</div><div style="font-size:1.3rem;font-weight:700;color:var(--red)">${pr.failed.toLocaleString()}</div></div>
-        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">通过率</div><div style="font-size:1.3rem;font-weight:700;color:var(--green)">${pr.passRate || 0}%</div></div>
-        <div style="flex:1;min-width:80px"><div style="font-size:0.65rem;color:var(--tl)">新增企业</div><div style="font-size:1.3rem;font-weight:700;color:var(--purple)">${pr.new_enterprise || 0}</div></div>
-      </div>
-    </div>
-    ${reviewerHtml}
-    ${reasonHtml}
-  `;
-}
-
-function renderQualityReview(){
-  const sec = document.getElementById("qualityReviewSec");
-  const grid = document.getElementById("qualityReviewGrid");
-  if(!sec || !grid) return;
-  const qr = DATA.qualityReview;
-  if(!qr || !Object.keys(qr).length){
-    sec.style.display = "none"; return;
-  }
-  sec.style.display = "block";
-
-  const cards = Object.entries(qr).map(([name, data]) => {
-    const items = Object.entries(data)
-      .filter(([k]) => k !== '月份' && k !== 'month')
-      .map(([k, v]) => {
-        const val = typeof v === 'number' ? (v > 1 ? v.toFixed(0) : (v*100).toFixed(1)+'%') : v;
-        return `<div class="fm-box"><div class="fm-l">${k}</div><div class="fm-v">${val}</div></div>`;
-      }).join('');
-    const month = data.月份 || data.month || '';
-    return `<div class="ac"><div class="ac-title">${name} ${month}</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">${items}</div></div>`;
-  }).join('');
-
-  grid.innerHTML = cards;
 }
 
 // ============================================================
