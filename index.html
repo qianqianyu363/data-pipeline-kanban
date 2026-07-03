@@ -112,8 +112,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
 /* ===== Flowchart Pipeline (Part 1) ===== */
 .flow-pipeline{display:flex;flex-direction:column;gap:0;margin-bottom:6px}
-.pipe-row{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;gap:0;margin-bottom:0}
-@media(max-width:1000px){.pipe-row{grid-template-columns:1fr;gap:6px}.pipe-row .flow-arr{transform:rotate(90deg);padding:2px 0}}
+.pipe-row{display:flex;align-items:stretch;margin-bottom:4px}
+.pipe-row .flow-node{flex:1;min-width:0}
+.pipe-row .flow-arr{display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:20px;font-size:1.1rem;color:#bbb;user-select:none}
+.flow-arr-down{display:flex;justify-content:center;padding:2px 0;font-size:1rem;color:#bbb}
+@media(max-width:1100px){.pipe-row{flex-wrap:wrap}.pipe-row .flow-node{flex:1 1 45%;min-width:120px}.pipe-row .flow-arr{width:14px;font-size:0.9rem}}
+@media(max-width:600px){.pipe-row .flow-node{flex:1 1 100%}.pipe-row .flow-arr{transform:rotate(90deg);width:auto;padding:2px 0}}
 .flow-node{background:var(--card);border-radius:var(--r-md);padding:8px 10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border-left:4px solid var(--blue);transition:transform 0.15s;min-height:90px}
 .flow-node:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.1)}
 .flow-node-hd{display:flex;align-items:center;gap:5px;padding-bottom:4px;border-bottom:1px dashed #eee;margin-bottom:4px}
@@ -129,11 +133,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .flow-node-body .fn-m .fn-mv.bad{color:var(--red)}
 .flow-node-body .fn-mbar{display:flex;gap:3px;align-items:flex-end;height:20px;margin-top:3px}
 .flow-node-body .fn-mbar .bar{width:12px;border-radius:2px 2px 0 0;min-height:2px}
+.fn-m-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:1px 0;font-size:0.68rem}
+.fn-m-row .fn-ml{color:var(--tl);white-space:nowrap;flex-shrink:0}
+.fn-m-row .fn-mv{font-weight:700;white-space:nowrap}
+.fn-m-row .fn-mv.good{color:#1e8449}
+.fn-m-row .fn-mv.warn{color:#b7950b}
+.fn-m-row .fn-mv.bad{color:var(--red)}
 .flow-arr{display:flex;align-items:center;justify-content:center;padding:0 4px;font-size:1.2rem;color:#bbb;user-select:none}
-.flow-arr-down{display:flex;justify-content:center;padding:2px 0;font-size:1.2rem;color:#bbb;grid-column:1/-1}
-.flow-connector{grid-column:1/-1;display:flex;justify-content:center;padding:2px 0}
+.flow-connector{display:flex;justify-content:center;padding:2px 0}
 .flow-connector .dot{width:6px;height:6px;background:#ddd;border-radius:50%;margin:0 3px}
-@media(max-width:1000px){.flow-arr-down{display:none}.flow-connector{display:none}}
 
 /* Part 2 distinct style */
 .analysis-collect-panel{background:#FAFBFC;border-radius:var(--r-md);padding:10px 12px;border:1px solid #E8ECF0}
@@ -208,8 +216,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .empty-state{padding:30px;text-align:center;color:var(--tl);font-size:0.8rem}
 
 /* === Flow Cards === */
-.flow-row{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
-@media(max-width:1200px){.flow-row{grid-template-columns:repeat(3,1fr)}}
+.flow-row{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:1400px){.flow-row{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:1000px){.flow-row{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){.flow-row{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:450px){.flow-row{grid-template-columns:1fr}}
 .flow-card{background:var(--card);border-radius:var(--r-md);box-shadow:var(--shadow);overflow:hidden;transition:transform 0.15s}
@@ -1670,6 +1679,7 @@ function renderFlowKPIs(tasks, m){
   const fb = DATA.issueFeedback;
   const fbTotal = fb ? fb.问题反馈量 : 0;
   const consRate = fb && fb.问题反馈量 ? +(fb.双方共识量/fb.问题反馈量*100).toFixed(1) : null;
+  const budget = DATA.totalBudget||3900000;
 
   // 颜色辅助
   function clr(v, inv){
@@ -1732,6 +1742,12 @@ function renderFlowKPIs(tasks, m){
         {l:'审核总量', v:pr?pr.total.toLocaleString():'—', c:'#3498DB'},
         {l:'预审通过率', v:pr?(pr.passRate||0)+'%':'—', c:clr(pr.passRate)},
       ]},
+    { name:'结算与成本', sub:'预算管控', color:'#2980B9', icon:'💰',
+      items:[
+        {l:'总预算', v:'¥'+(budget/10000).toFixed(0)+'万', c:''},
+        {l:'累计执行', v:m.totalCost?'¥'+m.totalCost+'万':'—', c:m.totalCost?'#2980B9':''},
+        {l:'预算执行率', v:m.budgetRate!=null?m.budgetRate+'%':'—', c:clr(m.budgetRate)},
+      ]},
   ];
 
   // 问题反馈标签（有数据则追加）
@@ -1782,20 +1798,21 @@ function renderFlowKPIs(tasks, m){
 
 // === 看板 1：三大专项卡片 ===
 function renderSpecialProjects(tasks, m){
+  // 结算与成本（无论有无specialProjects都计算）
+  const s = DATA.settlements||[];
+  const totalAmt = s.reduce((x,y) => x + num(y.结算金额||y.amount), 0);
+  const budget = DATA.totalBudget||3900000;
+  m.budgetRate = budget ? +((totalAmt/budget)*100).toFixed(1) : 0;
+  m.totalCost = +(totalAmt/10000).toFixed(1);
+
   const sp = DATA.specialProjects;
   if(!sp) return;
   // 采购价更新专项
   const updateTasks = tasks.filter(t => t.settleType === "价格更新");
   const updCol = updateTasks.reduce((s,t) => s + num(t.collected), 0);
   const updDem = updateTasks.reduce((s,t) => s + num(t.issuedQty||t.totalPoints), 0);
-  // 结算与成本
-  const s = DATA.settlements||[];
-  const totalAmt = s.reduce((x,y) => x + num(y.结算金额||y.amount), 0);
-  const budget = DATA.totalBudget||3900000;
   m.updateCompletion = updDem ? +((updCol/updDem)*100).toFixed(1) : 0;
   m.updateDemand = updDem;
-  m.budgetRate = budget ? +((totalAmt/budget)*100).toFixed(1) : 0;
-  m.totalCost = +(totalAmt/10000).toFixed(1);
   let html = "";
   for(const [name, cfg] of Object.entries(sp)){
     const metricsHtml = cfg.metrics.map(mm => {
@@ -2262,26 +2279,50 @@ function renderMonthlyTrendOverview(tasks, m){
   });
   function getMT(key, idx){ const arr=td[key]; return arr&&idx>=0&&idx<arr.length ? arr[idx] : null; }
 
-  // 6流程数据
+  // 7流程数据（合并指标，每流程单框显示）
   const PROCS = [
     {name:"需求下发", icon:"📋", color:COLORS[0], sc:"下发",
-     i1:(m)=>m.totalPoints, i1l:"需求总量",
-     i2:(m)=>m.timelyRate||0, i2l:"及时率"},
+     rows:[
+       {l:"需求总量", fn:m=>m.totalPoints, pct:false},
+       {l:"及时率", fn:m=>m.timelyRate, pct:true},
+     ],
+     trendFn:(mm)=>tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.totalPoints),0)},
     {name:"需求校核", icon:"🔍", color:COLORS[4], sc:"校核",
-     i1:(m)=>m.reviewIssues, i1l:"反馈问题",
-     i2:(m)=>m.reviewIssueRate, i2l:"问题率"},
+     rows:[
+       {l:"反馈问题", fn:m=>m.reviewIssues, pct:false},
+       {l:"问题率", fn:m=>m.reviewIssueRate, pct:true},
+     ],
+     trendFn:(mm)=>byMonth_review[mm]||0},
     {name:"数据采集", icon:"🔧", color:COLORS[2], sc:"采集",
-     i1:(m)=>m.totalDemand, i1l:"采集下发",
-     i2:(m)=>m.completionRate, i2l:"完成率"},
+     rows:[
+       {l:"采集下发", fn:m=>m.totalDemand, pct:false},
+       {l:"完成率", fn:m=>m.completionRate, pct:true},
+     ],
+     trendFn:(mm)=>tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.issuedQty||t.totalPoints),0)},
     {name:"问题闭环", icon:"✅", color:COLORS[3], sc:"闭环",
-     i1:(m)=>m.feedbackMat, i1l:"反馈材料",
-     i2:(m)=>m.verifyPassRate, i2l:"核实通过率"},
+     rows:[
+       {l:"反馈材料", fn:m=>m.feedbackMat, pct:false},
+       {l:"核实通过率", fn:m=>m.verifyPassRate, pct:true},
+     ],
+     trendFn:(mm)=>byMonth_feedback[mm]||0},
     {name:"质量审核", icon:"📊", color:COLORS[5], sc:"审核",
-     i1:()=>{const pr=DATA.preReview;return pr?pr.passRate:0;}, i1l:"入库通过率",
-     i2:()=>{const qr=DATA.qualityReview;const gz=qr?qr['公章抽审']:null;return gz?+((gz.初审通过||0)/gz.审核*100).toFixed(1):0;}, i2l:"预审通过率"},
+     rows:[
+       {l:"入库通过率", fn:()=>{const pr=DATA.preReview;return pr?pr.passRate:0;}, pct:true},
+       {l:"预审通过率", fn:()=>{const qr=DATA.qualityReview;const gz=qr?qr['公章抽审']:null;return gz?+((gz.初审通过||0)/gz.审核*100).toFixed(1):0;}, pct:true},
+     ],
+     trendFn:(mm)=>DATA.preReview?DATA.preReview.passRate:0},
     {name:"加工审核发布", icon:"🚀", color:COLORS[6], sc:"发布",
-     i1:(m)=>m.publishedData||0, i1l:"发布数据",
-     i2:(m)=>m.accuracyRate, i2l:"准确率"}
+     rows:[
+       {l:"发布数据", fn:m=>m.publishedData||0, pct:false},
+       {l:"准确率", fn:m=>m.accuracyRate, pct:true},
+     ],
+     trendFn:(mm)=>tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.publishedData),0)},
+    {name:"结算与成本", icon:"💰", color:COLORS[7], sc:"成本",
+     rows:[
+       {l:"预算执行率", fn:m=>m.budgetRate, pct:true},
+       {l:"累计成本", fn:m=>m.totalCost?m.totalCost+'万':0, pct:false},
+     ],
+     trendFn:(mm)=>{const stl=DATA.settlements||[];return stl.filter(x=>(x.月份||x.month)===mm).reduce((s,x)=>s+num(x.结算金额||x.amount),0);}},
   ];
 
   // 构建每个节点的微型趋势条（最近3个月）
@@ -2291,11 +2332,18 @@ function renderMonthlyTrendOverview(tasks, m){
     return last.map(v => Math.max(2, (v/mx)*16)).join(';');
   };
 
-  function nodeHTML(p, mi, vi1, vi2){
-    const c1 = vi1>=80?'good':vi1>=60?'warn':'bad';
-    const c2 = vi2>=80?'good':vi2>=60?'warn':'bad';
-    const bars1 = minBar(p.i1._vals||[]);
-    const bars2 = minBar(p.i2._vals||[]);
+  // 单框节点HTML（所有指标合并显示）
+  function nodeHTML(p){
+    const rowsHtml = p.rows.map(r => {
+      let val = r.fn(m);
+      if(val===undefined||val===null) val="—";
+      else if(typeof val==='number' && r.pct) val=val.toFixed(1)+'%';
+      else if(typeof val==='number') val=val.toLocaleString();
+      const cls = r.pct ? (parseFloat(val)>=80?'good':parseFloat(val)>=60?'warn':'bad') : '';
+      return `<div class="fn-m-row"><span class="fn-ml">${r.l}</span><span class="fn-mv ${cls}">${val}</span></div>`;
+    }).join('');
+    const bars = minBar(p._trendVals||[]);
+    const barHtml = bars.split(';').map(h=>`<div class="bar" style="height:${h}px;background:${p.color}66"></div>`).join('');
     return `<div class="flow-node" style="border-left-color:${p.color}">
       <div class="flow-node-hd">
         <span class="fn-icon">${p.icon}</span>
@@ -2303,41 +2351,32 @@ function renderMonthlyTrendOverview(tasks, m){
         <span class="fn-badge" style="background:${p.color}22;color:${p.color}">${p.sc}</span>
       </div>
       <div class="flow-node-body">
-        <div class="fn-m"><div class="fn-ml">${p.i1l}</div><div class="fn-mv ${c1}">${typeof vi1==='number'?vi1.toLocaleString():vi1}</div><div class="fn-mbar">${bars1.split(';').map((h,i)=>`<div class="bar" style="height:${h}px;background:${p.color}66"></div>`).join('')}</div></div>
-        <div class="fn-m"><div class="fn-ml">${p.i2l}</div><div class="fn-mv ${c2}">${typeof vi2==='number'?vi2.toFixed(1)+'%':vi2}</div><div class="fn-mbar">${bars2.split(';').map((h,i)=>`<div class="bar" style="height:${h}px;background:${p.color}66"></div>`).join('')}</div></div>
+        <div class="fn-m unified">${rowsHtml}<div class="fn-mbar">${barHtml}</div></div>
       </div>
     </div>`;
   }
 
-  // 准备每个流程的指标数值（用于条形图）
+  // 准备每个流程趋势数值
   PROCS.forEach(p => {
-    p.i1._vals = months.map(mm=>p.i1({totalPoints: tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.totalPoints),0), reviewIssues: tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.reviewIssues),0), totalDemand: tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.issuedQty||t.totalPoints),0), feedbackMat: tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.feedbackMat),0), publishedData: tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.publishedData),0), accuracyRate:0, completionRate:0, verifyPassRate:0, timelyRate:0}));
-    p.i2._vals = months.map(mm=>p.i2({timelyRate: (()=>{const d=byMonth_timelyRate[mm];return d&&d.w?+((d.tw/d.w)*100).toFixed(1):0;})(), reviewIssueRate: (()=>{const total=tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.totalPoints),0);return total?+((byMonth_review[mm]||0)/total*100).toFixed(1):0;})(), completionRate: (()=>{const d=byMonth_issued[mm];return d?+((byMonth_collected[mm]||0)/d*100).toFixed(1):0;})(), verifyPassRate: (()=>{const d=byMonth_feedback[mm];return 0;})(), accuracyRate:0}));
-  });
-
-  // 取当前总体指标
-  const vi = PROCS.map(p => {
-    const v1 = p.i1(m), v2 = p.i2(m);
-    return [typeof v1==='number'?v1:0, typeof v2==='number'?v2:0];
+    p._trendVals = months.map(mm=>p.trendFn(mm));
   });
 
   const ARR = '<div class="flow-arr">▶</div>';
   const ARR_DOWN = '<div class="flow-arr-down">▼</div>';
-  const CONN = '<div class="flow-connector"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
 
-  // Row 1: 需求下发 → 需求校核 → 数据采集
+  // Row 1: 需求下发 → 需求校核 → 数据采集 → 问题闭环
   let html = '<div class="pipe-row">';
-  for(let i=0;i<3;i++){
-    html += nodeHTML(PROCS[i], i, vi[i][0], vi[i][1]);
-    if(i<2) html += ARR;
+  for(let i=0;i<4;i++){
+    html += nodeHTML(PROCS[i]);
+    if(i<3) html += ARR;
   }
   html += '</div>' + ARR_DOWN;
 
-  // Row 2: 问题闭环 → 质量审核 → 加工审核发布
+  // Row 2: 质量审核 → 加工审核发布 → 结算与成本
   html += '<div class="pipe-row">';
-  for(let i=3;i<6;i++){
-    html += nodeHTML(PROCS[i], i, vi[i][0], vi[i][1]);
-    if(i<5) html += ARR;
+  for(let i=4;i<7;i++){
+    html += nodeHTML(PROCS[i]);
+    if(i<6) html += ARR;
   }
   html += '</div>';
 
