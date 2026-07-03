@@ -1656,8 +1656,9 @@ function calcMetrics(tasks){
 // RENDER
 // ============================================================
 function renderAll(){
-  if(!DATA || !DATA.tasks) return;
+  if(!DATA || !DATA.tasks){ console.warn("renderAll: no DATA"); return; }
   const tasks = getFilteredTasks();
+  console.log("renderAll: tasks="+tasks.length+", settlements="+(DATA.settlements||[]).length+", monthlyTrend="+(DATA.monthlyTrend?"yes":"no"));
   const m = calcMetrics(tasks);
   document.getElementById("filterCount").textContent = `共 ${tasks.length} 条`;
   // 先计算结算与成本指标（renderFlowKPIs和renderMonthlyTrendOverview都需要）
@@ -1802,6 +1803,7 @@ function renderFlowKPIs(tasks, m){
 }
 
 function renderCollectionSection(tasks, m){
+  console.log("renderCollectionSection: tasks="+tasks.length);
   renderProgressTab(tasks, m);
   renderCapacityTab(tasks, m);
   renderBudgetTab(tasks, m);
@@ -2227,9 +2229,10 @@ function renderTaskTable(tasks){
 // ============================================================
 function renderMonthlyTrendOverview(tasks, m){
   const pipeline = document.getElementById("trendPipeline");
-  if(!pipeline) return;
+  if(!pipeline){ console.warn("trendPipeline not found"); return; }
   const td = DATA.monthlyTrend;
-  if(!td) return;
+  if(!td){ console.warn("DATA.monthlyTrend missing"); return; }
+  console.log("renderMonthlyTrendOverview: months="+getTrendMonths().length+", tasks="+tasks.length);
   const months = getTrendMonths();
   if(!months.length) months.push("3月");
 
