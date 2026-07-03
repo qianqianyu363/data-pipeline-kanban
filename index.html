@@ -110,35 +110,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .monthly-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .monthly-grid .mc{background:var(--card);border-radius:var(--r-md);padding:8px 10px;box-shadow:var(--shadow)}
 
-/* ===== Flowchart Pipeline (Part 1) ===== */
-.flow-pipeline{display:flex;flex-direction:column;gap:0;margin-bottom:6px}
-.pipe-row{display:flex;align-items:stretch;margin-bottom:4px}
-.pipe-row .flow-node{flex:1;min-width:0}
-.pipe-row .flow-arr{display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:20px;font-size:1.1rem;color:#bbb;user-select:none}
-.flow-arr-down{display:flex;justify-content:center;padding:2px 0;font-size:1rem;color:#bbb}
-@media(max-width:1100px){.pipe-row{flex-wrap:wrap}.pipe-row .flow-node{flex:1 1 45%;min-width:120px}.pipe-row .flow-arr{width:14px;font-size:0.9rem}}
-@media(max-width:600px){.pipe-row .flow-node{flex:1 1 100%}.pipe-row .flow-arr{transform:rotate(90deg);width:auto;padding:2px 0}}
-.flow-node{background:var(--card);border-radius:var(--r-md);padding:8px 10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border-left:4px solid var(--blue);transition:transform 0.15s;min-height:90px}
-.flow-node:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.1)}
-.flow-node-hd{display:flex;align-items:center;gap:5px;padding-bottom:4px;border-bottom:1px dashed #eee;margin-bottom:4px}
-.flow-node-hd .fn-icon{font-size:0.85rem}
-.flow-node-hd .fn-name{font-size:0.78rem;font-weight:700}
-.flow-node-hd .fn-badge{font-size:0.55rem;padding:1px 6px;border-radius:8px;font-weight:600;margin-left:auto}
-.flow-node-body{display:flex;gap:8px;flex-wrap:wrap}
-.flow-node-body .fn-m{flex:1;min-width:70px}
-.flow-node-body .fn-m .fn-ml{font-size:0.6rem;color:var(--tl);white-space:nowrap}
-.flow-node-body .fn-m .fn-mv{font-size:0.85rem;font-weight:700;line-height:1.2}
-.flow-node-body .fn-m .fn-mv.good{color:#1e8449}
-.flow-node-body .fn-m .fn-mv.warn{color:#b7950b}
-.flow-node-body .fn-m .fn-mv.bad{color:var(--red)}
-.flow-node-body .fn-mbar{display:flex;gap:3px;align-items:flex-end;height:20px;margin-top:3px}
-.flow-node-body .fn-mbar .bar{width:12px;border-radius:2px 2px 0 0;min-height:2px}
-.fn-m-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:1px 0;font-size:0.68rem}
-.fn-m-row .fn-ml{color:var(--tl);white-space:nowrap;flex-shrink:0}
-.fn-m-row .fn-mv{font-weight:700;white-space:nowrap}
-.fn-m-row .fn-mv.good{color:#1e8449}
-.fn-m-row .fn-mv.warn{color:#b7950b}
-.fn-m-row .fn-mv.bad{color:var(--red)}
+/* ===== Monthly Trend Charts (replaces pipeline) ===== */
+.trend-chart-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+@media(max-width:1200px){.trend-chart-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.trend-chart-grid{grid-template-columns:1fr}}
+.tc-card{background:var(--card);border-radius:var(--r-md);padding:8px 10px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border-top:3px solid var(--blue)}
+.tc-card .tc-hd{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.tc-card .tc-hd .tc-icon{font-size:0.8rem}
+.tc-card .tc-hd .tc-name{font-size:0.7rem;font-weight:700;flex:1}
+.tc-card .tc-hd .tc-trend{font-size:0.6rem;font-weight:600;padding:1px 6px;border-radius:6px}
+.tc-card .tc-chart{height:110px;width:100%}
+.tc-card .tc-sub{font-size:0.55rem;color:var(--tl);margin-top:2px;text-align:center}
 .flow-arr{display:flex;align-items:center;justify-content:center;padding:0 4px;font-size:1.2rem;color:#bbb;user-select:none}
 .flow-connector{display:flex;justify-content:center;padding:2px 0}
 .flow-connector .dot{width:6px;height:6px;background:#ddd;border-radius:50%;margin:0 3px}
@@ -343,14 +325,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <button class="tab-btn tb-chart" onclick="switchAnalysisTab(this,'collect')">📋 采集执行分析</button>
       </div>
     </div>
-    <!-- Tab 1: 月度趋势总览（6流程流程图） -->
+    <!-- Tab 1: 月度趋势总览（7流程月度走势图） -->
     <div class="tab-content on" id="analysisTrend">
-      <div class="flow-pipeline" id="trendPipeline"></div>
-      <!-- 底部：全流程健康度雷达图 -->
-      <div style="margin-top:14px;padding-top:10px;border-top:2px dashed #e0e0e0">
-        <div style="font-size:0.78rem;font-weight:600;margin-bottom:6px;color:var(--dark)">🎯 全流程健康度概览</div>
-        <div class="chart-box-md" id="radarChart" style="height:220px;max-width:500px;margin:0 auto"></div>
-      </div>
+      <div class="trend-chart-grid" id="trendChartGrid"></div>
     </div>
     <!-- Tab 2: 采集执行分析（4个子Tab，灰色面板区分） -->
     <div class="tab-content" id="analysisCollect">
@@ -2228,135 +2205,100 @@ function renderTaskTable(tasks){
 // MONTHLY TREND OVERVIEW — 6流程流程图
 // ============================================================
 function renderMonthlyTrendOverview(tasks, m){
-  const pipeline = document.getElementById("trendPipeline");
-  if(!pipeline){ console.warn("trendPipeline not found"); return; }
-  const td = DATA.monthlyTrend;
-  if(!td){ console.warn("DATA.monthlyTrend missing"); return; }
-  console.log("renderMonthlyTrendOverview: months="+getTrendMonths().length+", tasks="+tasks.length);
+  const grid = document.getElementById("trendChartGrid");
+  if(!grid){ console.warn("trendChartGrid not found"); return; }
+
   const months = getTrendMonths();
   if(!months.length) months.push("3月");
 
-  // 按月份聚合tasks数据
-  function aggByMonth(key){ const r={}; tasks.forEach(t=>{const mm=t.month;if(mm)r[mm]=(r[mm]||0)+num(t[key]);}); return r; }
-  const byMonth_issued = aggByMonth("issuedQty");
-  const byMonth_collected = aggByMonth("collected");
-  const byMonth_review = aggByMonth("reviewIssues");
-  const byMonth_feedback = aggByMonth("feedbackMat");
-  const byMonth_published = aggByMonth("publishedData");
-  const byMonth_closed = {};
-  tasks.forEach(t => {if(t.month){const v=t.closed; if(!byMonth_closed[t.month]) byMonth_closed[t.month]={cnt:0,closed:0}; byMonth_closed[t.month].cnt++; if(v==="是"||v==="全部闭环") byMonth_closed[t.month].closed++;}});
-  const byMonth_timelyRate = {};
-  tasks.forEach(t => {
-    const mm = t.month; if(!mm) return;
-    if(!byMonth_timelyRate[mm]) byMonth_timelyRate[mm] = {w:0, tw:0};
-    const w = num(t.issuedQty||t.totalPoints);
-    byMonth_timelyRate[mm].w += w;
-    if(t.timelyRate===1||t.timelyRate==='1') byMonth_timelyRate[mm].tw += w;
-  });
-  function getMT(key, idx){ const arr=td[key]; return arr&&idx>=0&&idx<arr.length ? arr[idx] : null; }
+  // 按月份聚合数据
+  function agg(key){ const r={}; tasks.forEach(t=>{const mm=t.month;if(mm)r[mm]=(r[mm]||0)+num(t[key]);}); return r; }
+  const byIssued = agg("issuedQty");
+  const byCollected = agg("collected");
+  const byReview = agg("reviewIssues");
+  const byFeedback = agg("feedbackMat");
+  const byPublished = agg("publishedData");
+  const byTotalPts = agg("totalPoints");
 
-  // 7流程数据（合并指标，每流程单框显示）
-  const PROCS = [
-    {name:"需求下发", icon:"📋", color:COLORS[0], sc:"下发",
-     rows:[
-       {l:"需求总量", fn:m=>m.totalPoints, pct:false},
-       {l:"及时率", fn:m=>m.timelyRate, pct:true},
-     ],
-     trendFn:(mm)=>tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.totalPoints),0)},
-    {name:"需求校核", icon:"🔍", color:COLORS[4], sc:"校核",
-     rows:[
-       {l:"反馈问题", fn:m=>m.reviewIssues, pct:false},
-       {l:"问题率", fn:m=>m.reviewIssueRate, pct:true},
-     ],
-     trendFn:(mm)=>byMonth_review[mm]||0},
-    {name:"数据采集", icon:"🔧", color:COLORS[2], sc:"采集",
-     rows:[
-       {l:"采集下发", fn:m=>m.totalDemand, pct:false},
-       {l:"完成率", fn:m=>m.completionRate, pct:true},
-     ],
-     trendFn:(mm)=>tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.issuedQty||t.totalPoints),0)},
-    {name:"问题闭环", icon:"✅", color:COLORS[3], sc:"闭环",
-     rows:[
-       {l:"反馈材料", fn:m=>m.feedbackMat, pct:false},
-       {l:"核实通过率", fn:m=>m.verifyPassRate, pct:true},
-     ],
-     trendFn:(mm)=>byMonth_feedback[mm]||0},
-    {name:"质量审核", icon:"📊", color:COLORS[5], sc:"审核",
-     rows:[
-       {l:"入库通过率", fn:()=>{const pr=DATA.preReview;return pr?pr.passRate:0;}, pct:true},
-       {l:"预审通过率", fn:()=>{const qr=DATA.qualityReview;const gz=qr?qr['公章抽审']:null;return gz?+((gz.初审通过||0)/gz.审核*100).toFixed(1):0;}, pct:true},
-     ],
-     trendFn:(mm)=>DATA.preReview?DATA.preReview.passRate:0},
-    {name:"加工审核发布", icon:"🚀", color:COLORS[6], sc:"发布",
-     rows:[
-       {l:"发布数据", fn:m=>m.publishedData||0, pct:false},
-       {l:"准确率", fn:m=>m.accuracyRate, pct:true},
-     ],
-     trendFn:(mm)=>tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.publishedData),0)},
-    {name:"结算与成本", icon:"💰", color:COLORS[7], sc:"成本",
-     rows:[
-       {l:"预算执行率", fn:m=>m.budgetRate, pct:true},
-       {l:"累计成本", fn:m=>m.totalCost?m.totalCost+'万':0, pct:false},
-     ],
-     trendFn:(mm)=>{const stl=DATA.settlements||[];return stl.filter(x=>(x.月份||x.month)===mm).reduce((s,x)=>s+num(x.结算金额||x.amount),0);}},
+  // 各流程月度数据
+  function getData(fn){ return months.map(mm=>fn(byTotalPts[mm], byIssued[mm], byCollected[mm], byReview[mm], byFeedback[mm], byPublished[mm])); }
+
+  const CHARTS = [
+    {id:"tc0", name:"需求下发", icon:"📋", color:COLORS[0],
+     data:getData((pts)=>pts||0), unit:"条",
+     desc: d=>{const v=d[d.length-1];return v>=(d[0]||1)?'📈 增长':'📉 下降';}},
+    {id:"tc1", name:"需求校核", icon:"🔍", color:COLORS[4],
+     data:getData((pts,iss,col,rev)=>rev||0), unit:"条",
+     desc: d=>{const v=d[d.length-1];return v<=(d[0]||1)?'✅ 减少':'⚠️ 增多';}},
+    {id:"tc2", name:"数据采集", icon:"🔧", color:COLORS[2],
+     data:getData((pts,iss,col)=>iss||0), unit:"下发量",
+     subData:getData((pts,iss,col)=>col||0), subUnit:"完成量",
+     desc: d=>{const v=d[d.length-1];return v>=(d[0]||1)?'📈 增长':'📉 下降';}},
+    {id:"tc3", name:"问题闭环", icon:"✅", color:COLORS[3],
+     data:getData((pts,iss,col,rev,fb)=>fb||0), unit:"条",
+     desc: d=>{const v=d[d.length-1];return v<=(d[0]||1)?'✅ 减少':'⚠️ 增多';}},
+    {id:"tc4", name:"质量审核", icon:"📊", color:COLORS[5],
+     data:months.map(mm=>{const pr=DATA.preReview;return pr&&pr.by_month?pr.by_month[mm.replace(/^0/,'')]?pr.by_month[mm.replace(/^0/,'')].passRate:null:null;}).filter(v=>v!==null),
+     months2:months.filter((_,i)=>{const pr=DATA.preReview;return pr&&pr.by_month?!!pr.by_month[months[i].replace(/^0/,'')]:false;}),
+     unit:"%",
+     desc: ()=>'通过率走势'},
+    {id:"tc5", name:"加工审核发布", icon:"🚀", color:COLORS[6],
+     data:getData((pts,iss,col,rev,fb,pub)=>pub||0), unit:"条",
+     desc: d=>{const v=d[d.length-1];return v>=(d[0]||1)?'📈 增长':'📉 下降';}},
+    {id:"tc6", name:"结算与成本", icon:"💰", color:COLORS[7],
+     data:months.map(mm=>{const stl=DATA.settlements||[];const v=stl.filter(x=>(x.月份||x.month)===mm.replace(/^0/,'')).reduce((s,x)=>s+num(x.结算金额||x.amount),0);return v>0?+(v/10000).toFixed(1):null;}).filter(v=>v!==null),
+     months2:months.filter((_,i)=>(DATA.settlements||[]).some(x=>(x.月份||x.month)===months[i].replace(/^0/,''))),
+     unit:"万元",
+     desc: d=>{const vals=d.filter(v=>v!==null);return vals.length>1?(vals[vals.length-1]>vals[0]?'📈 增长':'📉 下降'):'';}},
   ];
 
-  // 构建每个节点的微型趋势条（最近3个月）
-  const minBar = vals => {
-    const last = vals.slice(-3);
-    const mx = Math.max(...last, 1);
-    return last.map(v => Math.max(2, (v/mx)*16)).join(';');
-  };
-
-  // 单框节点HTML（所有指标合并显示）
-  function nodeHTML(p){
-    const rowsHtml = p.rows.map(r => {
-      let val = r.fn(m);
-      if(val===undefined||val===null) val="—";
-      else if(typeof val==='number' && r.pct) val=val.toFixed(1)+'%';
-      else if(typeof val==='number') val=val.toLocaleString();
-      const cls = r.pct ? (parseFloat(val)>=80?'good':parseFloat(val)>=60?'warn':'bad') : '';
-      return `<div class="fn-m-row"><span class="fn-ml">${r.l}</span><span class="fn-mv ${cls}">${val}</span></div>`;
-    }).join('');
-    const bars = minBar(p._trendVals||[]);
-    const barHtml = bars.split(';').map(h=>`<div class="bar" style="height:${h}px;background:${p.color}66"></div>`).join('');
-    return `<div class="flow-node" style="border-left-color:${p.color}">
-      <div class="flow-node-hd">
-        <span class="fn-icon">${p.icon}</span>
-        <span class="fn-name" style="color:${p.color}">${p.name}</span>
-        <span class="fn-badge" style="background:${p.color}22;color:${p.color}">${p.sc}</span>
+  // 渲染卡片
+  let html = CHARTS.map((c,idx)=>{
+    const xData = c.months2 || months;
+    return `<div class="tc-card" style="border-top-color:${c.color}">
+      <div class="tc-hd">
+        <span class="tc-icon">${c.icon}</span>
+        <span class="tc-name" style="color:${c.color}">${c.name}</span>
+        <span class="tc-trend" style="background:${c.color}15;color:${c.color}">${c.desc(c.data)}</span>
       </div>
-      <div class="flow-node-body">
-        <div class="fn-m unified">${rowsHtml}<div class="fn-mbar">${barHtml}</div></div>
-      </div>
+      <div class="tc-chart" id="${c.id}"></div>
+      <div class="tc-sub">${xData[0]||''} – ${xData[xData.length-1]||''} · ${c.unit}</div>
     </div>`;
-  }
+  }).join('');
+  grid.innerHTML = html;
 
-  // 准备每个流程趋势数值
-  PROCS.forEach(p => {
-    p._trendVals = months.map(mm=>p.trendFn(mm));
+  // 初始化每个ECharts图表
+  const commonOpt = (xData, series, unit) => ({
+    tooltip:{trigger:"axis", formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+i.value).join('<br/>')}`},
+    grid:{top:6,bottom:16,left:4,right:4,containLabel:true},
+    xAxis:{type:"category", data:xData, axisLabel:{fontSize:6}, axisLine:{show:false}, axisTick:{show:false}},
+    yAxis:{type:"value", min:0, splitLine:{lineStyle:{type:"dashed",color:"#eee"}}, axisLabel:{fontSize:5,show:true}},
+    series:series
   });
 
-  const ARR = '<div class="flow-arr">▶</div>';
-  const ARR_DOWN = '<div class="flow-arr-down">▼</div>';
-
-  // Row 1: 需求下发 → 需求校核 → 数据采集 → 问题闭环
-  let html = '<div class="pipe-row">';
-  for(let i=0;i<4;i++){
-    html += nodeHTML(PROCS[i]);
-    if(i<3) html += ARR;
-  }
-  html += '</div>' + ARR_DOWN;
-
-  // Row 2: 质量审核 → 加工审核发布 → 结算与成本
-  html += '<div class="pipe-row">';
-  for(let i=4;i<7;i++){
-    html += nodeHTML(PROCS[i]);
-    if(i<6) html += ARR;
-  }
-  html += '</div>';
-
-  pipeline.innerHTML = html;
+  CHARTS.forEach((c,i)=>{
+    const el = document.getElementById(c.id);
+    if(!el) return;
+    const ch = echarts.init(el);
+    const xData = c.months2 || months;
+    const mainData = c.data;
+    const series = c.subData ? [
+      {name:c.unit, type:"line", data:mainData, smooth:true, symbol:"circle", symbolSize:4,
+       lineStyle:{color:c.color,width:1.5}, itemStyle:{color:c.color},
+       label:{show:true,fontSize:6,formatter:p=>p.value,fontWeight:600}},
+      {name:c.subUnit, type:"line", data:c.subData, smooth:true, symbol:"diamond", symbolSize:4,
+       lineStyle:{color:c.color,width:1,type:"dashed"}, itemStyle:{color:c.color},
+       label:{show:true,fontSize:5,formatter:p=>p.value}}
+    ] : [
+      {name:c.unit, type:"line", data:mainData, smooth:true, symbol:"circle", symbolSize:4,
+       lineStyle:{color:c.color,width:1.5}, itemStyle:{color:c.color},
+       areaStyle:{color:c.color+"18"},
+       label:{show:true,fontSize:6,formatter:p=>p.value,fontWeight:600}}
+    ];
+    ch.setOption(commonOpt(xData, series, c.unit));
+    charts[c.id] = ch;
+    new ResizeObserver(()=>ch.resize()).observe(el.parentElement);
+  });
 }
 
 // DATA INSIGHTS — 已移除
