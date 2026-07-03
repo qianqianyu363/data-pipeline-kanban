@@ -110,6 +110,45 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .monthly-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
 .monthly-grid .mc{background:var(--card);border-radius:var(--r-md);padding:8px 10px;box-shadow:var(--shadow)}
 
+/* ===== Flowchart Pipeline (Part 1) ===== */
+.flow-pipeline{display:flex;flex-direction:column;gap:0;margin-bottom:6px}
+.pipe-row{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;gap:0;margin-bottom:0}
+@media(max-width:1000px){.pipe-row{grid-template-columns:1fr;gap:6px}.pipe-row .flow-arr{transform:rotate(90deg);padding:2px 0}}
+.flow-node{background:var(--card);border-radius:var(--r-md);padding:8px 10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border-left:4px solid var(--blue);transition:transform 0.15s;min-height:90px}
+.flow-node:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.1)}
+.flow-node-hd{display:flex;align-items:center;gap:5px;padding-bottom:4px;border-bottom:1px dashed #eee;margin-bottom:4px}
+.flow-node-hd .fn-icon{font-size:0.85rem}
+.flow-node-hd .fn-name{font-size:0.78rem;font-weight:700}
+.flow-node-hd .fn-badge{font-size:0.55rem;padding:1px 6px;border-radius:8px;font-weight:600;margin-left:auto}
+.flow-node-body{display:flex;gap:8px;flex-wrap:wrap}
+.flow-node-body .fn-m{flex:1;min-width:70px}
+.flow-node-body .fn-m .fn-ml{font-size:0.6rem;color:var(--tl);white-space:nowrap}
+.flow-node-body .fn-m .fn-mv{font-size:0.85rem;font-weight:700;line-height:1.2}
+.flow-node-body .fn-m .fn-mv.good{color:#1e8449}
+.flow-node-body .fn-m .fn-mv.warn{color:#b7950b}
+.flow-node-body .fn-m .fn-mv.bad{color:var(--red)}
+.flow-node-body .fn-mbar{display:flex;gap:3px;align-items:flex-end;height:20px;margin-top:3px}
+.flow-node-body .fn-mbar .bar{width:12px;border-radius:2px 2px 0 0;min-height:2px}
+.flow-arr{display:flex;align-items:center;justify-content:center;padding:0 4px;font-size:1.2rem;color:#bbb;user-select:none}
+.flow-arr-down{display:flex;justify-content:center;padding:2px 0;font-size:1.2rem;color:#bbb;grid-column:1/-1}
+.flow-connector{grid-column:1/-1;display:flex;justify-content:center;padding:2px 0}
+.flow-connector .dot{width:6px;height:6px;background:#ddd;border-radius:50%;margin:0 3px}
+@media(max-width:1000px){.flow-arr-down{display:none}.flow-connector{display:none}}
+
+/* Part 2 distinct style */
+.analysis-collect-panel{background:#FAFBFC;border-radius:var(--r-md);padding:10px 12px;border:1px solid #E8ECF0}
+.analysis-collect-panel .focus-tabs{margin-top:0}
+.analysis-collect-panel .ftab{background:#E8ECF0;color:#7F8C8D}
+.analysis-collect-panel .ftab.on{color:#fff}
+
+/* Prediction area */
+.pred-box{background:#f8f9fa;border-radius:var(--r-sm);padding:8px 12px;margin-top:6px;border-left:3px solid #9B59B6}
+.pred-box .pb-title{font-size:0.7rem;font-weight:600;color:#9B59B6;margin-bottom:4px}
+.pred-box .pb-row{display:flex;gap:12px;flex-wrap:wrap;font-size:0.68rem}
+.pred-box .pb-item{flex:1;min-width:80px}
+.pred-box .pb-item .pb-l{color:var(--tl)}
+.pred-box .pb-item .pb-v{font-weight:700;font-size:0.8rem}
+
 .alert-section{background:var(--card);border-radius:var(--r-md);padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px;border-left:4px solid var(--red)}
 .alert-title{display:flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:600;color:var(--red);margin-bottom:10px}
 .alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -253,18 +292,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     </div>
   </div>
 
-  <!-- ===== 看板 0：数据洞察（领导看板） ===== -->
-  <div class="trend-section" id="insightsSec">
-    <div class="trend-header">
-      <div>
-        <div class="trend-title">🧠 数据洞察 · 核心结论</div>
-        <div class="trend-sub">基于当前数据自动分析 · 面向管理层</div>
-      </div>
-    </div>
-    <div id="insightsGrid" class="health-grid" style="grid-template-columns:1fr 1fr 1fr"></div>
-    <div id="insightsWarnings" style="margin-top:8px"></div>
-  </div>
-
+  <!-- Toolbar -->
   <!-- Toolbar -->
   <div class="toolbar">
     <button class="btn btn-outline btn-sm" onclick="openCSV()">📥 导入</button>
@@ -296,7 +324,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div id="specialRow" class="special-row"></div>
   </div>
 
-  <!-- ===== 看板 2：图表分析 ===== -->
+  <!-- ===== 看板 2：数据量化分析（重构：月度趋势总览+采集执行分析） ===== -->
   <div class="trend-section">
     <div class="trend-header">
       <div>
@@ -304,38 +332,32 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         <div class="trend-sub">看板 2 · 执行明细 · 独立于筛选条件，显示全部月份</div>
       </div>
       <div class="tab-bar">
-        <button class="tab-btn tb-flow on" onclick="switchAnalysisTab(this,'flow')">📊 流程分析</button>
-        <button class="tab-btn tb-chart" onclick="switchAnalysisTab(this,'chart')">💰 结算预算</button>
+        <button class="tab-btn tb-flow on" onclick="switchAnalysisTab(this,'trend')">📈 月度趋势总览</button>
+        <button class="tab-btn tb-chart" onclick="switchAnalysisTab(this,'collect')">📋 采集执行分析</button>
       </div>
     </div>
-    <div class="tab-content on" id="analysisFlow">
-      <!-- 采集执行详细分析（4个Tab） -->
-      <div id="collectionArea" style="margin-bottom:10px">
+    <!-- Tab 1: 月度趋势总览（6流程流程图） -->
+    <div class="tab-content on" id="analysisTrend">
+      <div class="flow-pipeline" id="trendPipeline"></div>
+      <!-- 底部：全流程健康度雷达图 -->
+      <div style="margin-top:14px;padding-top:10px;border-top:2px dashed #e0e0e0">
+        <div style="font-size:0.78rem;font-weight:600;margin-bottom:6px;color:var(--dark)">🎯 全流程健康度概览</div>
+        <div class="chart-box-md" id="radarChart" style="height:220px;max-width:500px;margin:0 auto"></div>
+      </div>
+    </div>
+    <!-- Tab 2: 采集执行分析（4个子Tab，灰色面板区分） -->
+    <div class="tab-content" id="analysisCollect">
+      <div id="collectionArea" class="analysis-collect-panel" style="margin-bottom:10px">
         <div class="focus-tabs">
-          <button class="ftab ft-capacity on" onclick="switchTab(this,'cp')">📊 产能</button>
+          <button class="ftab ft-progress on" onclick="switchTab(this,'pg')">📈 采集进度</button>
+          <button class="ftab ft-capacity" onclick="switchTab(this,'cp')">📊 采集产能</button>
           <button class="ftab ft-budget" onclick="switchTab(this,'bd')">💰 费用执行</button>
-          <button class="ftab ft-progress" onclick="switchTab(this,'pg')">📈 采集进度</button>
           <button class="ftab ft-tasks" onclick="switchTab(this,'tl')">📋 任务清单</button>
         </div>
-        <div class="fpanel on" id="fp_cp"></div>
+        <div class="fpanel on" id="fp_pg"></div>
+        <div class="fpanel" id="fp_cp"></div>
         <div class="fpanel" id="fp_bd"></div>
-        <div class="fpanel" id="fp_pg"></div>
         <div class="fpanel" id="fp_tl"></div>
-      </div>
-      <!-- 月度趋势 -->
-      <div>
-        <div style="font-size:0.72rem;font-weight:600;margin-bottom:6px;color:var(--tl)">📈 月度趋势</div>
-        <div class="monthly-grid" id="trendGrid"></div>
-      </div>
-    </div>
-    <div class="tab-content" id="analysisChart">
-      <div class="health-grid">
-        <div class="chart-box-md" id="radarChart"></div>
-        <div class="chart-box-md" id="budgetTrendChart"></div>
-      </div>
-      <div class="chart-row">
-        <div class="chart-box-sm" id="benchChart1"></div>
-        <div class="chart-box-sm" id="benchChart2"></div>
       </div>
     </div>
   </div>
@@ -1662,13 +1684,12 @@ function renderAll(){
   const tasks = getFilteredTasks();
   const m = calcMetrics(tasks);
   document.getElementById("filterCount").textContent = `共 ${tasks.length} 条`;
-  renderDataInsights(tasks, m);
   renderStageOverview(tasks, m);
   renderFlowKPIs(tasks, m);
   renderSpecialProjects(tasks, m);
   renderCollectionSection(tasks, m);
-  renderMonthTrends();
-  renderAnalysisCharts(tasks, m);
+  renderMonthlyTrendOverview(tasks, m);
+  renderRadarChart(tasks, m);
   renderAlerts(tasks, m);
   renderNewSections();
 }
@@ -1829,24 +1850,20 @@ function renderSpecialProjects(tasks, m){
 }
 
 function renderCollectionSection(tasks, m){
-  renderColOverview(m);
-  renderCapacityTab(tasks, m);
-  renderBudgetTab();
   renderProgressTab(tasks, m);
+  renderCapacityTab(tasks, m);
+  renderBudgetTab(tasks, m);
   renderTaskTable(tasks);
 }
 
-// === 看板 2：图表分析 ===
-function renderAnalysisCharts(tasks, m){
-  renderRadarChart(tasks, m);
-  renderBudgetTrendChart();
-  renderBenchCharts(tasks, m);
-}
+// === 看板 2：图表分析（已迁移至月度趋势总览 + 采集执行分析） ===
 function switchAnalysisTab(btn, id){
   document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("on"));
   btn.classList.add("on");
   document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("on"));
-  document.getElementById("analysis"+id.charAt(0).toUpperCase()+id.slice(1)).classList.add("on");
+  const target = "analysis" + (id === 'trend' ? 'Trend' : id === 'collect' ? 'Collect' : id.charAt(0).toUpperCase()+id.slice(1));
+  const el = document.getElementById(target);
+  if(el) el.classList.add("on");
 }
 
 function renderRadarChart(tasks, m){
@@ -1889,69 +1906,6 @@ ${d.val.toFixed(0)}分`,max:d.max})),
   }
 }
 
-function renderBudgetTrendChart(){
-  const c = initC("budgetTrendChart",200);
-  if(!c) return;
-  const months = getSettlementMonths();
-  if(!months.length) return;
-  const s = DATA.settlements||[];
-  const byMonth={};
-  s.forEach(x=>{ const m=x.月份||x.month; byMonth[m]=(byMonth[m]||0)+num(x.结算金额||x.amount); });
-  const vals = months.map(m => +(byMonth[m]/10000).toFixed(1)||0);
-  let cum = 0; const cumVals = vals.map(v => +(cum+=v).toFixed(1));
-  c.setOption({
-    tooltip:{trigger:"axis"},
-    legend:{data:["月度结算","累计预算"],bottom:0,textStyle:{fontSize:8}},
-    grid:{top:10,bottom:28,left:6,right:6,containLabel:true},
-    xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},
-    yAxis:{type:"value",axisLabel:{formatter:"{value}万",fontSize:7}},
-    series:[
-      {name:"月度结算",type:"bar",data:vals,itemStyle:{color:"#E74C3C",borderRadius:[4,4,0,0]},barWidth:16,label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:7}},
-      {name:"累计预算",type:"line",data:cumVals,smooth:true,symbol:"circle",symbolSize:4,lineStyle:{color:"#3498DB",width:2},itemStyle:{color:"#3498DB"},label:{show:true,formatter:p=>p.value+"万",fontSize:7}},
-    ]
-  });
-}
-
-function renderBenchCharts(tasks, m){
-  // 需求下发柱状对比图（当前值 vs 目标值）
-  const c1 = initC("benchChart1",160);
-  if(c1){
-    const bench1 = {
-      categories: ["采集完成率","核实通过率","需求准确率","闭环率"],
-      current: [m.completionRate, m.verifyPassRate, m.accuracyRate, m.closedRate],
-      target:  [90, 85, 95, 100]
-    };
-    c1.setOption({
-      tooltip:{trigger:"axis"},
-      legend:{data:["当前值","目标值"],bottom:0,textStyle:{fontSize:7}},
-      grid:{top:8,bottom:24,left:4,right:4,containLabel:true},
-      xAxis:{type:"category",data:bench1.categories,axisLabel:{fontSize:7}},
-      yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:6}},
-      series:[
-        {name:"当前值",type:"bar",data:bench1.current.map(v=>({value:v,itemStyle:{color:v>=80?"#2ECC71":v>=60?"#F39C12":"#E74C3C",borderRadius:[4,4,0,0]}})),barWidth:14,label:{show:true,position:"top",formatter:p=>p.value+"%",fontSize:7}},
-        {name:"目标值",type:"line",data:bench1.target,symbol:"none",lineStyle:{type:"dashed",color:"#95A5A6",width:1},label:{show:true,formatter:p=>p.value+"%",fontSize:6,color:"#95A5A6"}}
-      ]
-    });
-  }
-  // 采集执行条形图（分项目完成率对比）
-  const c2 = initC("benchChart2",160);
-  if(c2){
-    const items = tasks.filter(t=>t.issuedQty>0).sort((a,b)=>(a.collected&&a.issuedQty?(a.collected/a.issuedQty)*100:0)-(b.collected&&b.issuedQty?(b.collected/b.issuedQty)*100:0)).slice(0,12);
-    c2.setOption({
-      tooltip:{trigger:"axis"},
-      grid:{top:6,bottom:12,left:4,right:12,containLabel:true},
-      xAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:6}},
-      yAxis:{type:"category",data:items.map(t=>t.name).reverse(),axisLabel:{fontSize:6}},
-      series:[{
-        type:"bar",data:items.map(t=>{
-          const v = pctStr(t.completionRate);
-          return {value:v,itemStyle:{color:v>=80?"#2ECC71":v>=60?"#F39C12":"#E74C3C",borderRadius:[0,4,4,0]}};
-        }).reverse(),barWidth:10,label:{show:true,position:"right",formatter:p=>p.value+"%",fontSize:6},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标90%",fontSize:6,color:"#E74C3C"},data:[{xAxis:90}]}
-      }]
-    });
-  }
-}
-
 // ============================================================
 // COLLECTION STEP TABS
 // ============================================================
@@ -1976,51 +1930,183 @@ function initC(id, h){
   return c;
 }
 
-function renderColOverview(m){
+// ============================================================
+// PREDICTION HELPER
+// ============================================================
+function predict(values, monthsToPredict){
+  if(!values || values.length < 2) return [];
+  monthsToPredict = monthsToPredict || 2;
+  const n = values.length;
+  const xMean = (n - 1) / 2;
+  const yMean = values.reduce((a,b) => a+b, 0) / n;
+  const xDiff = values.reduce((sum, _, i) => sum + (i - xMean) ** 2, 0);
+  if(xDiff === 0) return [];
+  const slope = values.reduce((sum, y, i) => sum + (i - xMean) * (y - yMean), 0) / xDiff;
+  return Array.from({length: monthsToPredict}, (_, i) => Math.max(0, +(yMean + slope * (n + i - xMean)).toFixed(0)));
+}
+
+function renderProgressTab(tasks, m){
+  const panel = document.getElementById("fp_pg");
+  if(!panel) return;
   const months = getTrendMonths();
-  if(!months.length) months.push("3月");
-  const vals1 = DATA.monthlyTrend["采集完成数"] || [];
-  const vals2 = DATA.monthlyTrend["采集完成率"] || [];
-  const c1 = initC("colOvChart1", 160);
-  if(c1) c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",axisLabel:{fontSize:7}},series:[{type:"line",data:vals1,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#F39C12",width:2},itemStyle:{color:"#F39C12"},areaStyle:{color:"#F39C1222"},label:{show:true,formatter:p=>p.value,fontSize:7,fontWeight:600}}]});
-  const c2 = initC("colOvChart2", 160);
-  if(c2) c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"line",data:vals2,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#F39C12",width:2},itemStyle:{color:"#F39C12"},areaStyle:{color:"#F39C1222"},label:{show:true,formatter:p=>p.value+"%",fontSize:7,fontWeight:600},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标90%",fontSize:7,color:"#E74C3C"},data:[{yAxis:90}]}}]});
+  if(!months.length){ panel.innerHTML=''; return; }
+
+  // 按月聚合每个任务的进度
+  const byMonth = {};
+  tasks.forEach(t => {
+    const mm = t.month;
+    if(!mm) return;
+    if(!byMonth[mm]) byMonth[mm] = {tasks:[], totalDemand:0, totalCollected:0};
+    byMonth[mm].tasks.push(t);
+    byMonth[mm].totalDemand += num(t.issuedQty||t.totalPoints);
+    byMonth[mm].totalCollected += num(t.collected);
+  });
+
+  // 每月总体完成率
+  const monthRates = months.map(mName => {
+    const d = byMonth[mName];
+    return d ? {month:mName, rate:d.totalDemand?+((d.totalCollected/d.totalDemand)*100).toFixed(1):0, collected:d.totalCollected, demand:d.totalDemand} : {month:mName, rate:0, collected:0, demand:0};
+  });
+
+  // 每个任务在各月的完成率（用于分组柱状图）
+  const taskNames = [...new Set(tasks.filter(t=>t.month).map(t=>t.name))];
+  const taskColors = {};
+  taskNames.forEach((tn,i)=>taskColors[tn]=COLORS[i%COLORS.length]);
+
+  panel.innerHTML = `
+    <div class="focus-metrics">
+      <div class="fm-box"><div class="fm-l">整体完成率</div><div class="fm-v">${m.completionRate}%</div><div class="fm-d">${m.totalCollected.toLocaleString()}/${m.totalDemand.toLocaleString()}</div></div>
+      <div class="fm-box"><div class="fm-l">已采集</div><div class="fm-v">${m.totalCollected.toLocaleString()}</div><div class="fm-d">完成总量</div></div>
+      <div class="fm-box"><div class="fm-l">待采集</div><div class="fm-v">${Math.max(0,m.issuedQty-m.collected).toLocaleString()}</div><div class="fm-d">剩余总量</div></div>
+    </div>
+    <div class="chart-row"><div class="chart-box-sm" id="pgChart1"></div><div class="chart-box-sm" id="pgChart2"></div></div>
+    <div style="margin-top:6px;font-size:0.65rem;color:var(--tl)">💡 左侧：各任务每月完成率对比 · 右侧：每月总体完成率趋势</div>`;
+
+  // 图表1: 按月-任务分组柱状图
+  const c1 = initC("pgChart1", 160);
+  if(c1){
+    const series = taskNames.map(tn => ({
+      name: tn, type: "bar", stack: "a", barWidth: 10,
+      data: months.map(mName => {
+        const d = byMonth[mName];
+        if(!d) return 0;
+        const t = d.tasks.find(t=>t.name===tn);
+        if(!t) return 0;
+        const r = (t.issuedQty||t.totalPoints) ? +((t.collected/t.issuedQty||t.totalPoints)*100).toFixed(1) : 0;
+        return r;
+      }),
+      itemStyle: {color: taskColors[tn], borderRadius: [0,0,0,0]},
+      label: {show: false}
+    }));
+    c1.setOption({
+      tooltip: {trigger:"axis", formatter: p=>{
+        let s = `<strong>${p[0].axisValue}</strong><br/>`;
+        p.forEach(item=>s+=`${item.marker} ${item.seriesName}: ${item.value}%<br/>`);
+        return s;
+      }},
+      legend: {type:"scroll", bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
+      grid: {top:6,bottom:32,left:4,right:4,containLabel:true},
+      xAxis: {type:"category", data:months, axisLabel:{fontSize:7}},
+      yAxis: {type:"value", min:0, max:100, axisLabel:{formatter:"{value}%",fontSize:6}},
+      series: series
+    });
+  }
+
+  // 图表2: 每月总体完成率趋势
+  const c2 = initC("pgChart2", 160);
+  if(c2){
+    c2.setOption({
+      tooltip:{trigger:"axis"},
+      grid:{top:8,bottom:8,left:4,right:4,containLabel:true},
+      xAxis:{type:"category", data:months, axisLabel:{fontSize:7}},
+      yAxis:{type:"value", min:0, max:100, axisLabel:{formatter:"{value}%",fontSize:6}},
+      series:[{
+        type:"line", data:monthRates.map(d=>({value:d.rate})),
+        smooth:true, symbol:"circle", symbolSize:6,
+        lineStyle:{color:"#3498DB", width:2}, itemStyle:{color:"#3498DB"},
+        areaStyle:{color:"rgba(52,152,219,0.1)"},
+        label:{show:true, formatter:p=>p.value+"%", fontSize:7, fontWeight:600},
+        markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标90%",fontSize:7,color:"#E74C3C"},data:[{yAxis:90}]}
+      }]
+    });
+  }
 }
 
 function renderCapacityTab(tasks, m){
   const panel = document.getElementById("fp_cp");
   if(!panel) return;
-  const totalIssued = tasks.reduce((s,t)=>s+num(t.issuedQty), 0);
-  const totalFeedback = tasks.reduce((s,t)=>s+num(t.feedbackMat), 0);
-  const totalVerify = tasks.reduce((s,t)=>s+num(t.expertVerify), 0);
+  const months = getTrendMonths();
+  if(!months.length){ panel.innerHTML=''; return; }
+
+  // 按结算类型和月份聚合
+  const settleTypes = [...new Set(tasks.map(t=>t.settleType||"其他"))];
+  const byST = {};
+  settleTypes.forEach(st => byST[st] = {});
+  months.forEach(mm => byST[mm] = {});
+  tasks.forEach(t => {
+    const st = t.settleType||"其他";
+    const mm = t.month;
+    if(!mm) return;
+    if(!byST[st]) byST[st] = {};
+    if(!byST[st][mm]) byST[st][mm] = {demand:0, collected:0};
+    byST[st][mm].demand += num(t.issuedQty||t.totalPoints);
+    byST[st][mm].collected += num(t.collected);
+  });
+
+  // 当月（最后一个月）各结算类型承接量
+  const lastMonth = months[months.length-1];
+  const ST_COLORS = {"价格采集":"#3498DB","价格更新":"#2ECC71","全系列报价单":"#F39C12","其他":"#95A5A6"};
+
   panel.innerHTML = `
     <div class="focus-metrics">
-      <div class="fm-box"><div class="fm-l">产能利用率</div><div class="fm-v">${m.completionRate}%</div><div class="fm-d">实际采集/下发总量</div></div>
-      <div class="fm-box"><div class="fm-l">材料反馈率</div><div class="fm-v">${m.feedbackRate}%</div><div class="fm-d">反馈/实际采集</div></div>
-      <div class="fm-box"><div class="fm-l">专家核实通过率</div><div class="fm-v">${m.verifyPassRate}%</div><div class="fm-d">通过/反馈材料</div></div>
+      <div class="fm-box"><div class="fm-l">当月(${lastMonth})总下发</div><div class="fm-v">${(byST[lastMonth]?Object.values(byST).reduce((s,o)=>s+((o[lastMonth]||{}).demand||0),0):0).toLocaleString()}</div><div class="fm-d">全部结算类型</div></div>
+      <div class="fm-box"><div class="fm-l">当月采集完成</div><div class="fm-v">${(byST[lastMonth]?Object.values(byST).reduce((s,o)=>s+((o[lastMonth]||{}).collected||0),0):0).toLocaleString()}</div><div class="fm-d">${lastMonth}</div></div>
+      <div class="fm-box"><div class="fm-l">整体完成率</div><div class="fm-v">${m.completionRate}%</div><div class="fm-d">全部月份</div></div>
     </div>
     <div class="chart-row"><div class="chart-box-sm" id="cpChart1"></div><div class="chart-box-sm" id="cpChart2"></div></div>`;
 
-  const months = getTrendMonths();
-  if(!months.length) months.push("3月");
-  const vals = DATA.monthlyTrend["产能利用率"] || [];
+  // 图表1: 按结算类型分组的每月采集数量柱状图
   const c1 = initC("cpChart1", 160);
-  if(c1) c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:8}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"line",data:vals,smooth:true,symbol:"circle",symbolSize:5,lineStyle:{color:"#9B59B6",width:2},itemStyle:{color:"#9B59B6"},areaStyle:{color:"#9B59B622"},label:{show:true,formatter:p=>p.value+"%",fontSize:7},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标85%",fontSize:7,color:"#E74C3C"},data:[{yAxis:85}]}}]});
+  if(c1){
+    const series = settleTypes.map(st => ({
+      name: st, type: "bar", barWidth: 10,
+      data: months.map(mm => ((byST[st]||{})[mm]||{}).collected || 0),
+      itemStyle: {color: ST_COLORS[st]||"#95A5A6", borderRadius:[0,0,0,0]},
+      label: {show: false}
+    }));
+    c1.setOption({
+      tooltip:{trigger:"axis"},
+      legend:{type:"scroll", bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
+      grid:{top:6,bottom:32,left:4,right:4,containLabel:true},
+      xAxis:{type:"category", data:months, axisLabel:{fontSize:7}},
+      yAxis:{type:"value", axisLabel:{fontSize:6}},
+      series: series
+    });
+  }
 
-  const funnel = ["下发→采集","采集→反馈","反馈→核实","核实通过"];
-  
-  // Use actual product ratios
-  const totalDemand = tasks.reduce((s,t)=>s+num(t.issuedQty||t.totalPoints),0);
-  const totalCollected = tasks.reduce((s,t)=>s+num(t.collected),0);
-  const r1 = totalIssued ? 100 : 0;
-  const r2 = totalIssued ? +((m.collected/totalIssued)*100).toFixed(1) : 0;
-  const r3 = m.collected ? +((totalFeedback/m.collected)*100).toFixed(1) : 0;
-  const r4 = totalFeedback ? +((totalVerify/totalFeedback)*100).toFixed(1) : 0;
+  // 图表2: 当月各结算类型占比饼图
   const c2 = initC("cpChart2", 160);
-  if(c2) c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:12,left:4,right:4,containLabel:true},xAxis:{type:"category",data:funnel,axisLabel:{fontSize:7}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"bar",data:[r1,r2,r3,r4].map((v,i)=>({value:v,itemStyle:{color:[94.8,79.3,83.2,76.5][i]>=85?"#2ECC71":[94.8,79.3,83.2,76.5][i]>=70?"#F39C12":"#E74C3C",borderRadius:[4,4,0,0]}})),barWidth:24,label:{show:true,position:"top",formatter:p=>p.value+"%",fontSize:8}}]});
+  if(c2){
+    const pieData = settleTypes.map(st => ({
+      name: st,
+      value: ((byST[st]||{})[lastMonth]||{}).collected || 0
+    })).filter(d => d.value > 0);
+    if(pieData.length){
+      c2.setOption({
+        tooltip:{formatter:p=>`<strong>${p.name}</strong><br/>采集量: ${p.value.toLocaleString()}<br/>占比: ${p.percent}%`},
+        series:[{
+          type:"pie", radius:["30%","60%"], center:["50%","50%"],
+          data: pieData,
+          label:{fontSize:7, formatter:p=>`${p.name}\n${p.value}`},
+          itemStyle:{borderRadius:4,borderColor:"#fff",borderWidth:1},
+          emphasis:{itemStyle:{shadowBlur:6,shadowColor:"rgba(0,0,0,0.2)"}}
+        }]
+      });
+    }
+  }
 }
 
-function renderBudgetTab(){
+function renderBudgetTab(tasks, m){
   const panel = document.getElementById("fp_bd");
   if(!panel) return;
   const s = DATA.settlements || [];
@@ -2032,25 +2118,36 @@ function renderBudgetTab(){
   const totalAmount = s.reduce((sum, x) => sum + num(x.结算金额 || x.amount), 0);
   const execRate = totalBudget ? +((totalAmount/totalBudget)*100).toFixed(1) : 0;
 
-  // Group by month
-  const byMonth = {};
-  s.forEach(x => {
-    const m = x.月份 || x.month;
-    if(!byMonth[m]) byMonth[m] = 0;
-    byMonth[m] += num(x.结算金额 || x.amount);
-  });
+  // 按月按数据类型聚合费用
   const monthNames = getSettlementMonths();
-  const monthVals = monthNames.map(m => +(byMonth[m]/10000).toFixed(1) || 0);
-
-  // Group by type
-  const byType = {};
+  const dataTypes = [...new Set(s.map(x=>x.需求类型||x.type||"其他"))];
+  const costByMonthType = {};
+  monthNames.forEach(mm => costByMonthType[mm] = {});
   s.forEach(x => {
-    const t = x.需求类型 || x.type;
-    if(!byType[t]) byType[t] = 0;
-    byType[t] += num(x.结算金额 || x.amount);
+    const mm = x.月份||x.month; const dt = x.需求类型||x.type||"其他";
+    if(!costByMonthType[mm]) costByMonthType[mm] = {};
+    costByMonthType[mm][dt] = (costByMonthType[mm][dt]||0) + num(x.结算金额||x.amount);
   });
-  const typeNames = Object.keys(byType);
-  const typeVals = typeNames.map(t => +(byType[t]/10000).toFixed(1));
+
+  // 按月总费用（用于预测）
+  const monthlyTotals = monthNames.map(mm => {
+    const vals = Object.values(costByMonthType[mm]||{});
+    return vals.length ? vals.reduce((a,b)=>a+b,0) : 0;
+  });
+  const predVals = predict(monthlyTotals, 2);
+  const predMonths = predVals.length ? [`预测1月`,`预测2月`] : [];
+
+  // 从tasks获取采集量数据用于产能预测（注意月份格式：tasks用"03月"，settlements用"3月"）
+  const monthlyCollected = {};
+  (DATA.tasks||[]).forEach(t => {
+    if(t.month){
+      // 统一去掉前导零，匹配settlement月份格式
+      const normMonth = t.month.replace(/^0/,'');
+      monthlyCollected[normMonth] = (monthlyCollected[normMonth]||0) + num(t.collected);
+    }
+  });
+  const collectVals = monthNames.map(mm => monthlyCollected[mm]||0);
+  const predCollect = predict(collectVals, 2);
 
   panel.innerHTML = `
     <div class="focus-metrics">
@@ -2058,54 +2155,75 @@ function renderBudgetTab(){
       <div class="fm-box"><div class="fm-l">累计执行</div><div class="fm-v">¥${(totalAmount/10000).toFixed(1)}万</div><div class="fm-d">截至${monthNames[monthNames.length-1]||"4月"}</div></div>
       <div class="fm-box"><div class="fm-l">预算执行率</div><div class="fm-v">${execRate}%</div><div class="fm-d">累计/年度</div></div>
     </div>
-    <div class="chart-row"><div class="chart-box-sm" id="bdChart1"></div><div class="chart-box-sm" id="bdChart2"></div></div>`;
+    <div class="chart-row"><div class="chart-box-sm" id="bdChart1"></div><div class="chart-box-sm" id="bdChart2"></div></div>
+    <div class="pred-box" id="predBox"></div>`;
 
+  // 图表1: 每月每类数据类型花费堆叠柱状图
   const c1 = initC("bdChart1", 160);
-  if(c1) c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:8,left:4,right:4,containLabel:true},xAxis:{type:"category",data:monthNames,axisLabel:{fontSize:8}},yAxis:{type:"value",axisLabel:{formatter:"{value}万",fontSize:7}},series:[{type:"bar",data:monthVals,itemStyle:{color:"#E74C3C",borderRadius:[4,4,0,0]},barWidth:20,label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:8}}]});
+  if(c1){
+    const dtColors = {"价格采集":"#E74C3C","价格更新":"#3498DB","全系列报价单":"#F39C12","额外激励":"#2ECC71"};
+    const series = dataTypes.map(dt => ({
+      name: dt, type: "bar", stack: "cost", barWidth: 18,
+      data: monthNames.map(mm => +((costByMonthType[mm][dt]||0)/10000).toFixed(1)),
+      itemStyle: {color: dtColors[dt]||"#95A5A6", borderRadius:[0,0,0,0]},
+      label: {show: false}
+    }));
+    c1.setOption({
+      tooltip:{trigger:"axis", formatter:p=>{
+        let s = `<strong>${p[0].axisValue}</strong><br/>`;
+        let total = 0;
+        p.forEach(item=>{total+=item.value; s+=`${item.marker} ${item.seriesName}: ¥${item.value}万<br/>`;});
+        s+=`<hr/>合计: ¥${total.toFixed(1)}万`;
+        return s;
+      }},
+      legend:{type:"scroll", bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
+      grid:{top:6,bottom:32,left:4,right:4,containLabel:true},
+      xAxis:{type:"category", data:monthNames, axisLabel:{fontSize:7}},
+      yAxis:{type:"value", axisLabel:{formatter:"{value}万",fontSize:6}},
+      series: series
+    });
+  }
 
+  // 图表2: 历史费用+预测趋势
   const c2 = initC("bdChart2", 160);
-  if(c2) c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:12,left:4,right:4,containLabel:true},xAxis:{type:"category",data:typeNames,axisLabel:{fontSize:7,rotate:10}},yAxis:{type:"value",axisLabel:{formatter:"{value}万",fontSize:7}},series:[{type:"bar",data:typeVals,itemStyle:{color:"#3498DB",borderRadius:[4,4,0,0]},barWidth:24,label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:8}}]});
-}
+  if(c2){
+    const allMonths = [...monthNames, ...predMonths];
+    const histVals = monthNames.map(mm => +((Object.values(costByMonthType[mm]||{}).reduce((a,b)=>a+b,0))/10000).toFixed(1));
+    const fullVals = [...histVals, ...predVals.map(v=>+(v/10000).toFixed(1))];
+    const predStartIdx = monthNames.length;
+    c2.setOption({
+      tooltip:{trigger:"axis"},
+      legend:{data:["历史费用(万)","预测趋势","采集量(历史)","采集量(预测)"], bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
+      grid:{top:6,bottom:32,left:4,right:4,containLabel:true},
+      xAxis:{type:"category", data:allMonths, axisLabel:{fontSize:6}},
+      yAxis:{type:"value", axisLabel:{fontSize:6}},
+      series:[
+        {name:"历史费用(万)", type:"bar", data:histVals.map((v,i)=>({value:v,itemStyle:{color:i>=predStartIdx?"rgba(231,76,60,0.3)":"#E74C3C",borderRadius:[4,4,0,0]}})), barWidth:12, label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:6}},
+        {name:"预测趋势", type:"line", data:fullVals.map((v,i)=>({value:v,symbol:i<predStartIdx?"none":"diamond",itemStyle:{color:i<predStartIdx?"transparent":"#E74C3C"}})), lineStyle:{type:"dashed",color:"#E74C3C",width:1.5}, smooth:true, label:{show:true,formatter:p=>p.value+"万",fontSize:6}},
+        {name:"采集量(历史)", type:"line", data:collectVals.map(v=>+(v/1000).toFixed(1)), smooth:true, symbol:"circle", symbolSize:4, lineStyle:{color:"#3498DB",width:1.5}, yAxisIndex:0, label:{show:true,formatter:p=>p.value+"k",fontSize:5,color:"#3498DB"}},
+        {name:"采集量(预测)", type:"line", data:[...collectVals.map(v=>+(v/1000).toFixed(1)),...predCollect.map(v=>+(v/1000).toFixed(1))].map((v,i)=>({value:v,symbol:i<predStartIdx?"none":"diamond",itemStyle:{color:i<predStartIdx?"transparent":"#3498DB"}})), lineStyle:{type:"dashed",color:"#3498DB",width:1}, smooth:true, label:{show:true,formatter:p=>p.value+"k",fontSize:5,color:"#3498DB"}}
+      ]
+    });
+  }
 
-function renderProgressTab(tasks, m){
-  const panel = document.getElementById("fp_pg");
-  if(!panel) return;
-  const remain = m.issuedQty - m.collected;
-  // By settle type
-  const byType = {};
-  tasks.forEach(t => {
-    const tp = t.settleType || "其他";
-    if(!byType[tp]) byType[tp] = {demand:0, collected:0, cnt:0};
-    byType[tp].demand += num(t.issuedQty||t.totalPoints);
-    byType[tp].collected += num(t.collected);
-    byType[tp].cnt++;
-  });
-  const typeNames = Object.keys(byType);
-  const typeRates = typeNames.map(tn => byType[tn].demand ? +((byType[tn].collected/byType[tn].demand)*100).toFixed(1) : 0);
-
-  panel.innerHTML = `
-    <div class="focus-metrics">
-      <div class="fm-box"><div class="fm-l">整体完成率</div><div class="fm-v">${m.completionRate}%</div><div class="fm-d">${m.totalCollected}/${m.totalDemand}</div></div>
-      <div class="fm-box"><div class="fm-l">已采集</div><div class="fm-v">${m.totalCollected.toLocaleString()}</div><div class="fm-d">完成量</div></div>
-      <div class="fm-box"><div class="fm-l">待采集</div><div class="fm-v">${Math.max(0,remain).toLocaleString()}</div><div class="fm-d">剩余量</div></div>
-    </div>
-    <div class="chart-row"><div class="chart-box-sm" id="pgChart1"></div><div class="chart-box-sm" id="pgChart2"></div></div>`;
-
-  const c1 = initC("pgChart1", 160);
-  if(c1) c1.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:12,left:4,right:4,containLabel:true},xAxis:{type:"category",data:typeNames,axisLabel:{fontSize:7,rotate:10}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"bar",data:typeRates.map(v=>({value:v,itemStyle:{color:v>=80?"#2ECC71":v>=60?"#F39C12":"#E74C3C",borderRadius:[4,4,0,0]}})),barWidth:24,label:{show:true,position:"top",formatter:p=>p.value+"%",fontSize:8},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标90%",fontSize:7,color:"#E74C3C"},data:[{yAxis:90}]}}]});
-
-  // Source breakdown
-  const bySource = {};
-  tasks.forEach(t => {
-    const src = t.source || "其他";
-    if(!bySource[src]) bySource[src] = {demand:0, collected:0};
-    bySource[src].demand += num(t.issuedQty || t.totalPoints || t.demandQty);
-    bySource[src].collected += num(t.collected);
-  });
-  const srcNames = Object.keys(bySource);
-  const srcRates = srcNames.map(sn => bySource[sn].demand ? +((bySource[sn].collected/bySource[sn].demand)*100).toFixed(1) : 0);
-  const c2 = initC("pgChart2", 160);
-  if(c2) c2.setOption({tooltip:{trigger:"axis"},grid:{top:8,bottom:12,left:4,right:4,containLabel:true},xAxis:{type:"category",data:srcNames,axisLabel:{fontSize:7,rotate:10}},yAxis:{type:"value",min:0,max:100,axisLabel:{formatter:"{value}%",fontSize:7}},series:[{type:"bar",data:srcRates.map(v=>({value:v,itemStyle:{color:v>=80?"#2ECC71":v>=60?"#F39C12":"#E74C3C",borderRadius:[4,4,0,0]}})),barWidth:20,label:{show:true,position:"top",formatter:p=>p.value+"%",fontSize:8},markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标90%",fontSize:7,color:"#E74C3C"},data:[{yAxis:90}]}}]});
+  // 预测结果摘要
+  const predBox = document.getElementById("predBox");
+  if(predBox && predVals.length){
+    const lastCost = +(monthlyTotals[monthlyTotals.length-1]/10000).toFixed(1);
+    const nextCost = +(predVals[0]/10000).toFixed(1);
+    const chg = lastCost ? +((nextCost-lastCost)/lastCost*100).toFixed(1) : 0;
+    const lastCol = collectVals[collectVals.length-1]||0;
+    const nextCol = predCollect[0]||0;
+    const colChg = lastCol ? +((nextCol-lastCol)/lastCol*100).toFixed(1) : 0;
+    predBox.innerHTML = `
+      <div class="pb-title">🔮 未来趋势预测</div>
+      <div class="pb-row">
+        <div class="pb-item"><div class="pb-l">下月预计费用</div><div class="pb-v">¥${nextCost}万</div><div class="pb-l" style="font-size:0.6rem;color:${chg>=0?'var(--red)':'var(--green)'}">${chg>=0?'↑'+chg:'↓'+Math.abs(chg)}%</div></div>
+        <div class="pb-item"><div class="pb-l">下月预计采集量</div><div class="pb-v">${nextCol.toLocaleString()}</div><div class="pb-l" style="font-size:0.6rem;color:${colChg>=0?'var(--green)':'var(--red)'}">${colChg>=0?'↑'+colChg:'↓'+Math.abs(colChg)}%</div></div>
+        <div class="pb-item"><div class="pb-l">预算剩余</div><div class="pb-v">¥${Math.max(0,((totalBudget-totalAmount)/10000)).toFixed(0)}万</div></div>
+        <div class="pb-item"><div class="pb-l">预测依据</div><div class="pb-v" style="font-size:0.68rem;font-weight:400">基于${monthNames.length}个月线性趋势</div></div>
+      </div>`;
+  }
 }
 
 // ============================================================
@@ -2153,112 +2271,118 @@ function renderTaskTable(tasks){
 }
 
 // ============================================================
-// MONTHLY TRENDS (independent)
+// MONTHLY TREND OVERVIEW — 6流程流程图
 // ============================================================
-function renderMonthTrends(){
-  const grid = document.getElementById("trendGrid");
+function renderMonthlyTrendOverview(tasks, m){
+  const pipeline = document.getElementById("trendPipeline");
+  if(!pipeline) return;
   const td = DATA.monthlyTrend;
   if(!td) return;
   const months = getTrendMonths();
   if(!months.length) months.push("3月");
-  let i = 0;
-  grid.innerHTML = Object.entries(td).map(([name, vals]) => {
-    const c = COLORS[i++ % COLORS.length];
-    return `<div class="mc"><div style="font-size:0.72rem;font-weight:600;margin-bottom:4px;color:${c}">${name}</div><div class="chart-box" id="t_${name.replace(/[^a-z0-9]/gi,'_')}" style="height:130px"></div></div>`;
-  }).join("");
-  i = 0;
-  for(const [name, vals] of Object.entries(td)){
-    const c = COLORS[i++ % COLORS.length];
-    const id = "t_" + name.replace(/[^a-z0-9]/gi,'_');
-    const chart = initC(id, 130);
-    if(!chart) continue;
-    const isPct = !vals.some(v => v > 100 && name !== "需求量" && name !== "采集完成数");
-    chart.setOption({grid:{top:4,bottom:4,left:2,right:2,containLabel:true},xAxis:{type:"category",data:months,axisLabel:{fontSize:6}},yAxis:{type:"value",axisLabel:{fontSize:6}},series:[{type:"line",data:vals,smooth:true,symbol:"circle",symbolSize:4,lineStyle:{color:c,width:1.5},itemStyle:{color:c},areaStyle:{color:c+"15"},label:{show:true,formatter:p=>typeof p.value==="number"?(isPct?p.value+(p.value>1?"%":""):p.value):p.value,fontSize:6,fontWeight:600}}]});
+
+  // 按月份聚合tasks数据
+  function aggByMonth(key){ const r={}; tasks.forEach(t=>{const mm=t.month;if(mm)r[mm]=(r[mm]||0)+num(t[key]);}); return r; }
+  const byMonth_issued = aggByMonth("issuedQty");
+  const byMonth_collected = aggByMonth("collected");
+  const byMonth_review = aggByMonth("reviewIssues");
+  const byMonth_feedback = aggByMonth("feedbackMat");
+  const byMonth_published = aggByMonth("publishedData");
+  const byMonth_closed = {};
+  tasks.forEach(t => {if(t.month){const v=t.closed; if(!byMonth_closed[t.month]) byMonth_closed[t.month]={cnt:0,closed:0}; byMonth_closed[t.month].cnt++; if(v==="是"||v==="全部闭环") byMonth_closed[t.month].closed++;}});
+  const byMonth_timelyRate = {};
+  tasks.forEach(t => {
+    const mm = t.month; if(!mm) return;
+    if(!byMonth_timelyRate[mm]) byMonth_timelyRate[mm] = {w:0, tw:0};
+    const w = num(t.issuedQty||t.totalPoints);
+    byMonth_timelyRate[mm].w += w;
+    if(t.timelyRate===1||t.timelyRate==='1') byMonth_timelyRate[mm].tw += w;
+  });
+  function getMT(key, idx){ const arr=td[key]; return arr&&idx>=0&&idx<arr.length ? arr[idx] : null; }
+
+  // 6流程数据
+  const PROCS = [
+    {name:"需求下发", icon:"📋", color:COLORS[0], sc:"下发",
+     i1:(m)=>m.totalPoints, i1l:"需求总量",
+     i2:(m)=>m.timelyRate||0, i2l:"及时率"},
+    {name:"需求校核", icon:"🔍", color:COLORS[4], sc:"校核",
+     i1:(m)=>m.reviewIssues, i1l:"反馈问题",
+     i2:(m)=>m.reviewIssueRate, i2l:"问题率"},
+    {name:"数据采集", icon:"🔧", color:COLORS[2], sc:"采集",
+     i1:(m)=>m.totalDemand, i1l:"采集下发",
+     i2:(m)=>m.completionRate, i2l:"完成率"},
+    {name:"问题闭环", icon:"✅", color:COLORS[3], sc:"闭环",
+     i1:(m)=>m.feedbackMat, i1l:"反馈材料",
+     i2:(m)=>m.verifyPassRate, i2l:"核实通过率"},
+    {name:"质量审核", icon:"📊", color:COLORS[5], sc:"审核",
+     i1:()=>{const pr=DATA.preReview;return pr?pr.passRate:0;}, i1l:"入库通过率",
+     i2:()=>{const qr=DATA.qualityReview;const gz=qr?qr['公章抽审']:null;return gz?+((gz.初审通过||0)/gz.审核*100).toFixed(1):0;}, i2l:"预审通过率"},
+    {name:"加工审核发布", icon:"🚀", color:COLORS[6], sc:"发布",
+     i1:(m)=>m.publishedData||0, i1l:"发布数据",
+     i2:(m)=>m.accuracyRate, i2l:"准确率"}
+  ];
+
+  // 构建每个节点的微型趋势条（最近3个月）
+  const minBar = vals => {
+    const last = vals.slice(-3);
+    const mx = Math.max(...last, 1);
+    return last.map(v => Math.max(2, (v/mx)*16)).join(';');
+  };
+
+  function nodeHTML(p, mi, vi1, vi2){
+    const c1 = vi1>=80?'good':vi1>=60?'warn':'bad';
+    const c2 = vi2>=80?'good':vi2>=60?'warn':'bad';
+    const bars1 = minBar(p.i1._vals||[]);
+    const bars2 = minBar(p.i2._vals||[]);
+    return `<div class="flow-node" style="border-left-color:${p.color}">
+      <div class="flow-node-hd">
+        <span class="fn-icon">${p.icon}</span>
+        <span class="fn-name" style="color:${p.color}">${p.name}</span>
+        <span class="fn-badge" style="background:${p.color}22;color:${p.color}">${p.sc}</span>
+      </div>
+      <div class="flow-node-body">
+        <div class="fn-m"><div class="fn-ml">${p.i1l}</div><div class="fn-mv ${c1}">${typeof vi1==='number'?vi1.toLocaleString():vi1}</div><div class="fn-mbar">${bars1.split(';').map((h,i)=>`<div class="bar" style="height:${h}px;background:${p.color}66"></div>`).join('')}</div></div>
+        <div class="fn-m"><div class="fn-ml">${p.i2l}</div><div class="fn-mv ${c2}">${typeof vi2==='number'?vi2.toFixed(1)+'%':vi2}</div><div class="fn-mbar">${bars2.split(';').map((h,i)=>`<div class="bar" style="height:${h}px;background:${p.color}66"></div>`).join('')}</div></div>
+      </div>
+    </div>`;
   }
-}
 
-// ============================================================
-// DATA INSIGHTS — 自动分析结论
-// ============================================================
-function renderDataInsights(tasks, m){
-  const grid = document.getElementById("insightsGrid");
-  const warnDiv = document.getElementById("insightsWarnings");
-  if(!grid || !warnDiv) return;
-  const n = tasks.length;
-  if(!n){ grid.innerHTML=''; warnDiv.innerHTML=''; return; }
-
-  // 核心指标
-  const timelyRate = m.timelyRate || 0;
-  const totalPts = tasks.reduce((s,t)=>s+num(t.totalPoints),0);
-  const totalCol = tasks.reduce((s,t)=>s+num(t.collected),0);
-  const compRate = totalPts ? +((totalCol/totalPts)*100).toFixed(1) : 0;
-  const totalIssues = tasks.reduce((s,t)=>s+num(t.reviewIssues),0);
-  const totalInvalid = tasks.reduce((s,t)=>s+num(t.invalidData),0);
-
-  // 预算
-  const s = DATA.settlements||[];
-  const totalCost = s.reduce((x,y) => x + num(y.结算金额||y.amount), 0);
-  const budget = DATA.totalBudget||3900000;
-  const budgetRate = budget ? +((totalCost/budget)*100).toFixed(1) : 0;
-
-  // 预审
-  const pr = DATA.preReview;
-  const prPass = pr && pr.total ? pr.passRate : null;
-
-  // 反馈
-  const fb = DATA.issueFeedback;
-  const consRate = fb && fb.问题反馈量 ? +(fb.双方共识量/fb.问题反馈量*100).toFixed(1) : null;
-  const fbTotal = fb ? fb.问题反馈量 : 0;
-
-  // 高危任务
-  const highRisk = tasks.filter(t => {
-    const cr = t.collected && t.issuedQty ? (t.collected/t.issuedQty)*100 : (t.completionRate||0);
-    return cr > 0 && cr < 60;
-  }).sort((a,b)=>{
-    const ca = a.collected&&a.issuedQty?(a.collected/a.issuedQty)*100:(a.completionRate||100);
-    const cb = b.collected&&b.issuedQty?(b.collected/b.issuedQty)*100:(b.completionRate||100);
-    return ca-cb;
+  // 准备每个流程的指标数值（用于条形图）
+  PROCS.forEach(p => {
+    p.i1._vals = months.map(mm=>p.i1({totalPoints: tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.totalPoints),0), reviewIssues: tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.reviewIssues),0), totalDemand: tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.issuedQty||t.totalPoints),0), feedbackMat: tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.feedbackMat),0), publishedData: tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.publishedData),0), accuracyRate:0, completionRate:0, verifyPassRate:0, timelyRate:0}));
+    p.i2._vals = months.map(mm=>p.i2({timelyRate: (()=>{const d=byMonth_timelyRate[mm];return d&&d.w?+((d.tw/d.w)*100).toFixed(1):0;})(), reviewIssueRate: (()=>{const total=tasks.filter(t=>t.month===mm).reduce((s,t)=>s+num(t.totalPoints),0);return total?+((byMonth_review[mm]||0)/total*100).toFixed(1):0;})(), completionRate: (()=>{const d=byMonth_issued[mm];return d?+((byMonth_collected[mm]||0)/d*100).toFixed(1):0;})(), verifyPassRate: (()=>{const d=byMonth_feedback[mm];return 0;})(), accuracyRate:0}));
   });
 
-  // 问题最多TOP3
-  const topIssues = [...tasks].filter(t=>t.reviewIssues>0).sort((a,b)=>b.reviewIssues-a.reviewIssues).slice(0,3);
+  // 取当前总体指标
+  const vi = PROCS.map(p => {
+    const v1 = p.i1(m), v2 = p.i2(m);
+    return [typeof v1==='number'?v1:0, typeof v2==='number'?v2:0];
+  });
 
-  // 月度趋势（上升/下降）
-  const trendMonths = getTrendMonths();
-  const trendVals = DATA.monthlyTrend ? DATA.monthlyTrend['采集完成率'] || [] : [];
-  const trendDir = trendVals.length>=2 && trendVals[trendVals.length-1] < trendVals[0] ? '📉 下降' : '📈 上升';
-  const trendChange = trendVals.length>=2 ? (trendVals[trendVals.length-1] - trendVals[0]).toFixed(1) : '0';
+  const ARR = '<div class="flow-arr">▶</div>';
+  const ARR_DOWN = '<div class="flow-arr-down">▼</div>';
+  const CONN = '<div class="flow-connector"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
 
-  function card(label, value, unit, color, note){
-    return `<div class="ac" style="text-align:center;padding:10px 8px"><div style="font-size:0.65rem;color:var(--tl);margin-bottom:2px">${label}</div><div style="font-size:1.3rem;font-weight:700;color:${color}">${value}${unit||''}</div>${note?`<div style="font-size:0.6rem;color:var(--tl);margin-top:2px">${note}</div>`:''}</div>`;
+  // Row 1: 需求下发 → 需求校核 → 数据采集
+  let html = '<div class="pipe-row">';
+  for(let i=0;i<3;i++){
+    html += nodeHTML(PROCS[i], i, vi[i][0], vi[i][1]);
+    if(i<2) html += ARR;
   }
-  function warnCard(level, title, desc){
-    return `<div class="alert-item ${level}"><span class="alert-tag">${level==='p0'?'P0':'P1'}</span><div class="alert-text"><div class="at-p">${title}</div><div class="at-a">${desc}</div></div></div>`;
+  html += '</div>' + ARR_DOWN;
+
+  // Row 2: 问题闭环 → 质量审核 → 加工审核发布
+  html += '<div class="pipe-row">';
+  for(let i=3;i<6;i++){
+    html += nodeHTML(PROCS[i], i, vi[i][0], vi[i][1]);
+    if(i<5) html += ARR;
   }
+  html += '</div>';
 
-  grid.innerHTML = `
-    ${card('采集完成率', compRate, '%', compRate>=80?'#2ECC71':compRate>=60?'#F39C12':'#E74C3C', `目标90% · 差距${(90-compRate).toFixed(1)}%`)}
-    ${card('发布及时率', timelyRate, '%', timelyRate>=80?'#2ECC71':timelyRate>=60?'#F39C12':'#E74C3C', `${tasks.filter(t=>t.timelyRate===1).length}/${tasks.filter(t=>t.timelyRate!==null).length}项及时`)}
-    ${card('预算执行率', budgetRate, '%', budgetRate>75?'#E74C3C':budgetRate>50?'#F39C12':'#3498DB', `${(totalCost/10000).toFixed(0)}万/${(budget/10000).toFixed(0)}万`)}
-    ${card('预审通过率', prPass||'—', prPass?'%':'', prPass&&prPass>=99?'#2ECC71':'#F39C12', pr?`${pr.passed}/${pr.total}通过`:'暂无数据')}
-    ${fbTotal ? card('反馈共识率', consRate, '%', consRate>=60?'#2ECC71':consRate>=30?'#F39C12':'#E74C3C', `${fb.双方共识量}/${fbTotal}达成共识`) : ''}
-    ${totalInvalid ? card('无效数据', totalInvalid, '条', totalInvalid>500?'#E74C3C':totalInvalid>100?'#F39C12':'#2ECC71', '需排查整改') : ''}
-    ${card('采集趋势', trendDir+trendChange, 'pp', trendChange>=0?'#2ECC71':'#E74C3C', trendMonths.length?`${trendMonths[0]}→${trendMonths[trendMonths.length-1]}`:'')}
-    ${card('初审问题', totalIssues, '条', totalIssues>1000?'#E74C3C':totalIssues>500?'#F39C12':'#2ECC71', topIssues.length?`最多:${topIssues[0].name}`:'')}
-  `.split('undefined').join('');
-
-  // 警告区
-  let warns = '';
-  if(compRate < 80) warns += warnCard('p0', `整体采集完成率${compRate}%，低于目标90%`, `差距${(90-compRate).toFixed(1)}%，需加强${highRisk.slice(0,2).map(t=>t.name).join('、')}等${highRisk.length}项重点攻坚`);
-  if(timelyRate < 80) warns += warnCard('p1', `发布及时率${timelyRate}%，${tasks.filter(t=>t.timelyRate===0).length}项未及时发布`, '需关注需求下发时效性');
-  if(totalInvalid > 0) warns += warnCard('p1', `存在${totalInvalid}条无效数据`, `涉及${tasks.filter(t=>t.invalidData>0).length}项任务，需排查原因`);
-  if(consRate !== null && consRate < 50) warns += warnCard('p0', `反馈共识率仅${consRate}%，${fb.双方未达成共识量||0}条未达成共识`, '大量问题未与采集方达成一致，需加强沟通闭环');
-  if(highRisk.length) warns += warnCard('p0', `${highRisk.length}项任务采集率低于60%`, highRisk.map(t=>`${t.name}(${t.collected&&t.issuedQty?((t.collected/t.issuedQty)*100).toFixed(1):t.completionRate||0}%)`).join('、'));
-  if(topIssues.length) warns += warnCard('p1', `初审问题集中：${topIssues[0].name}(${topIssues[0].reviewIssues}条)等${topIssues.length}项`, '需追溯源头优化需求质量');
-  if(budgetRate < 50 && trendMonths.length >= 6) warns += warnCard('p1', `半年预算执行率仅${budgetRate}%`, '进度偏慢，需评估下半年预算使用计划');
-
-  warnDiv.innerHTML = warns ? `<div class="alert-action" style="grid-template-columns:1fr 1fr">${warns}</div>` : '<div style="text-align:center;padding:8px;color:var(--green);font-size:0.74rem">✅ 整体数据健康，无明显异常</div>';
+  pipeline.innerHTML = html;
 }
+
+// DATA INSIGHTS — 已移除
 
 // ============================================================
 // ALERTS
