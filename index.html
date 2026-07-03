@@ -120,8 +120,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .tc-card .tc-hd .tc-icon{font-size:0.8rem}
 .tc-card .tc-hd .tc-name{font-size:0.7rem;font-weight:700;flex:1}
 .tc-card .tc-hd .tc-trend{font-size:0.6rem;font-weight:600;padding:1px 6px;border-radius:6px}
-.tc-card .tc-chart{height:110px;width:100%}
-.tc-card .tc-sub{font-size:0.55rem;color:var(--tl);margin-top:2px;text-align:center}
+.tc-card .tc-chart{height:125px;width:100%}
+.tc-card .tc-sub{font-size:0.55rem;color:var(--tl);margin-top:1px;text-align:center}
+.tc-card .tc-extra{padding:2px 2px 0;font-size:0.55rem;border-top:1px solid #f0f0f0;margin-top:1px}
+.tc-card .tc-extra .extra-title{font-size:0.55rem;font-weight:600;color:var(--tl);margin-bottom:1px}
+.tc-card .tc-extra .eb-row{display:flex;align-items:center;gap:2px;margin:1px 0;line-height:1.2}
+.tc-card .tc-extra .eb-l{min-width:38px;font-size:0.52rem;color:var(--tl);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tc-card .tc-extra .eb-track{flex:1;height:5px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+.tc-card .tc-extra .eb-fill{height:100%;border-radius:3px;background:var(--blue)}
+.tc-card .tc-extra .eb-fill.c1{background:var(--red)}
+.tc-card .tc-extra .eb-fill.c2{background:#E67E22}
+.tc-card .tc-extra .eb-fill.c3{background:var(--orange)}
+.tc-card .tc-extra .eb-fill.c4{background:var(--green)}
+.tc-card .tc-extra .eb-r{min-width:20px;font-size:0.5rem;font-weight:600;text-align:right}
+.tc-card .tc-extra .et-row{display:flex;flex-wrap:wrap;gap:2px}
+.tc-card .tc-extra .et-tag{display:inline-block;background:#f0f0f0;border-radius:4px;padding:0 4px;font-size:0.5rem;color:var(--tl);line-height:1.5}
 .flow-arr{display:flex;align-items:center;justify-content:center;padding:0 4px;font-size:1.2rem;color:#bbb;user-select:none}
 .flow-connector{display:flex;justify-content:center;padding:2px 0}
 .flow-connector .dot{width:6px;height:6px;background:#ddd;border-radius:50%;margin:0 3px}
@@ -295,7 +308,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
   <!-- ===== 看板 1：流程总览 ===== -->
   <div style="margin-bottom:14px">
-    <div class="sec-title">360237223213 345205250351223276350267257346265201347250213346200273350247210 <span class="st-badge">347234213346235277 1 302267 344270211351203250345210206</span></div>
+    <div class="sec-title">📋 核心指标（6大流程） <span class="st-badge">看板 1 · 随筛选联动</span></div>
     <!-- 6流程核心指标+详细指标（合并展示） -->
     <div id="flowRow" class="flow-row"></div>
     <div id="specialRow" class="special-row"></div>
@@ -664,22 +677,22 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "notes": null
     },
     {
-      "name": "聚合1:3",
+      "name": "广西多层级清单",
       "settleType": "价格采集",
-      "source": "聚合1:3",
+      "source": "地区特性",
       "demandItem": "市场价",
-      "month": "04月",
-      "totalPoints": 19910,
-      "itemCount": 19910,
+      "month": "05月",
+      "totalPoints": 3109,
+      "itemCount": 3109,
       "reviewIssues": 0,
-      "issuedQty": 19910,
-      "collected": 9739,
-      "completionRate": 48.9,
-      "accuracyRate": null,
-      "invalidData": null,
-      "invalidRate": null,
-      "publishedData": null,
-      "timelyRate": 0,
+      "issuedQty": 3109,
+      "collected": 2920,
+      "completionRate": 93.9,
+      "accuracyRate": 100.0,
+      "invalidData": 189,
+      "invalidRate": 6.1,
+      "publishedData": 2441,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -745,13 +758,37 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "itemCount": 759,
       "reviewIssues": 76,
       "issuedQty": 2277,
-      "collected": 2355,
-      "completionRate": 103.4,
+      "collected": 2277,
+      "completionRate": 100.0,
       "accuracyRate": 96.7,
       "invalidData": null,
       "invalidRate": null,
       "publishedData": 2242,
       "timelyRate": 1,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
+    },
+    {
+      "name": "聚合1:3",
+      "settleType": "价格采集",
+      "source": "聚合1:3",
+      "demandItem": "市场价",
+      "month": "05月",
+      "totalPoints": 19910,
+      "itemCount": 19910,
+      "reviewIssues": 0,
+      "issuedQty": 19910,
+      "collected": 9739,
+      "completionRate": 48.9,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 0,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -823,30 +860,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "invalidData": null,
       "invalidRate": 0.0,
       "publishedData": null,
-      "timelyRate": 1,
-      "feedbackMat": null,
-      "expertVerify": null,
-      "supplierRejects": null,
-      "closed": null,
-      "allClosed": null,
-      "notes": null
-    },
-    {
-      "name": "广西多层级清单",
-      "settleType": "价格采集",
-      "source": "地区特性",
-      "demandItem": "市场价",
-      "month": "06月",
-      "totalPoints": 3109,
-      "itemCount": 3109,
-      "reviewIssues": 0,
-      "issuedQty": 3109,
-      "collected": 2920,
-      "completionRate": 93.9,
-      "accuracyRate": 100.0,
-      "invalidData": 189,
-      "invalidRate": 6.1,
-      "publishedData": 2441,
       "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
@@ -1170,11 +1183,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
           "unit": "%"
         },
         {
-          "key": "reviewPassRate",
-          "label": "初审通过率",
-          "unit": "%"
-        },
-        {
           "key": "timelyRate",
           "label": "发布及时率",
           "unit": "%"
@@ -1309,45 +1317,45 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   "monthlyTrend": {
     "需求总条数": [
       17626,
-      56647,
-      4781,
-      49478
+      36737,
+      27800,
+      46369
     ],
     "采集下发数": [
       17626,
-      56647,
-      4781,
-      49478
+      36737,
+      27800,
+      46369
     ],
     "采集完成数": [
       15595,
-      45842,
-      4826,
-      29995
+      36103,
+      17407,
+      27075
     ],
     "采集完成率": [
       88.5,
-      80.9,
-      100.9,
-      60.6
+      98.3,
+      62.6,
+      58.4
     ],
     "需求准确率": [
       89.8,
       100.0,
-      98.4,
-      94.0
+      99.7,
+      93.6
     ],
     "无效数据数": [
       0,
       17,
-      0,
-      789
+      189,
+      600
     ],
     "无效数据率": [
       0.0,
       0.0,
-      0.0,
-      2.6
+      1.1,
+      2.2
     ],
     "预算执行率": [
       8.9,
@@ -1363,21 +1371,40 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     ]
   },
   "qualityReview": {
+    "抽审任务": {
+      "by_month": {
+        "月份": {
+          "项": "值"
+        }
+      }
+    },
     "公章抽审": {
-      "审核": 663,
-      "初审通过": 567,
-      "初审不通过": 96,
-      "初审通过率": 0.855203619909502,
-      "无问题采集员": 8,
-      "问题采集员": 1
+      "by_month": {
+        "6月": {
+          "审核": 663,
+          "初审通过": 567,
+          "初审不通过": 96,
+          "初审通过率": 0.855203619909502,
+          "无问题采集员": 8,
+          "问题采集员": 1
+        }
+      }
     },
     "报价抽审": {
-      "抽审量": 76,
-      "报价量": 38
-    },
-    "抽审任务": {
-      "月份": "月份",
-      "项": "值"
+      "by_month": {
+        "5月": {
+          "抽审量": 44,
+          "报价量": 25
+        },
+        "6月": {
+          "抽审量": 76,
+          "报价量": 38,
+          "报价偏高": 15,
+          "报价偏低": 23,
+          "偏差率＜15%": 13,
+          "高质量报价": 0.736842105263158
+        }
+      }
     }
   },
   "preReview": {
@@ -1453,14 +1480,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "已淘汰参数": 5,
       "找不到资源": 68
     }
-  }
+  },
+  "productAcceptance": null
 }
 </script>
 <script>
 // ============================================================
 // STATE
 // ============================================================
-let DATA = null, charts = {}, filters = { demandItem: "全部", settleType: "全部", month: "全部" };
+let DATA = null, charts = {}, filters = { demandItem: "市场价", settleType: "全部", month: "06月" };
 const MONTH_KEYS = ["03","04","05","06"];
 const MONTH_KEYS_FULL = {"03月":"03","04月":"04","05月":"05","06月":"06"};
 const MONTH_MAP = {"03":"3月","04":"4月","05":"5月","06":"6月"};
@@ -1529,6 +1557,9 @@ function init(){
   populateSelect("fDemandItem", fi.demandItems);
   populateSelect("fSettleType", fi.settleTypes);
   populateSelect("fMonth", fi.months);
+  // 默认值：月份→06月，需求项→市场价
+  document.getElementById("fDemandItem").value = "市场价";
+  document.getElementById("fMonth").value = "06月";
   // Load tasks & settlements from files
   loadTaskData();
 }
@@ -1628,19 +1659,28 @@ function renderAll(){
   m.budgetRate = budget ? +((totalAmt/budget)*100).toFixed(1) : 0;
   m.totalCost = +(totalAmt/10000).toFixed(1);
   renderFlowKPIs(tasks, m);
-  renderCollectionSection(tasks, m);
-  renderMonthlyTrendOverview(tasks, m);
-  renderRadarChart(tasks, m);
+  // 分析模块使用全部数据（不跟随筛选），因为展示的是各月趋势
+  const allTasks = DATA.tasks || [];
+  const allM = calcMetrics(allTasks);
+  allM.budgetRate = m.budgetRate;
+  allM.totalCost = m.totalCost;
+  renderCollectionSection(allTasks, allM);
+  renderMonthlyTrendOverview(allTasks, allM);
+  renderRadarChart(allTasks, allM);
 }
 
-// === 看板 1：6流程卡片（Part1核心指标+Part2详细指标合并展示）===
+// === 看板 1：6流程卡片（随筛选联动）===
 function renderFlowKPIs(tasks, m){
-  // 预审/抽审/反馈数据
+  // 使用传入的已筛选数据
+  // 预审/抽审/反馈数据（全局数据，不受筛选影响）
   const pr = DATA.preReview;
   const prPass = pr && pr.total ? pr.passRate : null;
   const qr = DATA.qualityReview || {};
-  const gz = qr['公章抽审'];
-  const gzPassRate = gz && gz.审核 ? +((gz.初审通过||0)/gz.审核*100).toFixed(1) : null;
+  const gzBM = qr['公章抽审']?.by_month || {};
+  const gzKeys = Object.keys(gzBM);
+  let gzTotal = 0, gzPass = 0;
+  gzKeys.forEach(k => { gzTotal += (gzBM[k].审核||0); gzPass += (gzBM[k]['初审通过']||0); });
+  const gzPassRate = gzTotal ? +((gzPass/gzTotal)*100).toFixed(1) : null;
   const fb = DATA.issueFeedback;
   const fbTotal = fb ? fb.问题反馈量 : 0;
   const consRate = fb && fb.问题反馈量 ? +(fb.双方共识量/fb.问题反馈量*100).toFixed(1) : null;
@@ -1654,12 +1694,7 @@ function renderFlowKPIs(tasks, m){
     return n>=80?'#2ECC71':n>=60?'#F39C12':'#E74C3C';
   }
 
-  // 6流程卡片定义（核心指标在前，颜色标注）
-  const juneTasks = tasks.filter(t=>t.month==='06月');
-  const junePts = juneTasks.length ? (juneTasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2)+'W' : '—';
-  const juneComp = juneTasks.length && juneTasks.reduce((s,t)=>s+(t.issuedQty||0),0)>0
-    ? +(juneTasks.reduce((s,t)=>s+(t.collected||0),0)/juneTasks.reduce((s,t)=>s+(t.issuedQty||0),0)*100).toFixed(1)+'%' : '—';
-
+  // 6流程卡片定义
   const stages = [
     { name:'需求下发', color:'#E74C3C', icon:'📋',
       items:[
@@ -1679,7 +1714,7 @@ function renderFlowKPIs(tasks, m){
       ]},
     { name:'数据采集', sub:'核心执行', color:'#F39C12', icon:'🔧',
       items:[
-        {l:'当月承接', v:junePts, c:''},
+        {l:'当月承接', v:tasks.length?(tasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2)+'W':'—', c:''},
         {l:'采集完成率', v:m.completionRate!=null?m.completionRate+'%':'—', c:clr(m.completionRate)},
         {l:'采集下发数', v:m.issuedQty?m.issuedQty+'条':'—', c:''},
         {l:'采集完成数', v:m.collected?m.collected+'条':'—', c:''},
@@ -1710,7 +1745,7 @@ function renderFlowKPIs(tasks, m){
     { name:'结算与成本', sub:'预算管控', color:'#2980B9', icon:'💰',
       items:[
         {l:'总预算', v:'¥'+(budget/10000).toFixed(0)+'万', c:''},
-        {l:'累计执行', v:m.totalCost?'¥'+m.totalCost+'万':'—', c:m.totalCost?'#2980B9':''},
+        {l:'累计执行', v:m.totalCost!=null?'¥'+(+m.totalCost).toFixed(1)+'万':'—', c:m.totalCost!=null?'#2980B9':''},
         {l:'预算执行率', v:m.budgetRate!=null?m.budgetRate+'%':'—', c:clr(m.budgetRate)},
       ]},
   ];
@@ -1881,68 +1916,72 @@ function renderProgressTab(tasks, m){
     return d ? {month:mName, rate:d.totalDemand?+((d.totalCollected/d.totalDemand)*100).toFixed(1):0, collected:d.totalCollected, demand:d.totalDemand} : {month:mName, rate:0, collected:0, demand:0};
   });
 
-  // 每个任务在各月的完成率（用于分组柱状图）
-  const taskNames = [...new Set(tasks.filter(t=>t.month).map(t=>t.name))];
-  const taskColors = {};
-  taskNames.forEach((tn,i)=>taskColors[tn]=COLORS[i%COLORS.length]);
-
   panel.innerHTML = `
     <div class="focus-metrics">
       <div class="fm-box"><div class="fm-l">整体完成率</div><div class="fm-v">${m.completionRate}%</div><div class="fm-d">${(m.collected||0).toLocaleString()}/${(m.totalDemand||0).toLocaleString()}</div></div>
       <div class="fm-box"><div class="fm-l">已采集</div><div class="fm-v">${(m.collected||0).toLocaleString()}</div><div class="fm-d">完成总量</div></div>
       <div class="fm-box"><div class="fm-l">待采集</div><div class="fm-v">${Math.max(0,m.issuedQty-m.collected).toLocaleString()}</div><div class="fm-d">剩余总量</div></div>
     </div>
+    <div style="margin-bottom:6px;overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:0.65rem">
+<thead><tr style="background:var(--lg);font-weight:600">
+<th style="padding:3px 6px;text-align:left">月份</th>
+<th style="padding:3px 6px;text-align:right">任务数</th>
+<th style="padding:3px 6px;text-align:right">采集需求</th>
+<th style="padding:3px 6px;text-align:right">已完成</th>
+<th style="padding:3px 6px;text-align:right">完成率</th>
+</tr></thead><tbody>
+${months.map(mm => {
+  const d = byMonth[mm];
+  const cnt = d ? d.tasks.length : 0;
+  const dem = d ? d.totalDemand : 0;
+  const col = d ? d.totalCollected : 0;
+  const rate = dem ? ((col/dem)*100).toFixed(1) : '—';
+  return `<tr><td style="padding:2px 6px;font-weight:600">${mm}</td>
+    <td style="padding:2px 6px;text-align:right">${cnt}</td>
+    <td style="padding:2px 6px;text-align:right">${dem.toLocaleString()}</td>
+    <td style="padding:2px 6px;text-align:right">${col.toLocaleString()}</td>
+    <td style="padding:2px 6px;text-align:right;color:${rate!=='—'&&parseFloat(rate)>=80?'#2ECC71':rate!=='—'&&parseFloat(rate)>=60?'#F39C12':'#E74C3C'}">${rate}${rate!=='—'?'%':''}</td></tr>`;
+}).join('')}
+</tbody></table>
+</div>
     <div class="chart-box" id="pgChart1" style="height:280px;width:100%;margin-bottom:6px"></div>
-    <div class="chart-row"><div class="chart-box-sm" id="pgChart2"></div></div>
-    <div style="margin-top:4px;font-size:0.65rem;color:var(--tl)">💡 热力图：任务×月份 完成率矩阵</div>`;
+    <div style="margin-top:4px;font-size:0.65rem;color:var(--tl)">💡 各任务完成率一览（按完成率排序）</div>`;
 
-  // 热力图：任务×月份完成率矩阵
-  const hmEl = document.getElementById("pgChart1");
-  if(hmEl && taskNames.length && months.length){
+  // 各任务完成率柱状图（直接展示每个任务的完成率，不按月拆分）
+  const barEl = document.getElementById("pgChart1");
+  if(barEl && tasks.length){
     disposeC("pgChart1");
-    const hm = echarts.init(hmEl);
-    const heatData = [];
-    taskNames.forEach((tn, ti) => months.forEach((mm, mi) => {
-      const d = byMonth[mm];
-      const t = d ? d.tasks.find(t=>t.name===tn) : null;
-      const rate = t ? ((t.issuedQty||t.totalPoints) ? +((t.collected/(t.issuedQty||t.totalPoints))*100).toFixed(1) : 0) : null;
-      heatData.push([mi, ti, rate]);
-    }));
-    hm.setOption({
-      tooltip:{position:"top", formatter:p=>{
-        const tn = taskNames[p.value[1]], mm = months[p.value[0]], v = p.value[2];
-        return `<strong>${tn}</strong><br/>${mm}: ${v!==null?v+'%':'无数据'}`;
+    const bc = echarts.init(barEl);
+    const taskRates = tasks.filter(t => t.name).map(t => ({
+      name: t.name + (months.length > 1 ? ' ('+t.month+')' : ''),
+      rate: t.completionRate != null ? t.completionRate : ((t.issuedQty||t.totalPoints) ? +((t.collected/(t.issuedQty||t.totalPoints))*100).toFixed(1) : 0),
+      collected: t.collected||0,
+      issued: t.issuedQty||t.totalPoints||0
+    })).sort((a,b) => b.rate - a.rate);
+    const maxRate = Math.max(...taskRates.map(d=>d.rate), 100);
+    bc.setOption({
+      tooltip:{trigger:"axis", formatter:p=>{
+        const d = taskRates[p[0].dataIndex];
+        return '<strong>'+d.name+'</strong><br/>完成率: '+d.rate+'%<br/>采集: '+(d.collected||0).toLocaleString()+'/'+(d.issued||0).toLocaleString();
       }},
-      grid:{top:4,bottom:28,left:60,right:8,containLabel:true},
-      xAxis:{type:"category", data:months, splitArea:{show:true}, axisLabel:{fontSize:7}},
-      yAxis:{type:"category", data:taskNames, splitArea:{show:true}, axisLabel:{fontSize:6}},
-      visualMap:{min:0,max:100,calculable:false,inRange:{color:["#FDEDEC","#FADBD8","#F1948A","#E74C3C","#2ECC71"]},orient:"horizontal",left:"center",bottom:0,itemWidth:12,itemHeight:6,textStyle:{fontSize:5}},
-      series:[{type:"heatmap",data:heatData.filter(d=>d[2]!==null),label:{show:true,fontSize:5,color:"#2C3E50",formatter:p=>p.value[2]!==null?p.value[2]+'%':''},emphasis:{itemStyle:{shadowBlur:6,shadowColor:"rgba(0,0,0,0.2)"}},itemStyle:{borderWidth:1,borderColor:"#fff"}}]
-    });
-    charts["pgChart1"] = hm;
-    new ResizeObserver(()=>hm.resize()).observe(hmEl.parentElement);
-  }
-
-  // 图表2: 每月总体完成率趋势
-  const c2 = initC("pgChart2", 160);
-  if(c2){
-    c2.setOption({
-      tooltip:{trigger:"axis"},
-      grid:{top:8,bottom:8,left:4,right:4,containLabel:true},
-      xAxis:{type:"category", data:months, axisLabel:{fontSize:7}},
-      yAxis:{type:"value", min:0, max:100, axisLabel:{formatter:"{value}%",fontSize:6}},
+      grid:{top:6,bottom:50,left:4,right:20,containLabel:true},
+      xAxis:{type:"category", data:taskRates.map(d=>d.name), axisLabel:{fontSize:6, rotate:45, interval:0}},
+      yAxis:{type:"value", min:0, max:Math.ceil(maxRate/10)*10, axisLabel:{fontSize:6,formatter:'{value}%'}},
       series:[{
-        type:"line", data:monthRates.map(d=>({value:d.rate})),
-        smooth:true, symbol:"circle", symbolSize:6,
-        lineStyle:{color:"#3498DB", width:2}, itemStyle:{color:"#3498DB"},
-        areaStyle:{color:"rgba(52,152,219,0.1)"},
-        label:{show:true, formatter:p=>p.value+"%", fontSize:7, fontWeight:600},
-        markLine:{silent:true,symbol:"none",lineStyle:{type:"dashed",color:"#E74C3C",width:1},label:{formatter:"目标90%",fontSize:7,color:"#E74C3C"},data:[{yAxis:90}]}
+        type:"bar", barWidth:Math.min(22, Math.max(6, 280/taskRates.length)),
+        data: taskRates.map(d => ({
+          value: d.rate,
+          itemStyle: {color: d.rate>=90?'#2ECC71':d.rate>=80?'#58D68D':d.rate>=60?'#F39C12':'#E74C3C', borderRadius:[3,3,0,0]}
+        })),
+        label:{show:true, position:'top', formatter:p=>p.value+'%', fontSize:6, fontWeight:600},
+        markLine:{silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#E74C3C',width:1},label:{formatter:'目标90%',fontSize:6,color:'#E74C3C'},data:[{yAxis:90}]}
       }]
     });
+    charts["pgChart1"] = bc;
+    new ResizeObserver(()=>bc.resize()).observe(barEl.parentElement);
   }
 }
-
 function renderCapacityTab(tasks, m){
   const panel = document.getElementById("fp_cp");
   if(!panel) return;
@@ -2049,25 +2088,77 @@ function renderBudgetTab(tasks, m){
     costByMonthType[mm][dt] = (costByMonthType[mm][dt]||0) + num(x.结算金额||x.amount);
   });
 
-  // 按月总费用（用于预测）
+  // 将金额数据按类型的月度需求量×固定单价预测（而非直接对金额做线性回归）
+  // 第一步：按月按类型聚合需求量，计算固定单价
+  const qtyByMT = {};  // qtyByMonthType
+  const amtByType = {};
+  monthNames.forEach(mm => qtyByMT[mm] = {});
+  s.forEach(x => {
+    const mm = x.月份||x.month; const dt = x.需求类型||x.type||"其他";
+    const qty = num(x.需求数量||0); const amt = num(x.结算金额||x.amount);
+    if(!qtyByMT[mm]) qtyByMT[mm] = {};
+    qtyByMT[mm][dt] = (qtyByMT[mm][dt]||0) + qty;
+    if(!amtByType[dt]) amtByType[dt] = {ta:0, tq:0};
+    amtByType[dt].ta += amt; amtByType[dt].tq += qty;
+  });
+  // 固定单价 = 总金额 / 总数量
+  const unitPrice = {};
+  Object.entries(amtByType).forEach(([dt, {ta,tq}]) => {
+    unitPrice[dt] = tq ? +(ta/tq).toFixed(2) : 0;
+  });
+
+  const lastMonthNum = parseInt(monthNames[monthNames.length-1]) || 6;
+  const monthsToPredict = Math.max(0, 12 - lastMonthNum);
+
+  // 按类型预测需求量 × 固定单价 = 预测费用
+  const predVals = new Array(monthsToPredict).fill(0);
+  if (monthsToPredict > 0) {
+    dataTypes.forEach(dt => {
+      const monthlyQtys = monthNames.map(mm => qtyByMT[mm][dt]||0);
+      const predQtys = predict(monthlyQtys, monthsToPredict);
+      const up = unitPrice[dt] || 0;
+      predQtys.forEach((qty, i) => { predVals[i] += qty * up; });
+    });
+  }
+  const predMonths = predVals.length ? Array.from({length: monthsToPredict}, (_, i) => {
+    return (lastMonthNum + 1 + i) + "月";
+  }) : [];
+
+  // 历史月度总费用（用于图表展示）
   const monthlyTotals = monthNames.map(mm => {
     const vals = Object.values(costByMonthType[mm]||{});
     return vals.length ? vals.reduce((a,b)=>a+b,0) : 0;
   });
-  const predVals = predict(monthlyTotals, 2);
-  const predMonths = predVals.length ? [`预测1月`,`预测2月`] : [];
 
-  // 从tasks获取采集量数据用于产能预测（注意月份格式：tasks用"03月"，settlements用"3月"）
+  // 检测已有实际数据的预测月份，计算偏差率
+  const devItems = [];
+  if (predVals.length) {
+    predVals.forEach((pred, i) => {
+      const m = lastMonthNum + 1 + i;
+      const monthStr = m + "月";
+      const actualIdx = monthNames.indexOf(monthStr);
+      if (actualIdx >= 0) {
+        const actual = monthlyTotals[actualIdx];
+        const predWan = +(pred/10000).toFixed(1);
+        const actWan = +(actual/10000).toFixed(1);
+        devItems.push({
+          month: monthStr, actual: actWan, predicted: predWan,
+          deviation: actWan ? +((predWan - actWan)/actWan*100).toFixed(1) : null
+        });
+      }
+    });
+  }
+
+  // 从tasks获取采集量数据
   const monthlyCollected = {};
   (DATA.tasks||[]).forEach(t => {
     if(t.month){
-      // 统一去掉前导零，匹配settlement月份格式
-      const normMonth = t.month.replace(/^0/,'');
+      const normMonth = t.month.replace(/^0/,"");
       monthlyCollected[normMonth] = (monthlyCollected[normMonth]||0) + num(t.collected);
     }
   });
   const collectVals = monthNames.map(mm => monthlyCollected[mm]||0);
-  const predCollect = predict(collectVals, 2);
+  const predCollect = monthsToPredict > 0 ? predict(collectVals, monthsToPredict) : [];
 
   panel.innerHTML = `
     <div class="focus-metrics">
@@ -2075,60 +2166,45 @@ function renderBudgetTab(tasks, m){
       <div class="fm-box"><div class="fm-l">累计执行</div><div class="fm-v">¥${(totalAmount/10000).toFixed(1)}万</div><div class="fm-d">截至${monthNames[monthNames.length-1]||"4月"}</div></div>
       <div class="fm-box"><div class="fm-l">预算执行率</div><div class="fm-v">${execRate}%</div><div class="fm-d">累计/年度</div></div>
     </div>
-    <div class="section-subtitle">📊 已产生费用（按月度）</div>
-    <div class="chart-box" id="bdChart1" style="height:150px;width:100%;margin-bottom:10px"></div>
-    <div class="section-subtitle">🔮 预测费用趋势</div>
-    <div class="chart-box" id="bdChart2" style="height:150px;width:100%;margin-bottom:10px"></div>
+    <div class="section-subtitle">📊 费用执行趋势（已发生+预测）</div>
+    <div class="chart-box" id="bdChart1" style="height:190px;width:100%;margin-bottom:10px"></div>
     <div class="pred-box" id="predBox"></div>
     <div class="section-subtitle">🧩 总费用构成</div>
     <div class="chart-box" id="bdPie" style="height:180px;width:100%;margin-bottom:6px"></div>`;
 
-  // 图表1: 每月每类数据类型花费堆叠柱状图
-  const c1 = initC("bdChart1", 160);
+  // 合并图表：已发生费用（1-6月）+ 预测费用（后续月份）
+  const c1 = initC("bdChart1", 190);
   if(c1){
-    const dtColors = {"价格采集":"#E74C3C","价格更新":"#3498DB","全系列报价单":"#F39C12","额外激励":"#2ECC71"};
-    const series = dataTypes.map(dt => ({
-      name: dt, type: "bar", stack: "cost", barWidth: 18,
-      data: monthNames.map(mm => +((costByMonthType[mm][dt]||0)/10000).toFixed(1)),
-      itemStyle: {color: dtColors[dt]||"#95A5A6", borderRadius:[0,0,0,0]},
-      label: {show: false}
-    }));
-    c1.setOption({
-      tooltip:{trigger:"axis", formatter:p=>{
-        let s = `<strong>${p[0].axisValue}</strong><br/>`;
-        let total = 0;
-        p.forEach(item=>{total+=item.value; s+=`${item.marker} ${item.seriesName}: ¥${item.value}万<br/>`;});
-        s+=`<hr/>合计: ¥${total.toFixed(1)}万`;
-        return s;
-      }},
-      legend:{type:"scroll", bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
-      grid:{top:6,bottom:32,left:4,right:4,containLabel:true},
-      xAxis:{type:"category", data:monthNames, axisLabel:{fontSize:7}},
-      yAxis:{type:"value", axisLabel:{formatter:"{value}万",fontSize:6}},
-      series: series
-    });
-  }
-
-  // 图表2: 历史费用+预测趋势（简化，只保留费用预测）
-  const c2 = initC("bdChart2", 150);
-  if(c2){
-    const allMonths = [...monthNames, ...predMonths];
+    const allMonths = [...monthNames];
+    for (let m = lastMonthNum + 1; m <= 12; m++) allMonths.push(m + "月");
     const histVals = monthlyTotals.map(v=>+(v/10000).toFixed(1));
-    const fullVals = [...histVals, ...predVals.map(v=>+(v/10000).toFixed(1))];
-    const predStartIdx = monthNames.length;
-    c2.setOption({
+    const actualData = new Array(allMonths.length).fill(null);
+    for (let i = 0; i < histVals.length; i++) actualData[i] = histVals[i];
+    const predData = new Array(allMonths.length).fill(null);
+    if (predVals.length) {
+      predVals.forEach((pred, i) => {
+        const idx = monthNames.length + i;
+        if (idx < allMonths.length) predData[idx] = +(pred/10000).toFixed(1);
+      });
+    }
+    c1.setOption({
       tooltip:{trigger:"axis"},
       legend:{data:["已产生费用","预测费用"], bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
       grid:{top:6,bottom:28,left:4,right:4,containLabel:true},
       xAxis:{type:"category", data:allMonths, axisLabel:{fontSize:6}},
       yAxis:{type:"value", axisLabel:{fontSize:6,formatter:"{value}万"}},
       series:[
-        {name:"已产生费用", type:"bar", data:histVals.map((v,i)=>({value:v,itemStyle:{color:"#3498DB",borderRadius:[4,4,0,0]}})), barWidth:14, label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:6}},
-        {name:"预测费用", type:"bar", data:fullVals.map((v,i)=>({value:v,itemStyle:{color:i<predStartIdx?"rgba(52,152,219,0.15)":"#E74C3C",borderRadius:[4,4,0,0]}})), barWidth:14, label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:6}}
+        {name:"已产生费用", type:"bar",
+         data:actualData.map(v=>v!==null?{value:v,itemStyle:{color:"#3498DB",borderRadius:[4,4,0,0]}}:{value:0,itemStyle:{color:"transparent"}}),
+         barWidth:14,
+         label:{show:true,position:"top",formatter:p=>p.value>0?p.value+"万":"",fontSize:6}},
+        {name:"预测费用", type:"bar",
+         data:predData.map(v=>v!==null?{value:v,itemStyle:{color:"#E74C3C",borderRadius:[4,4,0,0]}}:{value:0,itemStyle:{color:"transparent"}}),
+         barWidth:8,barGap:'30%',
+         label:{show:true,position:"top",formatter:p=>p.value>0?p.value+"万":"",fontSize:6,color:"#E74C3C"}}
       ]
     });
   }
-
   // 饼图：总费用按数据类型分类
   const c3 = initC("bdPie", 180);
   if(c3){
@@ -2151,27 +2227,39 @@ function renderBudgetTab(tasks, m){
     }
   }
 
-  // 预测结果摘要
+  // 预测结果摘要（含偏差率）
   const predBox = document.getElementById("predBox");
-  if(predBox && predVals.length){
+  if(predBox && (predVals.length || devItems.length)){
     const lastCost = +(monthlyTotals[monthlyTotals.length-1]/10000).toFixed(1);
-    const nextCost = +(predVals[0]/10000).toFixed(1);
-    const chg = lastCost ? +((nextCost-lastCost)/lastCost*100).toFixed(1) : 0;
+    const nextCost = predVals.length ? +(predVals[0]/10000).toFixed(1) : 0;
+    const chg = lastCost && nextCost ? +((nextCost-lastCost)/lastCost*100).toFixed(1) : 0;
     const lastCol = collectVals[collectVals.length-1]||0;
-    const nextCol = predCollect[0]||0;
-    const colChg = lastCol ? +((nextCol-lastCol)/lastCol*100).toFixed(1) : 0;
+    const nextCol = predCollect.length ? predCollect[0] : 0;
+    const colChg = lastCol && nextCol ? +((nextCol-lastCol)/lastCol*100).toFixed(1) : 0;
+    let devHtml = "";
+    if(devItems.length){
+      devHtml = '<div style="margin-top:6px;padding-top:6px;border-top:1px dashed #ddd">';
+      devHtml += '<div style="font-size:0.65rem;font-weight:600;color:#F39C12;margin-bottom:4px">⏳ 已有实际数据的预测月份偏差率</div>';
+      devItems.forEach(function(d){
+        const cls = d.deviation>=0?"var(--red)":"var(--green)";
+        const arrow = d.deviation>=0?"↑":"↓";
+        devHtml += '<div class="pb-row" style="margin-bottom:2px"><div class="pb-item" style="min-width:60px"><span class="pb-l">'+d.month+'</span></div>';
+        devHtml += '<div class="pb-item"><span class="pb-l">实际:</span> <span class="pb-v">¥'+d.actual+'万</span></div>';
+        devHtml += '<div class="pb-item"><span class="pb-l">预测:</span> <span class="pb-v">¥'+d.predicted+'万</span></div>';
+        devHtml += '<div class="pb-item"><span class="pb-l" style="color:'+cls+'">'+arrow+' '+Math.abs(d.deviation)+'%</span></div></div>';
+      });
+      devHtml += '</div>';
+    }
     predBox.innerHTML = `
-      <div class="pb-title">🔮 未来趋势预测</div>
+      <div class="pb-title">🔮 未来费用预测（7-12月）</div>
       <div class="pb-row">
-        <div class="pb-item"><div class="pb-l">下月预计费用</div><div class="pb-v">¥${nextCost}万</div><div class="pb-l" style="font-size:0.6rem;color:${chg>=0?'var(--red)':'var(--green)'}">${chg>=0?'↑'+chg:'↓'+Math.abs(chg)}%</div></div>
-        <div class="pb-item"><div class="pb-l">下月预计采集量</div><div class="pb-v">${nextCol.toLocaleString()}</div><div class="pb-l" style="font-size:0.6rem;color:${colChg>=0?'var(--green)':'var(--red)'}">${colChg>=0?'↑'+colChg:'↓'+Math.abs(colChg)}%</div></div>
+        <div class="pb-item"><div class="pb-l">下月预计费用</div><div class="pb-v">¥${nextCost}万</div><div class="pb-l" style="font-size:0.6rem;color:${chg>=0?"var(--red)":"var(--green)"}">${chg>=0?"↑"+chg:"↓"+Math.abs(chg)}%</div></div>
+        <div class="pb-item"><div class="pb-l">下月预计采集量</div><div class="pb-v">${nextCol.toLocaleString()}</div><div class="pb-l" style="font-size:0.6rem;color:${colChg>=0?"var(--green)":"var(--red)"}">${colChg>=0?"↑"+colChg:"↓"+Math.abs(colChg)}%</div></div>
         <div class="pb-item"><div class="pb-l">预算剩余</div><div class="pb-v">¥${Math.max(0,((totalBudget-totalAmount)/10000)).toFixed(0)}万</div></div>
-        <div class="pb-item"><div class="pb-l">预测依据</div><div class="pb-v" style="font-size:0.68rem;font-weight:400">基于${monthNames.length}个月线性趋势</div></div>
-      </div>`;
+        <div class="pb-item"><div class="pb-l">预测依据</div><div class="pb-v" style="font-size:0.68rem;font-weight:400">按各类型需求量趋势×固定单价预测至12月</div></div>
+      </div>${devHtml}`;
   }
 }
-
-// ============================================================
 // TASK TABLE
 // ============================================================
 function renderTaskTable(tasks){
@@ -2203,13 +2291,13 @@ function renderTaskTable(tasks){
   });
 
   let html = `<div class="task-table-wrap"><table class="task-table">
-    <thead><tr><th>需求名称</th><th>结算类型</th><th>需求项</th><th>月份</th><th>总条数</th><th>下发数</th><th>采集完成</th><th>完成率</th><th>初审问题</th><th>闭环状态</th></tr></thead><tbody>`;
+    <thead><tr><th>需求项</th><th>月份</th><th>结算类型</th><th>需求名称</th><th>总条数</th><th>下发数</th><th>采集完成</th><th>完成率</th><th>初审问题</th><th>闭环状态</th></tr></thead><tbody>`;
   sorted.forEach(t => {
     const r = cr(t);
-    html += `<tr><td><strong>${t.name}</strong></td>
-      <td>${t.settleType||"—"}</td>
-      <td>${t.demandItem||"—"}</td>
+    html += `<tr><td>${t.demandItem||"—"}</td>
       <td>${t.month||"—"}</td>
+      <td>${t.settleType||"—"}</td>
+      <td><strong>${t.name}</strong></td>
       <td>${num(t.totalPoints).toLocaleString()||"—"}</td>
       <td>${num(t.issuedQty).toLocaleString()||"—"}</td>
       <td>${num(t.collected).toLocaleString()||"—"}</td>
@@ -2222,103 +2310,312 @@ function renderTaskTable(tasks){
 }
 
 // ============================================================
-// MONTHLY TREND OVERVIEW — 6流程流程图
+// MONTHLY TREND OVERVIEW — 7流程指标走势 + 补充信息
 // ============================================================
 function renderMonthlyTrendOverview(tasks, m){
+  console.log("renderMonthlyTrendOverview CALLED v2", tasks ? tasks.length : 0);
   const grid = document.getElementById("trendChartGrid");
   if(!grid){ console.warn("trendChartGrid not found"); return; }
 
   const months = getTrendMonths();
-  if(!months.length) months.push("3月");
+  if(!months.length) months.push("03月");
+  console.log("renderMonthlyTrendOverview: months=", months);
 
-  // 按月份聚合数据
+  try { // Error handling for new v2 rendering
+  // === 基础聚合 ===
   function agg(key){ const r={}; tasks.forEach(t=>{const mm=t.month;if(mm)r[mm]=(r[mm]||0)+num(t[key]);}); return r; }
+  const byTotalPts = agg("totalPoints");
   const byIssued = agg("issuedQty");
   const byCollected = agg("collected");
   const byReview = agg("reviewIssues");
-  const byFeedback = agg("feedbackMat");
   const byPublished = agg("publishedData");
-  const byTotalPts = agg("totalPoints");
+  const byInvalid = agg("invalidData");
 
-  // 各流程月度数据
-  function getData(fn){ return months.map(mm=>fn(byTotalPts[mm], byIssued[mm], byCollected[mm], byReview[mm], byFeedback[mm], byPublished[mm])); }
+  // 月度衍生指标
+  const monthlyTimelyRate = {}, monthlyIssueRate = {}, monthlyCompRate = {}, monthlyInvalidRate = {};
+  months.forEach(mm => {
+    const mt = tasks.filter(t=>t.month===mm);
+    const timely = mt.filter(t=>t.timelyRate===1||t.timelyRate==='1');
+    monthlyTimelyRate[mm] = mt.length ? +((timely.length/mt.length)*100).toFixed(1) : 0;
+    const tot = byTotalPts[mm]||0;
+    monthlyIssueRate[mm] = tot ? +(((byReview[mm]||0)/tot)*100).toFixed(1) : 0;
+    const iss = byIssued[mm]||0;
+    monthlyCompRate[mm] = iss ? +(((byCollected[mm]||0)/iss)*100).toFixed(1) : 0;
+    const col = byCollected[mm]||0;
+    monthlyInvalidRate[mm] = col ? +(((byInvalid[mm]||0)/col)*100).toFixed(1) : 0;
+  });
 
-  const CHARTS = [
-    {id:"tc0", name:"需求下发", icon:"📋", color:COLORS[0],
-     data:getData((pts)=>pts||0), unit:"条",
-     desc: d=>{const v=d[d.length-1];return v>=(d[0]||1)?'📈 增长':'📉 下降';}},
-    {id:"tc1", name:"需求校核", icon:"🔍", color:COLORS[4],
-     data:getData((pts,iss,col,rev)=>rev||0), unit:"条",
-     desc: d=>{const v=d[d.length-1];return v<=(d[0]||1)?'✅ 减少':'⚠️ 增多';}},
-    {id:"tc2", name:"数据采集", icon:"🔧", color:COLORS[2],
-     data:getData((pts,iss,col)=>iss||0), unit:"下发量",
-     subData:getData((pts,iss,col)=>col||0), subUnit:"完成量",
-     desc: d=>{const v=d[d.length-1];return v>=(d[0]||1)?'📈 增长':'📉 下降';}},
-    {id:"tc3", name:"问题闭环", icon:"✅", color:COLORS[3],
-     data:getData((pts,iss,col,rev,fb)=>fb||0), unit:"条",
-     desc: d=>{const v=d[d.length-1];return v<=(d[0]||1)?'✅ 减少':'⚠️ 增多';}},
-    {id:"tc4", name:"质量审核", icon:"📊", color:COLORS[5],
-     data:months.map(mm=>{const pr=DATA.preReview;return pr&&pr.by_month?pr.by_month[mm.replace(/^0/,'')]?pr.by_month[mm.replace(/^0/,'')].passRate:null:null;}).filter(v=>v!==null),
-     months2:months.filter((_,i)=>{const pr=DATA.preReview;return pr&&pr.by_month?!!pr.by_month[months[i].replace(/^0/,'')]:false;}),
-     unit:"%",
-     desc: ()=>'通过率走势'},
-    {id:"tc5", name:"加工审核发布", icon:"🚀", color:COLORS[6],
-     data:getData((pts,iss,col,rev,fb,pub)=>pub||0), unit:"条",
-     desc: d=>{const v=d[d.length-1];return v>=(d[0]||1)?'📈 增长':'📉 下降';}},
-    {id:"tc6", name:"结算与成本", icon:"💰", color:COLORS[7],
-     data:months.map(mm=>{const stl=DATA.settlements||[];const v=stl.filter(x=>(x.月份||x.month)===mm.replace(/^0/,'')).reduce((s,x)=>s+num(x.结算金额||x.amount),0);return v>0?+(v/10000).toFixed(1):null;}).filter(v=>v!==null),
-     months2:months.filter((_,i)=>(DATA.settlements||[]).some(x=>(x.月份||x.month)===months[i].replace(/^0/,''))),
-     unit:"万元",
-     desc: d=>{const vals=d.filter(v=>v!==null);return vals.length>1?(vals[vals.length-1]>vals[0]?'📈 增长':'📉 下降'):'';}},
+  // 外部数据辅助
+  const _m = mm => mm.replace(/^0/,'');
+  function qrVal(mm, grp, fld){ const d=DATA.qualityReview?.[grp]?.by_month?.[_m(mm)]; return d?.[fld]??null; }
+  function paVal(mm, fld){ const d=DATA.productAcceptance?.by_month?.[_m(mm)]; return d?.[fld]??null; }
+  function prVal(mm, fld){ const d=DATA.preReview?.by_month?.[_m(mm)]; return d?.[fld]??null; }
+
+  // 问题类型 & 不合格原因
+  const consensusRate = DATA.issueFeedback?.问题反馈量
+    ? +((DATA.issueFeedback.双方共识量/DATA.issueFeedback.问题反馈量)*100).toFixed(1) : null;
+  const ptData = Object.entries(DATA.issueFeedback?.['已共识问题标签']||{}).sort((a,b)=>b[1]-a[1]);
+  const maxPt = ptData.length ? ptData[0][1] : 1;
+
+  const frData = Object.entries(DATA.preReview?.fail_reasons||{}).reduce((acc,[k,v])=>{
+    const cat = k.includes('电话')||k.includes('联系')?'供应商联系不上'
+              : k.includes('印章')||k.includes('公章')||k.includes('签名')?'资质/印章问题'
+              : k.includes('报价说明')||k.includes('运费')||k.includes('品牌')?'报价说明问题'
+              : '其他问题';
+    acc[cat] = (acc[cat]||0)+v; return acc;
+  }, {});
+  const frEntries = Object.entries(frData).sort((a,b)=>b[1]-a[1]);
+
+  // === 卡片定义 ===
+  const CARDS = [
+    // 1. 需求下发
+    { id:'tc0', name:'需求下发', icon:'📋', color:COLORS[0],
+      ct:'combo',
+      bars:{name:'下发量', data:months.map(mm=>byTotalPts[mm]||0)},
+      lines:[{name:'发布及时率',data:months.map(mm=>monthlyTimelyRate[mm]||0),color:'#2ECC71'}],
+      target:90, unitL:'条', unitR:'%',
+      tip: d => (d||0) >= ((months[0]?byTotalPts[months[0]]:0)||1) ? '📈 增长' : '📉 下降' },
+    // 2. 需求校核 + 问题类型
+    { id:'tc1', name:'需求校核', icon:'🔍', color:COLORS[4],
+      ct:'combo',
+      bars:{name:'初审问题数',data:months.map(mm=>byReview[mm]||0)},
+      lines:[{name:'初审问题率',data:months.map(mm=>monthlyIssueRate[mm]||0),color:'#E67E22'}],
+      unitL:'条', unitR:'%',
+      tip: d => (d[d.length-1]||0) > (d[0]||0) ? '⚠️ 增多' : '✅ 减少',
+      extra:'bars', eTitle:'📌 问题类型 TOP3', eData:ptData.slice(0,3) },
+    // 3. 数据采集
+    { id:'tc2', name:'数据采集', icon:'🔧', color:COLORS[2],
+      ct:'combo',
+      bars:{name:'采集下发量',data:months.map(mm=>byIssued[mm]||0)},
+      lines:[{name:'采集完成率',data:months.map(mm=>monthlyCompRate[mm]||0),color:'#2ECC71'}],
+      target:90, unitL:'条', unitR:'%',
+      tip: d => '📈 趋势' },
+    // 4. 问题闭环 + 共识类型
+    { id:'tc3', name:'问题闭环', icon:'✅', color:COLORS[3],
+      ct:'bar',
+      bars:{name:'问题量',data:months.map(mm=>byReview[mm]||0)},
+      unitL:'条',
+      tip: d => '共识率 '+(consensusRate||'—')+'%',
+      extra:'bars', eTitle:'📌 共识问题类型', eData:ptData.slice(0,3) },
+    // 5. 质量审核 — 公章+报价分开两个柱形图（跨越2列）
+    { id:'tc4', name:'质量审核', icon:'📊', color:COLORS[5],
+      ct:'qrSplit',
+      tip: () => '公章抽审+报价抽审' },
+    // 6. 加工审核发布 + 不合格原因
+    { id:'tc5', name:'加工审核发布', icon:'🚀', color:COLORS[6],
+      ct:'lines',
+      lines:[
+        {name:'入库通过率',data:months.map(mm=>prVal(mm,'passRate')),color:'#2ECC71'},
+        {name:'验收合格率',data:months.map(mm=>{const t=paVal(mm,'产品验收')||0;const p=paVal(mm,'抽审通过')||0;return t?+((p/t)*100).toFixed(1):null;}),color:'#3498DB'}
+      ],
+      unitL:'%',
+      tip: () => '📈 通过率趋势',
+      extra:'tags', eTitle:'📌 不合格原因', eData:frEntries },
+    // 7. 全链路产出效率
+    { id:'tc6', name:'全链路产出效率', icon:'📈', color:'#1ABC9C',
+      ct:'comboRev',
+      bars:{name:'无效数据量',data:months.map(mm=>byInvalid[mm]||0)},
+      lines:[{name:'采集完成率',data:months.map(mm=>monthlyCompRate[mm]||0),color:'#2ECC71'}],
+      target:90, unitL:'%', unitR:'条',
+      tip: () => '📈 产出效率' },
   ];
 
-  // 渲染卡片
-  let html = CHARTS.map((c,idx)=>{
-    const xData = c.months2 || months;
+  // === 渲染卡片 HTML ===
+  function extraHtml(card){
+    if(!card.extra) return '';
+    let inner = '';
+    if(card.extra === 'bars'){
+      inner = card.eData.map(([k,v],i)=>{
+        const pct = Math.max(2, (v/maxPt)*100);
+        return `<div class="eb-row"><span class="eb-l">${k}</span><div class="eb-track"><div class="eb-fill c${i}" style="width:${pct}%"></div></div><span class="eb-r">${v}</span></div>`;
+      }).join('');
+    } else if(card.extra === 'tags'){
+      inner = card.eData.map(([k,v]) => `<span class="et-tag">${k} ${v}次</span>`).join('');
+    }
+    return inner ? `<div class="tc-extra"><div class="extra-title">${card.eTitle||''}</div>${inner}</div>` : '';
+  }
+
+  function trendText(card){
+    if(typeof card.tip === 'function') return card.tip(card.bars?.data||[]);
+    return card.tip||'';
+  }
+
+  let html = CARDS.map(c => {
+    const tip = trendText(c);
+    if(c.ct === 'qrSplit'){
+      return `<div class="tc-card" style="border-top-color:${c.color};grid-column:span 2">
+        <div class="tc-hd">
+          <span class="tc-icon">${c.icon}</span>
+          <span class="tc-name" style="color:${c.color}">${c.name}</span>
+          <span class="tc-trend" style="background:${c.color}15;color:${c.color}">${tip}</span>
+        </div>
+        <div style="display:flex;gap:4px;padding:0 2px">
+          <div style="flex:1"><div style="font-size:0.55rem;font-weight:600;color:#888;text-align:center;margin-bottom:1px">公章抽审</div><div class="tc-chart" id="tc4a" style="height:115px"></div></div>
+          <div style="flex:1"><div style="font-size:0.55rem;font-weight:600;color:#888;text-align:center;margin-bottom:1px">报价抽审</div><div class="tc-chart" id="tc4b" style="height:115px"></div></div>
+        </div>
+      </div>`;
+    }
     return `<div class="tc-card" style="border-top-color:${c.color}">
       <div class="tc-hd">
         <span class="tc-icon">${c.icon}</span>
         <span class="tc-name" style="color:${c.color}">${c.name}</span>
-        <span class="tc-trend" style="background:${c.color}15;color:${c.color}">${c.desc(c.data)}</span>
+        <span class="tc-trend" style="background:${c.color}15;color:${c.color}">${tip}</span>
       </div>
       <div class="tc-chart" id="${c.id}"></div>
-      <div class="tc-sub">${xData[0]||''} – ${xData[xData.length-1]||''} · ${c.unit}</div>
+      ${extraHtml(c)}
     </div>`;
   }).join('');
   grid.innerHTML = html;
 
-  // 初始化每个ECharts图表
-  const commonOpt = (xData, series, unit) => ({
-    tooltip:{trigger:"axis", formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+i.value).join('<br/>')}`},
-    grid:{top:6,bottom:16,left:4,right:4,containLabel:true},
-    xAxis:{type:"category", data:xData, axisLabel:{fontSize:6}, axisLine:{show:false}, axisTick:{show:false}},
-    yAxis:{type:"value", min:0, splitLine:{lineStyle:{type:"dashed",color:"#eee"}}, axisLabel:{fontSize:5,show:true}},
-    series:series
-  });
-
-  CHARTS.forEach((c,i)=>{
-    const el = document.getElementById(c.id);
+  // === 初始化 ECharts ===
+  function initCardChart(card){
+    // qrSplit: 直接初始化两个子图表，跳过主图表逻辑
+    if(card.ct === 'qrSplit'){
+      initQrSplitCharts(card);
+      return;
+    }
+    const el = document.getElementById(card.id);
     if(!el) return;
     const ch = echarts.init(el);
-    const xData = c.months2 || months;
-    const mainData = c.data;
-    const series = c.subData ? [
-      {name:c.unit, type:"line", data:mainData, smooth:true, symbol:"circle", symbolSize:4,
-       lineStyle:{color:c.color,width:1.5}, itemStyle:{color:c.color},
-       label:{show:true,fontSize:6,formatter:p=>p.value,fontWeight:600}},
-      {name:c.subUnit, type:"line", data:c.subData, smooth:true, symbol:"diamond", symbolSize:4,
-       lineStyle:{color:c.color,width:1,type:"dashed"}, itemStyle:{color:c.color},
-       label:{show:true,fontSize:5,formatter:p=>p.value}}
-    ] : [
-      {name:c.unit, type:"line", data:mainData, smooth:true, symbol:"circle", symbolSize:4,
-       lineStyle:{color:c.color,width:1.5}, itemStyle:{color:c.color},
-       areaStyle:{color:c.color+"18"},
-       label:{show:true,fontSize:6,formatter:p=>p.value,fontWeight:600}}
+    const xData = months;
+
+    function baseOpt(extraY, series){
+      return {
+        tooltip:{trigger:'axis', formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+(i.value!=null?i.value:'—')).join('<br/>')}`},
+        grid:{top:4,bottom:10,left:4,right:extraY?30:4,containLabel:true},
+        xAxis:{type:'category', data:xData, axisLabel:{fontSize:6}, axisLine:{show:false}, axisTick:{show:false}},
+        yAxis:extraY
+          ? [{type:'value', axisLabel:{fontSize:5}, splitLine:{lineStyle:{type:'dashed',color:'#eee'}}},
+             {type:'value', axisLabel:{fontSize:5,formatter:'{value}%'}, splitLine:{show:false}}]
+          : {type:'value', min:0, axisLabel:{fontSize:5}, splitLine:{lineStyle:{type:'dashed',color:'#eee'}}},
+        series:series
+      };
+    }
+
+    let opt;
+    if(card.ct === 'combo'){
+      const bars = card.bars.data;
+      const lines = card.lines;
+      const s = [
+        {name:card.bars.name, type:'bar', barWidth:12, data:bars,
+         itemStyle:{color:card.color,borderRadius:[3,3,0,0]},
+         label:{show:true,position:'top',fontSize:5,formatter:p=>p.value}},
+        ...lines.map((l, li) => ({
+          name:l.name, type:'line', yAxisIndex:1, smooth:true, symbol:'circle', symbolSize:4,
+          data:l.data.map(v=>v===0&&l.data.every(d=>d===0)?0:v),
+          lineStyle:{color:l.color,width:1.5}, itemStyle:{color:l.color},
+          label:{show:true,fontSize:5,formatter:p=>p.value+'%',fontWeight:600},
+          markLine: card.target && li===0 ? {silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#E74C3C',width:1},label:{formatter:'目标'+card.target+'%',fontSize:5,color:'#E74C3C'},data:[{yAxis:card.target}]} : undefined
+        }))
+      ];
+      opt = baseOpt(true, s);
+    }
+    else if(card.ct === 'bar'){
+      const s = [{name:card.bars.name, type:'bar', barWidth:16, data:card.bars.data,
+                  itemStyle:{color:card.color,borderRadius:[3,3,0,0]},
+                  label:{show:true,position:'top',fontSize:5,formatter:p=>p.value}}];
+      opt = baseOpt(false, s);
+    }
+    else if(card.ct === 'lines'){
+      const s = card.lines.map((l, li) => ({
+        name:l.name, type:'line', smooth:true, symbol:'circle', symbolSize:4,
+        data:l.data,
+        lineStyle:{color:l.color,width:1.5}, itemStyle:{color:l.color},
+        label:{show:true,fontSize:5,formatter:p=>p.value!=null?p.value+'%':'',fontWeight:600},
+        markLine: card.target && li===0 ? {silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#2ECC71',width:1},label:{formatter:'目标'+card.target+'%',fontSize:5,color:'#2ECC71'},data:[{yAxis:card.target}]} : undefined
+      }));
+      const hasPct = card.lines.some(l=>l.data.some(d=>d!==null&&d>100));
+      opt = {
+        tooltip:{trigger:'axis', formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+(i.value!=null?i.value+'%':'—')).join('<br/>')}`},
+        grid:{top:4,bottom:10,left:4,right:4,containLabel:true},
+        xAxis:{type:'category', data:xData, axisLabel:{fontSize:6}, axisLine:{show:false}, axisTick:{show:false}},
+        yAxis:hasPct
+          ? {type:'value', axisLabel:{fontSize:5}, splitLine:{lineStyle:{type:'dashed',color:'#eee'}}}
+          : {type:'value', min:0, max:100, axisLabel:{fontSize:5,formatter:'{value}%'}, splitLine:{lineStyle:{type:'dashed',color:'#eee'}}},
+        series:s
+      };
+    }
+    else if(card.ct === 'qrSplit'){
+      // handled above by initQrSplitCharts
+    }
+    else if(card.ct === 'comboRev'){
+      const bars = card.bars.data;
+      const lines = card.lines;
+      const s = [
+        ...lines.map((l, li) => ({
+          name:l.name, type:'line', smooth:true, symbol:'circle', symbolSize:4,
+          data:l.data,
+          lineStyle:{color:l.color,width:1.5}, itemStyle:{color:l.color},
+          label:{show:true,fontSize:5,formatter:p=>p.value+'%',fontWeight:600},
+          markLine: card.target && li===0 ? {silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#2ECC71',width:1},label:{formatter:'目标'+card.target+'%',fontSize:5,color:'#2ECC71'},data:[{yAxis:card.target}]} : undefined
+        })),
+        {name:card.bars.name, type:'bar', yAxisIndex:1, barWidth:12, data:bars,
+         itemStyle:{color:'#E74C3C',borderRadius:[3,3,0,0]},
+         label:{show:true,position:'top',fontSize:5,formatter:p=>p.value}}
+      ];
+      opt = {
+        tooltip:{trigger:'axis', formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+(i.value!=null?(i.seriesName.includes('率')?i.value+'%':i.value):'—')).join('<br/>')}`},
+        grid:{top:4,bottom:10,left:4,right:30,containLabel:true},
+        xAxis:{type:'category', data:xData, axisLabel:{fontSize:6}, axisLine:{show:false}, axisTick:{show:false}},
+        yAxis:[
+          {type:'value', min:0, max:100, axisLabel:{fontSize:5,formatter:'{value}%'}, splitLine:{lineStyle:{type:'dashed',color:'#eee'}}},
+          {type:'value', axisLabel:{fontSize:5}, splitLine:{show:false}}
+        ],
+        series:s
+      };
+    }
+
+    if(opt){
+      ch.setOption(opt);
+      charts[card.id] = ch;
+      new ResizeObserver(()=>ch.resize()).observe(el.parentElement);
+    }
+  }
+
+  // 质量审核：初始化两个子图表（公章抽审 + 报价抽审）
+    function initQrSplitCharts(card){
+    // 只显示质审实际有数据的月份
+    const qrMonths = (() => {
+      const qr = DATA.qualityReview || {};
+      const ms = new Set();
+      Object.values(qr).forEach(g => { if(g.by_month) Object.keys(g.by_month).forEach(m => ms.add(m)); });
+      return [...ms].sort((a,b) => parseInt(a)-parseInt(b));
+    })();
+    const subCfg = [
+      {id:'tc4a', grp:'公章抽审', barFld:'审核', lineFld:'初审通过率', barName:'抽审量', lineName:'初审通过率', barColor:COLORS[5], lineColor:'#2ECC71'},
+      {id:'tc4b', grp:'报价抽审', barFld:'报价量', lineFld:'高质量报价', barName:'有效报价量', lineName:'高质量报价占比', barColor:'#1ABC9C', lineColor:'#E67E22'}
     ];
-    ch.setOption(commonOpt(xData, series, c.unit));
-    charts[c.id] = ch;
-    new ResizeObserver(()=>ch.resize()).observe(el.parentElement);
-  });
+    subCfg.forEach(cfg => {
+      const el = document.getElementById(cfg.id);
+      if(!el) return;
+      const ch = echarts.init(el);
+      const barData = qrMonths.map(mm=>qrVal(mm,cfg.grp,cfg.barFld)||0);
+      const lineData = qrMonths.map(mm=>{const v=qrVal(mm,cfg.grp,cfg.lineFld);return v!=null?+(v*100).toFixed(1):null;});
+      ch.setOption({
+        tooltip:{trigger:'axis', formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+(i.value!=null?i.value:'—')).join('<br/>')}`},
+        grid:{top:3,bottom:8,left:3,right:26,containLabel:true},
+        xAxis:{type:'category', data:qrMonths, axisLabel:{fontSize:5}, axisLine:{show:false}, axisTick:{show:false}},
+        yAxis:[
+          {type:'value', axisLabel:{fontSize:5}},
+          {type:'value', axisLabel:{fontSize:5,formatter:'{value}%'}, splitLine:{show:false}}
+        ],
+        series:[
+          {name:cfg.barName, type:'bar', barWidth:14, data:barData,
+           itemStyle:{color:cfg.barColor,borderRadius:[3,3,0,0]},
+           label:{show:true,position:'top',fontSize:5,formatter:p=>p.value}},
+          {name:cfg.lineName, type:'line', yAxisIndex:1, smooth:true, symbol:'diamond', symbolSize:4,
+           data:lineData,
+           lineStyle:{color:cfg.lineColor,width:1.5}, itemStyle:{color:cfg.lineColor},
+           label:{show:true,fontSize:5,formatter:p=>p.value!=null?p.value+'%':''}}
+        ]
+      });
+      charts[cfg.id] = ch;
+      new ResizeObserver(()=>ch.resize()).observe(el.parentElement);
+    });
+  }
+
+  CARDS.forEach(c => { try { initCardChart(c); } catch(e) { console.error("initCardChart error for", c.name, e); } });
+  } catch(e) { console.error("renderMonthlyTrendOverview ERROR:", e); }
 }
 
 // DATA INSIGHTS — 已移除
@@ -2383,7 +2680,7 @@ const FIELD_MAP={
 function detectField(headers,f){const kws=FIELD_MAP[f]||[];for(const h of headers)for(const kw of kws)if(h.includes(kw)||kw.includes(h))return h;return null;}
 
 // ============================================================
-// 模板自动导入 — 解析全部5个Sheet
+// 模板自动导入 — 解析全部6个Sheet
 // ============================================================
 const TPL_COL = {
   // 各项需求跟踪 → 0-indexed 列号
@@ -2452,19 +2749,34 @@ function parseSettlementsSheet(aoa){
 }
 
 function parseQualitySheet(aoa){
-  const qr = {}; let cur = null;
-  for(let r=1; r<aoa.length; r++){ // skip header row
+  const qr = {}; let cur = null, curMonth = null;
+  for(let r=1; r<aoa.length; r++){
     const row = aoa[r]; if(!row) continue;
     const a=row[0], b=row[1], d=row[3], e=row[4];
     if(a && b && String(a).trim() !== '月份') {
-      const key = String(b).trim();
-      // 已有同key任务则合并月份+追加数据，不覆盖
-      if(!qr[key]) qr[key] = {月份:String(a).trim()};
-      cur = key;
+      cur = String(b).trim();
+      curMonth = String(a).trim();
+      if(!qr[cur]) qr[cur] = {by_month:{}};
+      if(!qr[cur].by_month[curMonth]) qr[cur].by_month[curMonth] = {};
     }
-    if(cur && d!=null && e!=null) qr[cur][String(d).trim()] = e;
+    if(cur && curMonth && d!=null && e!=null) {
+      qr[cur].by_month[curMonth][String(d).trim()] = e;
+    }
   }
   return qr;
+}
+
+function parseProductAcceptanceSheet(aoa){
+  const pa = {by_month:{}};
+  for(let r=1; r<aoa.length; r++){
+    const row = aoa[r]; if(!row) continue;
+    const month = row[0], label = row[1], val = row[2];
+    if(!month || String(month).trim() === '月份' || String(month).trim() === '') continue;
+    const mm = String(month).trim();
+    if(!pa.by_month[mm]) pa.by_month[mm] = {};
+    if(label && val != null) pa.by_month[mm][String(label).trim()] = parseFloat(val)||val;
+  }
+  return Object.keys(pa.by_month).length ? pa : null;
 }
 
 function parsePreReviewSheet(aoa){
@@ -2535,12 +2847,13 @@ function computeMonthlyTrend(tasks){
 }
 
 function autoImportTemplate(wb){
-  // 解析全部5个Sheet
+  // 解析全部Sheet
   const tasks = parseTasksSheet(XLSX.utils.sheet_to_json(wb.Sheets['各项需求跟踪'], {header:1, defval:null}));
   const settlements = parseSettlementsSheet(XLSX.utils.sheet_to_json(wb.Sheets['预算与结算'], {header:1, defval:null}));
   const qualityReview = parseQualitySheet(XLSX.utils.sheet_to_json(wb.Sheets['质量抽审'], {header:1, defval:null}));
   const preReview = parsePreReviewSheet(XLSX.utils.sheet_to_json(wb.Sheets['加工预审'], {header:1, defval:null}));
   const issueFeedback = parseFeedbackSheet(XLSX.utils.sheet_to_json(wb.Sheets['问题反馈'], {header:1, defval:null}));
+  const productAcc = wb.Sheets['产品验收'] ? parseProductAcceptanceSheet(XLSX.utils.sheet_to_json(wb.Sheets['产品验收'], {header:1, defval:null})) : null;
   const monthlyTrend = computeMonthlyTrend(tasks);
 
   // 更新 DATA
@@ -2549,6 +2862,7 @@ function autoImportTemplate(wb){
   if(Object.keys(qualityReview).length) DATA.qualityReview = qualityReview;
   if(preReview) DATA.preReview = preReview;
   if(issueFeedback && issueFeedback.问题反馈量) DATA.issueFeedback = issueFeedback;
+  if(productAcc) DATA.productAcceptance = productAcc;
   DATA.monthlyTrend = monthlyTrend;
   // 更新 filterOptions (收集唯一值)
   const di = [...new Set(tasks.map(t=>t.demandItem).filter(Boolean))].sort();

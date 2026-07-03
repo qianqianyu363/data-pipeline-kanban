@@ -286,22 +286,22 @@
       "notes": null
     },
     {
-      "name": "聚合1:3",
+      "name": "广西多层级清单",
       "settleType": "价格采集",
-      "source": "聚合1:3",
+      "source": "地区特性",
       "demandItem": "市场价",
-      "month": "04月",
-      "totalPoints": 19910,
-      "itemCount": 19910,
+      "month": "05月",
+      "totalPoints": 3109,
+      "itemCount": 3109,
       "reviewIssues": 0,
-      "issuedQty": 19910,
-      "collected": 9739,
-      "completionRate": 48.9,
-      "accuracyRate": null,
-      "invalidData": null,
-      "invalidRate": null,
-      "publishedData": null,
-      "timelyRate": 0,
+      "issuedQty": 3109,
+      "collected": 2920,
+      "completionRate": 93.9,
+      "accuracyRate": 100.0,
+      "invalidData": 189,
+      "invalidRate": 6.1,
+      "publishedData": 2441,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -367,13 +367,37 @@
       "itemCount": 759,
       "reviewIssues": 76,
       "issuedQty": 2277,
-      "collected": 2355,
-      "completionRate": 103.4,
+      "collected": 2277,
+      "completionRate": 100.0,
       "accuracyRate": 96.7,
       "invalidData": null,
       "invalidRate": null,
       "publishedData": 2242,
       "timelyRate": 1,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": null
+    },
+    {
+      "name": "聚合1:3",
+      "settleType": "价格采集",
+      "source": "聚合1:3",
+      "demandItem": "市场价",
+      "month": "05月",
+      "totalPoints": 19910,
+      "itemCount": 19910,
+      "reviewIssues": 0,
+      "issuedQty": 19910,
+      "collected": 9739,
+      "completionRate": 48.9,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 0,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
@@ -445,30 +469,6 @@
       "invalidData": null,
       "invalidRate": 0.0,
       "publishedData": null,
-      "timelyRate": 1,
-      "feedbackMat": null,
-      "expertVerify": null,
-      "supplierRejects": null,
-      "closed": null,
-      "allClosed": null,
-      "notes": null
-    },
-    {
-      "name": "广西多层级清单",
-      "settleType": "价格采集",
-      "source": "地区特性",
-      "demandItem": "市场价",
-      "month": "06月",
-      "totalPoints": 3109,
-      "itemCount": 3109,
-      "reviewIssues": 0,
-      "issuedQty": 3109,
-      "collected": 2920,
-      "completionRate": 93.9,
-      "accuracyRate": 100.0,
-      "invalidData": 189,
-      "invalidRate": 6.1,
-      "publishedData": 2441,
       "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
@@ -926,45 +926,45 @@
   "monthlyTrend": {
     "需求总条数": [
       17626,
-      56647,
-      4781,
-      49478
+      36737,
+      27800,
+      46369
     ],
     "采集下发数": [
       17626,
-      56647,
-      4781,
-      49478
+      36737,
+      27800,
+      46369
     ],
     "采集完成数": [
       15595,
-      45842,
-      4826,
-      29995
+      36103,
+      17407,
+      27075
     ],
     "采集完成率": [
       88.5,
-      80.9,
-      100.9,
-      60.6
+      98.3,
+      62.6,
+      58.4
     ],
     "需求准确率": [
       89.8,
       100.0,
-      98.4,
-      94.0
+      99.7,
+      93.6
     ],
     "无效数据数": [
       0,
       17,
-      0,
-      789
+      189,
+      600
     ],
     "无效数据率": [
       0.0,
       0.0,
-      0.0,
-      2.6
+      1.1,
+      2.2
     ],
     "预算执行率": [
       8.9,
@@ -980,25 +980,40 @@
     ]
   },
   "qualityReview": {
+    "抽审任务": {
+      "by_month": {
+        "月份": {
+          "项": "值"
+        }
+      }
+    },
     "公章抽审": {
-      "审核": 663,
-      "初审通过": 567,
-      "初审不通过": 96,
-      "初审通过率": 0.855203619909502,
-      "无问题采集员": 8,
-      "问题采集员": 1
+      "by_month": {
+        "6月": {
+          "审核": 663,
+          "初审通过": 567,
+          "初审不通过": 96,
+          "初审通过率": 0.855203619909502,
+          "无问题采集员": 8,
+          "问题采集员": 1
+        }
+      }
     },
     "报价抽审": {
-      "抽审量": 76,
-      "报价量": 38,
-      "报价偏高": 15,
-      "报价偏低": 23,
-      "偏差率＜15%": 13,
-      "高质量报价": 0.736842105263158
-    },
-    "抽审任务": {
-      "月份": "月份",
-      "项": "值"
+      "by_month": {
+        "5月": {
+          "抽审量": 44,
+          "报价量": 25
+        },
+        "6月": {
+          "抽审量": 76,
+          "报价量": 38,
+          "报价偏高": 15,
+          "报价偏低": 23,
+          "偏差率＜15%": 13,
+          "高质量报价": 0.736842105263158
+        }
+      }
     }
   },
   "preReview": {
@@ -1074,5 +1089,6 @@
       "已淘汰参数": 5,
       "找不到资源": 68
     }
-  }
+  },
+  "productAcceptance": null
 }

@@ -146,15 +146,13 @@ for r in range(3, ws2.max_row + 1):
     })
 
 # ============================================================
-# 3. 质量抽审 → qualityReview
+# 3. 质量抽审 → qualityReview (by_month 月度格式)
 # ============================================================
 ws3 = wb['质量抽审']
-quality_review = {
-    "公章抽审": {},
-    "报价抽审": {},
-}
+quality_review = {}
 
 current_task = None
+current_month = None
 for r in range(1, ws3.max_row + 1):
     a = ws3.cell(row=r, column=1).value  # 月份
     b = ws3.cell(row=r, column=2).value  # 抽审任务
@@ -164,11 +162,14 @@ for r in range(1, ws3.max_row + 1):
 
     if a and b:
         current_task = str(b).strip()
+        current_month = str(a).strip()
         if current_task not in quality_review:
-            quality_review[current_task] = {"月份": str(a).strip()}
+            quality_review[current_task] = {"by_month": {}}
+        if current_month not in quality_review[current_task]["by_month"]:
+            quality_review[current_task]["by_month"][current_month] = {}
 
-    if current_task and d and e is not None:
-        quality_review[current_task][str(d).strip()] = e
+    if current_task and current_month and d is not None and e is not None:
+        quality_review[current_task]["by_month"][current_month][str(d).strip()] = e
 
 # ============================================================
 # 4. 加工预审 → preReview (统计摘要)
@@ -273,7 +274,29 @@ if issue_labels:
     issue_feedback["已共识问题标签"] = issue_labels
 
 # ============================================================
-# 6. 计算月度趋势 monthlyTrend
+# 6. 产品验收 → productAcceptance
+# ============================================================
+product_acceptance = {"by_month": {}}
+if '产品验收' in wb.sheetnames:
+    ws6 = wb['产品验收']
+    for r in range(2, ws6.max_row + 1):
+        month = ws6.cell(row=r, column=1).value
+        label = ws6.cell(row=r, column=2).value
+        val = ws6.cell(row=r, column=3).value
+        if not month or not label:
+            continue
+        m = str(month).strip()
+        if m == '月份':
+            continue
+        if m not in product_acceptance["by_month"]:
+            product_acceptance["by_month"][m] = {}
+        try:
+            product_acceptance["by_month"][m][str(label).strip()] = float(val) if val else val
+        except (ValueError, TypeError):
+            product_acceptance["by_month"][m][str(label).strip()] = val
+
+# ============================================================
+# 7. 计算月度趋势 monthlyTrend
 # ============================================================
 monthly_trend = defaultdict(list)
 months_in_data = sorted(set(
@@ -305,7 +328,7 @@ for m in months_in_data:
     monthly_trend["无效数据率"].append(inv_rate)
 
 # ============================================================
-# 7. 构建完整 data.json
+# 8. 构建完整 data.json
 # ============================================================
 # 收集唯一值
 demand_items = sorted(set(t['demandItem'] for t in tasks if t['demandItem']))
@@ -447,6 +470,7 @@ data = {
     "qualityReview": quality_review,
     "preReview": preview_stats,
     "issueFeedback": issue_feedback if issue_feedback else None,
+    "productAcceptance": product_acceptance if product_acceptance.get("by_month") else None,
 }
 
 # 写入文件
