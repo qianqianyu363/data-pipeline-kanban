@@ -1660,13 +1660,13 @@ function renderAll(){
   const tasks = getFilteredTasks();
   const m = calcMetrics(tasks);
   document.getElementById("filterCount").textContent = `共 ${tasks.length} 条`;
-  renderFlowKPIs(tasks, m);
-  // 结算与成本指标（供流程节点使用）
+  // 先计算结算与成本指标（renderFlowKPIs和renderMonthlyTrendOverview都需要）
   const s = DATA.settlements||[];
   const totalAmt = s.reduce((x,y) => x + num(y.结算金额||y.amount), 0);
   const budget = DATA.totalBudget||3900000;
   m.budgetRate = budget ? +((totalAmt/budget)*100).toFixed(1) : 0;
   m.totalCost = +(totalAmt/10000).toFixed(1);
+  renderFlowKPIs(tasks, m);
   renderCollectionSection(tasks, m);
   renderMonthlyTrendOverview(tasks, m);
   renderRadarChart(tasks, m);
