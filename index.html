@@ -88,6 +88,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 @media(max-width:800px){.chart-row{grid-template-columns:1fr}}
 .chart-box{height:180px}
 .chart-box-sm{height:160px}
+.progress-trend-chart{height:260px;width:100%;margin-bottom:8px}
 
 /* Task Table */
 .task-table-wrap{overflow-x:auto;margin-top:6px}
@@ -132,6 +133,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .analysis-collect-panel .ftab.on{color:#fff}
 
 /* Prediction area */
+.section-subtitle{font-size:0.72rem;font-weight:600;color:var(--dark);margin:8px 0 4px;padding-left:6px;border-left:3px solid var(--blue)}
 .pred-box{background:#f8f9fa;border-radius:var(--r-sm);padding:8px 12px;margin-top:6px;border-left:3px solid #9B59B6}
 .pred-box .pb-title{font-size:0.7rem;font-weight:600;color:#9B59B6;margin-bottom:4px}
 .pred-box .pb-row{display:flex;gap:12px;flex-wrap:wrap;font-size:0.68rem}
@@ -1890,37 +1892,35 @@ function renderProgressTab(tasks, m){
       <div class="fm-box"><div class="fm-l">已采集</div><div class="fm-v">${(m.collected||0).toLocaleString()}</div><div class="fm-d">完成总量</div></div>
       <div class="fm-box"><div class="fm-l">待采集</div><div class="fm-v">${Math.max(0,m.issuedQty-m.collected).toLocaleString()}</div><div class="fm-d">剩余总量</div></div>
     </div>
-    <div class="chart-row"><div class="chart-box-sm" id="pgChart1"></div><div class="chart-box-sm" id="pgChart2"></div></div>
-    <div style="margin-top:6px;font-size:0.65rem;color:var(--tl)">💡 左侧：各任务每月完成率对比 · 右侧：每月总体完成率趋势</div>`;
+    <div class="chart-box" id="pgChart1" style="height:280px;width:100%;margin-bottom:6px"></div>
+    <div class="chart-row"><div class="chart-box-sm" id="pgChart2"></div></div>
+    <div style="margin-top:4px;font-size:0.65rem;color:var(--tl)">💡 热力图：任务×月份 完成率矩阵</div>`;
 
-  // 图表1: 按月-任务分组柱状图
-  const c1 = initC("pgChart1", 160);
-  if(c1){
-    const series = taskNames.map(tn => ({
-      name: tn, type: "bar", stack: "a", barWidth: 10,
-      data: months.map(mName => {
-        const d = byMonth[mName];
-        if(!d) return 0;
-        const t = d.tasks.find(t=>t.name===tn);
-        if(!t) return 0;
-        const r = (t.issuedQty||t.totalPoints) ? +((t.collected/t.issuedQty||t.totalPoints)*100).toFixed(1) : 0;
-        return r;
-      }),
-      itemStyle: {color: taskColors[tn], borderRadius: [0,0,0,0]},
-      label: {show: false}
+  // 热力图：任务×月份完成率矩阵
+  const hmEl = document.getElementById("pgChart1");
+  if(hmEl && taskNames.length && months.length){
+    disposeC("pgChart1");
+    const hm = echarts.init(hmEl);
+    const heatData = [];
+    taskNames.forEach((tn, ti) => months.forEach((mm, mi) => {
+      const d = byMonth[mm];
+      const t = d ? d.tasks.find(t=>t.name===tn) : null;
+      const rate = t ? ((t.issuedQty||t.totalPoints) ? +((t.collected/(t.issuedQty||t.totalPoints))*100).toFixed(1) : 0) : null;
+      heatData.push([mi, ti, rate]);
     }));
-    c1.setOption({
-      tooltip: {trigger:"axis", formatter: p=>{
-        let s = `<strong>${p[0].axisValue}</strong><br/>`;
-        p.forEach(item=>s+=`${item.marker} ${item.seriesName}: ${item.value}%<br/>`);
-        return s;
+    hm.setOption({
+      tooltip:{position:"top", formatter:p=>{
+        const tn = taskNames[p.value[1]], mm = months[p.value[0]], v = p.value[2];
+        return `<strong>${tn}</strong><br/>${mm}: ${v!==null?v+'%':'无数据'}`;
       }},
-      legend: {type:"scroll", bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
-      grid: {top:6,bottom:32,left:4,right:4,containLabel:true},
-      xAxis: {type:"category", data:months, axisLabel:{fontSize:7}},
-      yAxis: {type:"value", min:0, max:100, axisLabel:{formatter:"{value}%",fontSize:6}},
-      series: series
+      grid:{top:4,bottom:28,left:60,right:8,containLabel:true},
+      xAxis:{type:"category", data:months, splitArea:{show:true}, axisLabel:{fontSize:7}},
+      yAxis:{type:"category", data:taskNames, splitArea:{show:true}, axisLabel:{fontSize:6}},
+      visualMap:{min:0,max:100,calculable:false,inRange:{color:["#FDEDEC","#FADBD8","#F1948A","#E74C3C","#2ECC71"]},orient:"horizontal",left:"center",bottom:0,itemWidth:12,itemHeight:6,textStyle:{fontSize:5}},
+      series:[{type:"heatmap",data:heatData.filter(d=>d[2]!==null),label:{show:true,fontSize:5,color:"#2C3E50",formatter:p=>p.value[2]!==null?p.value[2]+'%':''},emphasis:{itemStyle:{shadowBlur:6,shadowColor:"rgba(0,0,0,0.2)"}},itemStyle:{borderWidth:1,borderColor:"#fff"}}]
     });
+    charts["pgChart1"] = hm;
+    new ResizeObserver(()=>hm.resize()).observe(hmEl.parentElement);
   }
 
   // 图表2: 每月总体完成率趋势
@@ -1976,21 +1976,30 @@ function renderCapacityTab(tasks, m){
     </div>
     <div class="chart-row"><div class="chart-box-sm" id="cpChart1"></div><div class="chart-box-sm" id="cpChart2"></div></div>`;
 
-  // 图表1: 按结算类型分组的每月采集数量柱状图
+  // 图表1: 按结算类型分组的每月采集数量柱状图 + 增长率折线
   const c1 = initC("cpChart1", 160);
   if(c1){
+    // 计算每月总采集量和增长率
+    const monthlyTotals = months.map(mm => settleTypes.reduce((s,st) => s + (((byST[st]||{})[mm]||{}).collected||0), 0));
+    const growthRates = monthlyTotals.map((v,i) => i>0 && monthlyTotals[i-1] ? +(((v-monthlyTotals[i-1])/monthlyTotals[i-1])*100).toFixed(1) : null);
     const series = settleTypes.map(st => ({
       name: st, type: "bar", barWidth: 10,
       data: months.map(mm => ((byST[st]||{})[mm]||{}).collected || 0),
       itemStyle: {color: ST_COLORS[st]||"#95A5A6", borderRadius:[0,0,0,0]},
       label: {show: false}
     }));
+    series.push({
+      name:"环比增长率", type:"line", yAxisIndex:1, smooth:true, symbol:"diamond", symbolSize:6,
+      data: growthRates.map((r,i) => ({value:r, itemStyle:{color:r!==null?(r>=0?"#E74C3C":"#2ECC71"):"#ccc"}})),
+      lineStyle:{color:"#E74C3C",width:1.5,type:"dashed"},
+      label:{show:true,formatter:p=>p.value!==null?p.value+'%':'',fontSize:6,fontWeight:600,color:"#E74C3C"}
+    });
     c1.setOption({
       tooltip:{trigger:"axis"},
       legend:{type:"scroll", bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
-      grid:{top:6,bottom:32,left:4,right:4,containLabel:true},
+      grid:{top:6,bottom:32,left:4,right:30,containLabel:true},
       xAxis:{type:"category", data:months, axisLabel:{fontSize:7}},
-      yAxis:{type:"value", axisLabel:{fontSize:6}},
+      yAxis:[{type:"value", axisLabel:{fontSize:6}},{type:"value", axisLabel:{fontSize:5,formatter:"{value}%"},splitLine:{show:false}}],
       series: series
     });
   }
@@ -2066,8 +2075,13 @@ function renderBudgetTab(tasks, m){
       <div class="fm-box"><div class="fm-l">累计执行</div><div class="fm-v">¥${(totalAmount/10000).toFixed(1)}万</div><div class="fm-d">截至${monthNames[monthNames.length-1]||"4月"}</div></div>
       <div class="fm-box"><div class="fm-l">预算执行率</div><div class="fm-v">${execRate}%</div><div class="fm-d">累计/年度</div></div>
     </div>
-    <div class="chart-row"><div class="chart-box-sm" id="bdChart1"></div><div class="chart-box-sm" id="bdChart2"></div></div>
-    <div class="pred-box" id="predBox"></div>`;
+    <div class="section-subtitle">📊 已产生费用（按月度）</div>
+    <div class="chart-box" id="bdChart1" style="height:150px;width:100%;margin-bottom:10px"></div>
+    <div class="section-subtitle">🔮 预测费用趋势</div>
+    <div class="chart-box" id="bdChart2" style="height:150px;width:100%;margin-bottom:10px"></div>
+    <div class="pred-box" id="predBox"></div>
+    <div class="section-subtitle">🧩 总费用构成</div>
+    <div class="chart-box" id="bdPie" style="height:180px;width:100%;margin-bottom:6px"></div>`;
 
   // 图表1: 每月每类数据类型花费堆叠柱状图
   const c1 = initC("bdChart1", 160);
@@ -2095,26 +2109,46 @@ function renderBudgetTab(tasks, m){
     });
   }
 
-  // 图表2: 历史费用+预测趋势
-  const c2 = initC("bdChart2", 160);
+  // 图表2: 历史费用+预测趋势（简化，只保留费用预测）
+  const c2 = initC("bdChart2", 150);
   if(c2){
     const allMonths = [...monthNames, ...predMonths];
-    const histVals = monthNames.map(mm => +((Object.values(costByMonthType[mm]||{}).reduce((a,b)=>a+b,0))/10000).toFixed(1));
+    const histVals = monthlyTotals.map(v=>+(v/10000).toFixed(1));
     const fullVals = [...histVals, ...predVals.map(v=>+(v/10000).toFixed(1))];
     const predStartIdx = monthNames.length;
     c2.setOption({
       tooltip:{trigger:"axis"},
-      legend:{data:["历史费用(万)","预测趋势","采集量(历史)","采集量(预测)"], bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
-      grid:{top:6,bottom:32,left:4,right:4,containLabel:true},
+      legend:{data:["已产生费用","预测费用"], bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
+      grid:{top:6,bottom:28,left:4,right:4,containLabel:true},
       xAxis:{type:"category", data:allMonths, axisLabel:{fontSize:6}},
-      yAxis:{type:"value", axisLabel:{fontSize:6}},
+      yAxis:{type:"value", axisLabel:{fontSize:6,formatter:"{value}万"}},
       series:[
-        {name:"历史费用(万)", type:"bar", data:histVals.map((v,i)=>({value:v,itemStyle:{color:i>=predStartIdx?"rgba(231,76,60,0.3)":"#E74C3C",borderRadius:[4,4,0,0]}})), barWidth:12, label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:6}},
-        {name:"预测趋势", type:"line", data:fullVals.map((v,i)=>({value:v,symbol:i<predStartIdx?"none":"diamond",itemStyle:{color:i<predStartIdx?"transparent":"#E74C3C"}})), lineStyle:{type:"dashed",color:"#E74C3C",width:1.5}, smooth:true, label:{show:true,formatter:p=>p.value+"万",fontSize:6}},
-        {name:"采集量(历史)", type:"line", data:collectVals.map(v=>+(v/1000).toFixed(1)), smooth:true, symbol:"circle", symbolSize:4, lineStyle:{color:"#3498DB",width:1.5}, yAxisIndex:0, label:{show:true,formatter:p=>p.value+"k",fontSize:5,color:"#3498DB"}},
-        {name:"采集量(预测)", type:"line", data:[...collectVals.map(v=>+(v/1000).toFixed(1)),...predCollect.map(v=>+(v/1000).toFixed(1))].map((v,i)=>({value:v,symbol:i<predStartIdx?"none":"diamond",itemStyle:{color:i<predStartIdx?"transparent":"#3498DB"}})), lineStyle:{type:"dashed",color:"#3498DB",width:1}, smooth:true, label:{show:true,formatter:p=>p.value+"k",fontSize:5,color:"#3498DB"}}
+        {name:"已产生费用", type:"bar", data:histVals.map((v,i)=>({value:v,itemStyle:{color:"#3498DB",borderRadius:[4,4,0,0]}})), barWidth:14, label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:6}},
+        {name:"预测费用", type:"bar", data:fullVals.map((v,i)=>({value:v,itemStyle:{color:i<predStartIdx?"rgba(52,152,219,0.15)":"#E74C3C",borderRadius:[4,4,0,0]}})), barWidth:14, label:{show:true,position:"top",formatter:p=>p.value+"万",fontSize:6}}
       ]
     });
+  }
+
+  // 饼图：总费用按数据类型分类
+  const c3 = initC("bdPie", 180);
+  if(c3){
+    const totalByType = {};
+    monthNames.forEach(mm => {
+      Object.entries(costByMonthType[mm]||{}).forEach(([dt,amt]) => {
+        totalByType[dt] = (totalByType[dt]||0) + amt;
+      });
+    });
+    const pieData = Object.entries(totalByType).map(([k,v]) => ({name:k, value:+((v/totalAmount*100).toFixed(1))})).filter(d=>d.value>0);
+    if(pieData.length){
+      c3.setOption({
+        tooltip:{formatter:p=>`<strong>${p.name}</strong><br/>占比: ${p.value}%<br/>金额: ¥${((p.value/100)*totalBudget/10000).toFixed(1)}万`},
+        series:[{type:"pie", radius:["30%","60%"], center:["50%","50%"],
+          data:pieData, label:{fontSize:7,formatter:p=>`${p.name}\n${p.value}%`},
+          itemStyle:{borderRadius:4,borderColor:"#fff",borderWidth:1},
+          emphasis:{itemStyle:{shadowBlur:6,shadowColor:"rgba(0,0,0,0.2)"}}
+        }]
+      });
+    }
   }
 
   // 预测结果摘要
@@ -2162,9 +2196,15 @@ function renderTaskTable(tasks){
   };
   
 
+  // 按月份倒序排列（6月在前）
+  const sorted = [...tasks].sort((a,b) => {
+    const ma = parseInt(a.month), mb = parseInt(b.month);
+    return (mb||0) - (ma||0);
+  });
+
   let html = `<div class="task-table-wrap"><table class="task-table">
     <thead><tr><th>需求名称</th><th>结算类型</th><th>需求项</th><th>月份</th><th>总条数</th><th>下发数</th><th>采集完成</th><th>完成率</th><th>初审问题</th><th>闭环状态</th></tr></thead><tbody>`;
-  tasks.forEach(t => {
+  sorted.forEach(t => {
     const r = cr(t);
     html += `<tr><td><strong>${t.name}</strong></td>
       <td>${t.settleType||"—"}</td>
