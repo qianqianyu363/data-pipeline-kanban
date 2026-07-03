@@ -1974,7 +1974,7 @@ function renderProgressTab(tasks, m){
   tasks.forEach(t => {
     const src = t.source || "其他";
     if(!bySource[src]) bySource[src] = {demand:0, collected:0};
-    bySource[src].demand += num(t.demandQty);
+    bySource[src].demand += num(t.issuedQty || t.totalPoints || t.demandQty);
     bySource[src].collected += num(t.collected);
   });
   const srcNames = Object.keys(bySource);
