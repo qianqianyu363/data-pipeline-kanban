@@ -103,6 +103,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .s-closed,.s-全部闭环{background:#EAFAF1;color:#1e8449}
 .s-进行中,.s-关闭{background:#FEF5E7;color:#b7950b}
 .s-暂未启动,.s-计算错误{background:#FDEDEC;color:var(--red)}
+.s-follow{background:#EBF5FB;color:#2980B9}
 
 /* Analysis */
 .analysis-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
@@ -1595,6 +1596,35 @@ function getFilteredTasks(){
 function num(v){ const n=parseFloat(v); return isNaN(n)?0:n; }
 function pctStr(v){ return typeof v === 'string' && v.includes('%') ? num(v) : num(v)*100; }
 
+// 指标说明（优化3：METRIC_TIPS 悬浮提示）
+const METRIC_TIPS = {
+  '需求及时率': '已及时下发需求占全部下发的比例（模板"需求发布及时率"=1）',
+  '需求总条数': '需求下发数量（含多家），= 下发材料 × 要求数量',
+  '需求项数': '下发材料数量',
+  '初审问题数': '预审发现的问题数据条数',
+  '初审通过率': '1 − 初审问题率，反映需求下发质量',
+  '反馈问题': '需求校核阶段反馈的问题量',
+  '需求问题率': '初审问题数 ÷ 需求总条数 ×100%',
+  '采集完成率': '实际采集完成量 ÷ 下发数量（含多家）×100%',
+  '采集下发数': '采集阶段下发的总条数',
+  '采集完成数': '实际采集完成的条数',
+  '无效数据': '采集数据中被判定无效的条数',
+  '发布数据': '通过审核并发布上线的条数',
+  '当月采集完成率': '约定采集完成时间=当月 的任务，实际采集完成量 ÷ 下发数量 ×100%',
+  '入库通过率': '加工预审"是否审核通过=是"占比',
+  '审核总量': '加工预审审核记录总数',
+  '预审通过率': '加工预审通过率（与入库通过率同源）',
+  '新供应商占比': '加工预审中"是否新建企业=是/新增"的记录占比',
+  '老供应商占比': '加工预审中"是否新建企业=更新登记表"的记录占比',
+  '价格审核通过率': '加工预审"价格审核结果=是/通过"占比',
+  '公章预审通过率': '质量抽审中"公章抽审"的初审通过率',
+  '需求准确率': '下发材料 ÷ 材料数量 ×100%（模板公式 =N/I）',
+  '闭环率': '已闭环任务占有关闭状态任务的比例',
+  '全部闭环率': '全部闭环任务占总任务比例',
+  '预算执行率': '累计结算金额 ÷ 年度总预算 ×100%',
+  '累计执行': '累计结算金额（万元）',
+};
+
 function calcMetrics(tasks){
   const n = tasks.length;
   const totalPoints = tasks.reduce((s,t) => s + num(t.totalPoints), 0);
@@ -1686,6 +1716,21 @@ function renderFlowKPIs(tasks, m){
   const consRate = fb && fb.问题反馈量 ? +(fb.双方共识量/fb.问题反馈量*100).toFixed(1) : null;
   const budget = DATA.totalBudget||3900000;
 
+  // 优化1：当月采集完成率（约定采集完成时间=筛选月的任务）
+  const curMonth = filters.month && filters.month !== '全部' ? filters.month : null;
+  const dueTasks = curMonth ? (DATA.tasks||[]).filter(t => t.dueMonth === curMonth) : [];
+  const dueCol = dueTasks.reduce((s,t) => s + num(t.collected), 0);
+  const dueIss = dueTasks.reduce((s,t) => s + num(t.totalPoints||t.issuedQty), 0);
+  const monthCompRate = dueIss ? +((dueCol/dueIss)*100).toFixed(1) : null;
+
+  // 优化2：加工审核 — 新老供应商占比 + 价格审核通过率
+  const newCnt = pr ? (pr.new_enterprise||0) : 0;
+  const oldCnt = pr ? (pr.old_enterprise||0) : 0;
+  const supTotal = newCnt + oldCnt;
+  const newRate = supTotal ? +((newCnt/supTotal)*100).toFixed(1) : null;
+  const oldRate = supTotal ? +((oldCnt/supTotal)*100).toFixed(1) : null;
+  const priceRate = (pr && pr.price_audit && pr.price_audit.total) ? pr.price_audit.passRate : null;
+
   // 颜色辅助
   function clr(v, inv){
     if(v==null||v==='—') return 'var(--gray)';
@@ -1715,6 +1760,7 @@ function renderFlowKPIs(tasks, m){
     { name:'数据采集', sub:'核心执行', color:'#F39C12', icon:'🔧',
       items:[
         {l:'当月承接', v:tasks.length?(tasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2)+'W':'—', c:''},
+        {l:'当月采集完成率', v:monthCompRate!=null?monthCompRate+'%':'—', c:clr(monthCompRate)},
         {l:'采集完成率', v:m.completionRate!=null?m.completionRate+'%':'—', c:clr(m.completionRate)},
         {l:'采集下发数', v:m.issuedQty?m.issuedQty+'条':'—', c:''},
         {l:'采集完成数', v:m.collected?m.collected+'条':'—', c:''},
@@ -1738,9 +1784,11 @@ function renderFlowKPIs(tasks, m){
     { name:'加工审核发布', sub:'入库交付', color:'#3498DB', icon:'🚀',
       items:[
         {l:'入库通过率', v:prPass!=null?prPass+'%':'—', c:clr(prPass)},
+        {l:'新供应商占比', v:newRate!=null?newRate+'%':'—', c:clr(newRate)},
+        {l:'老供应商占比', v:oldRate!=null?oldRate+'%':'—', c:clr(oldRate)},
+        {l:'价格审核通过率', v:priceRate!=null?priceRate+'%':'—', c:clr(priceRate)},
         {l:'发布数据', v:m.publishedData?m.publishedData+'条':'—', c:''},
         {l:'审核总量', v:pr?pr.total.toLocaleString():'—', c:'#3498DB'},
-        {l:'预审通过率', v:pr?(pr.passRate||0)+'%':'—', c:clr(pr.passRate)},
       ]},
     { name:'结算与成本', sub:'预算管控', color:'#2980B9', icon:'💰',
       items:[
@@ -1787,7 +1835,11 @@ function renderFlowKPIs(tasks, m){
     const itemsHtml = s.items.map(it => {
       if(it.raw) return it.v;
       const cStyle = it.c ? `color:${it.c};` : '';
-      return `<div class="fm" style="padding:2px 0;font-size:0.66rem"><span class="fl">${it.l}</span><span class="fv" style="${cStyle}font-size:0.85rem">${it.v}</span></div>`;
+      const tip = METRIC_TIPS[it.l];
+      const fl = tip
+        ? `<span class="fl" title="${tip}">${it.l}<sup style="color:#aaa;font-size:0.5rem;cursor:help">ⓘ</sup></span>`
+        : `<span class="fl">${it.l}</span>`;
+      return `<div class="fm" style="padding:2px 0;font-size:0.66rem">${fl}<span class="fv" style="${cStyle}font-size:0.85rem">${it.v}</span></div>`;
     }).join('');
     const sub = s.sub ? ` <span style="font-size:0.55rem;opacity:0.7;font-weight:400">${s.sub}</span>` : '';
     return `<div class="flow-card"><div class="flow-card-header" style="background:${s.color};padding:6px 8px;font-size:0.7rem;flex-wrap:wrap">${s.icon} ${s.name}${sub}</div><div class="flow-card-body" style="padding:6px 8px">${itemsHtml}</div></div>`;
@@ -1985,82 +2037,115 @@ ${months.map(mm => {
 function renderCapacityTab(tasks, m){
   const panel = document.getElementById("fp_cp");
   if(!panel) return;
-  const months = getTrendMonths();
-  if(!months.length){ panel.innerHTML=''; return; }
+  // 优化7：采集产能三维度（总产能/人均家数/人均条数/总人数）+ 产能人数预测
+  const caps = (DATA.collectionCapacity || []).filter(c => c.月份);
+  if(!caps.length){
+    panel.innerHTML = '<div class="empty-state">📭 暂无采集产能数据<br/><span style="font-size:0.65rem;color:var(--tl)">请在模板"采集产能"Sheet 填写 月份/计划·实际采集家数/条数/员工总人数</span></div>';
+    return;
+  }
+  caps.sort((a,b) => parseInt(a.月份)-parseInt(b.月份));
+  const months = caps.map(c => String(c.月份).trim());
+  const actHouse = caps.map(c => num(c.实际采集家数));
+  const actItem = caps.map(c => num(c.实际采集条数));
+  const staff = caps.map(c => num(c.员工总人数));
+  const lastIdx = caps.length-1;
+  const totalHouse = actHouse.reduce((s,v)=>s+v,0);
+  const totalItem = actItem.reduce((s,v)=>s+v,0);
+  const lastStaff = staff[lastIdx]||0;
+  const perHouse = lastStaff ? +(actHouse[lastIdx]/lastStaff).toFixed(1) : null;
+  const perItem = lastStaff ? +(actItem[lastIdx]/lastStaff).toFixed(1) : null;
+  const perHouseSeries = staff.map((p,i) => p ? +(actHouse[i]/p).toFixed(1) : null);
+  const perItemSeries = staff.map((p,i) => p ? +(actItem[i]/p).toFixed(1) : null);
 
-  // 按结算类型和月份聚合
-  const settleTypes = [...new Set(tasks.map(t=>t.settleType||"其他"))];
-  const byST = {};
-  settleTypes.forEach(st => byST[st] = {});
-  months.forEach(mm => byST[mm] = {});
-  tasks.forEach(t => {
-    const st = t.settleType||"其他";
-    const mm = t.month;
-    if(!mm) return;
-    if(!byST[st]) byST[st] = {};
-    if(!byST[st][mm]) byST[st][mm] = {demand:0, collected:0};
-    byST[st][mm].demand += num(t.issuedQty||t.totalPoints);
-    byST[st][mm].collected += num(t.collected);
-  });
-
-  // 当月（最后一个月）各结算类型承接量
-  const lastMonth = months[months.length-1];
-  const ST_COLORS = {"价格采集":"#3498DB","价格更新":"#2ECC71","全系列报价单":"#F39C12","其他":"#95A5A6"};
+  // 产能/人数预测（线性回归）
+  const lastMonthNum = parseInt(months[lastIdx].replace('月','')) || 6;
+  const monthsToPredict = Math.max(0, 12 - lastMonthNum);
+  const predHouse = monthsToPredict>0 ? predict(actHouse, monthsToPredict) : [];
+  const predItem = monthsToPredict>0 ? predict(actItem, monthsToPredict) : [];
+  const predStaff = monthsToPredict>0 ? predict(staff, monthsToPredict) : [];
 
   panel.innerHTML = `
     <div class="focus-metrics">
-      <div class="fm-box"><div class="fm-l">当月(${lastMonth})总下发</div><div class="fm-v">${(byST[lastMonth]?Object.values(byST).reduce((s,o)=>s+((o[lastMonth]||{}).demand||0),0):0).toLocaleString()}</div><div class="fm-d">全部结算类型</div></div>
-      <div class="fm-box"><div class="fm-l">当月采集完成</div><div class="fm-v">${(byST[lastMonth]?Object.values(byST).reduce((s,o)=>s+((o[lastMonth]||{}).collected||0),0):0).toLocaleString()}</div><div class="fm-d">${lastMonth}</div></div>
-      <div class="fm-box"><div class="fm-l">整体完成率</div><div class="fm-v">${m.completionRate}%</div><div class="fm-d">全部月份</div></div>
+      <div class="fm-box"><div class="fm-l">总产能(家数)</div><div class="fm-v">${totalHouse.toLocaleString()}</div><div class="fm-d">累计实际采集家数</div></div>
+      <div class="fm-box"><div class="fm-l">总产能(条数)</div><div class="fm-v">${totalItem.toLocaleString()}</div><div class="fm-d">累计实际采集条数</div></div>
+      <div class="fm-box"><div class="fm-l">人均家数</div><div class="fm-v">${perHouse!=null?perHouse:'—'}</div><div class="fm-d">${months[lastIdx]} 家数/人数</div></div>
+      <div class="fm-box"><div class="fm-l">人均条数</div><div class="fm-v">${perItem!=null?perItem:'—'}</div><div class="fm-d">${months[lastIdx]} 条数/人数</div></div>
+      <div class="fm-box"><div class="fm-l">员工总人数</div><div class="fm-v">${lastStaff}</div><div class="fm-d">${months[lastIdx]}</div></div>
     </div>
-    <div class="chart-row"><div class="chart-box-sm" id="cpChart1"></div><div class="chart-box-sm" id="cpChart2"></div></div>`;
+    <div class="section-subtitle">📊 采集产能趋势（实际家数/条数 + 人均产能）</div>
+    <div class="chart-box" id="cpChart1" style="height:200px;width:100%;margin-bottom:6px"></div>
+    ${monthsToPredict>0 ? `<div class="section-subtitle">🔮 产能人数预测（${(lastMonthNum+1)}-12月）</div><div class="chart-box" id="cpChart2" style="height:150px;width:100%;margin-bottom:6px"></div><div class="pred-box" id="cpPred"></div>` : ''}`;
 
-  // 图表1: 按结算类型分组的每月采集数量柱状图 + 增长率折线
-  const c1 = initC("cpChart1", 160);
+  // 图表1：家数/条数柱状 + 人均产能折线
+  const c1 = initC("cpChart1", 200);
   if(c1){
-    // 计算每月总采集量和增长率
-    const monthlyTotals = months.map(mm => settleTypes.reduce((s,st) => s + (((byST[st]||{})[mm]||{}).collected||0), 0));
-    const growthRates = monthlyTotals.map((v,i) => i>0 && monthlyTotals[i-1] ? +(((v-monthlyTotals[i-1])/monthlyTotals[i-1])*100).toFixed(1) : null);
-    const series = settleTypes.map(st => ({
-      name: st, type: "bar", barWidth: 10,
-      data: months.map(mm => ((byST[st]||{})[mm]||{}).collected || 0),
-      itemStyle: {color: ST_COLORS[st]||"#95A5A6", borderRadius:[0,0,0,0]},
-      label: {show: false}
-    }));
-    series.push({
-      name:"环比增长率", type:"line", yAxisIndex:1, smooth:true, symbol:"diamond", symbolSize:6,
-      data: growthRates.map((r,i) => ({value:r, itemStyle:{color:r!==null?(r>=0?"#E74C3C":"#2ECC71"):"#ccc"}})),
-      lineStyle:{color:"#E74C3C",width:1.5,type:"dashed"},
-      label:{show:true,formatter:p=>p.value!==null?p.value+'%':'',fontSize:6,fontWeight:600,color:"#E74C3C"}
-    });
+    const s1 = [
+      {name:"实际采集家数", type:"bar", barWidth:10,
+       data: actHouse, itemStyle:{color:"#3498DB",borderRadius:[3,3,0,0]},
+       label:{show:true,position:"top",fontSize:6,formatter:p=>p.value||''}},
+      {name:"实际采集条数", type:"bar", barWidth:10,
+       data: actItem, itemStyle:{color:"#5DADE2",borderRadius:[3,3,0,0]},
+       label:{show:true,position:"top",fontSize:6,formatter:p=>p.value||''}},
+      {name:"人均家数", type:"line", yAxisIndex:1, smooth:true, symbol:"circle", symbolSize:4,
+       data: perHouseSeries,
+       lineStyle:{color:"#E67E22",width:1.5}, itemStyle:{color:"#E67E22"},
+       label:{show:true,fontSize:6,formatter:p=>p.value!=null?p.value:'',color:"#E67E22"}},
+      {name:"人均条数", type:"line", yAxisIndex:1, smooth:true, symbol:"circle", symbolSize:4,
+       data: perItemSeries,
+       lineStyle:{color:"#9B59B6",width:1.5}, itemStyle:{color:"#9B59B6"},
+       label:{show:true,fontSize:6,formatter:p=>p.value!=null?p.value:'',color:"#9B59B6"}}
+    ];
     c1.setOption({
-      tooltip:{trigger:"axis"},
-      legend:{type:"scroll", bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
-      grid:{top:6,bottom:32,left:4,right:30,containLabel:true},
-      xAxis:{type:"category", data:months, axisLabel:{fontSize:7}},
-      yAxis:[{type:"value", axisLabel:{fontSize:6}},{type:"value", axisLabel:{fontSize:5,formatter:"{value}%"},splitLine:{show:false}}],
-      series: series
+      tooltip:{trigger:"axis", formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+(i.value!=null?i.value:'—')).join('<br/>')}`},
+      legend:{data:s1.map(x=>x.name), bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
+      grid:{top:6,bottom:26,left:4,right:30,containLabel:true},
+      xAxis:{type:"category", data:months, axisLabel:{fontSize:6}},
+      yAxis:[{type:"value", axisLabel:{fontSize:6}},{type:"value", axisLabel:{fontSize:5},splitLine:{show:false}}],
+      series:s1
     });
   }
 
-  // 图表2: 当月各结算类型占比饼图
-  const c2 = initC("cpChart2", 160);
-  if(c2){
-    const pieData = settleTypes.map(st => ({
-      name: st,
-      value: ((byST[st]||{})[lastMonth]||{}).collected || 0
-    })).filter(d => d.value > 0);
-    if(pieData.length){
+  // 图表2：预测（实际段 + 预测虚框）
+  if(monthsToPredict>0){
+    const c2 = initC("cpChart2", 150);
+    if(c2){
+      const predMonths = Array.from({length:monthsToPredict}, (_,i)=>(lastMonthNum+1+i)+'月');
+      const allMonths = [...months, ...predMonths];
+      const houseData = new Array(allMonths.length).fill(null);
+      actHouse.forEach((v,i)=>houseData[i]=v);
+      predHouse.forEach((v,i)=>houseData[months.length+i]=v);
+      const staffData = new Array(allMonths.length).fill(null);
+      staff.forEach((v,i)=>staffData[i]=v);
+      predStaff.forEach((v,i)=>staffData[months.length+i]=v);
+      const lastAct = months.length;
       c2.setOption({
-        tooltip:{formatter:p=>`<strong>${p.name}</strong><br/>采集量: ${p.value.toLocaleString()}<br/>占比: ${p.percent}%`},
-        series:[{
-          type:"pie", radius:["30%","60%"], center:["50%","50%"],
-          data: pieData,
-          label:{fontSize:7, formatter:p=>`${p.name}\n${p.value}`},
-          itemStyle:{borderRadius:4,borderColor:"#fff",borderWidth:1},
-          emphasis:{itemStyle:{shadowBlur:6,shadowColor:"rgba(0,0,0,0.2)"}}
-        }]
+        tooltip:{trigger:"axis"},
+        legend:{data:["实际采集条数","员工人数"], bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
+        grid:{top:6,bottom:26,left:4,right:4,containLabel:true},
+        xAxis:{type:"category", data:allMonths, axisLabel:{fontSize:6}},
+        yAxis:{type:"value", axisLabel:{fontSize:6}},
+        series:[
+          {name:"实际采集条数", type:"bar", barWidth:10,
+           data:houseData.map((v,i)=>v!=null?{value:v,itemStyle:{color:i<lastAct?"#5DADE2":"#E74C3C",borderRadius:[3,3,0,0],borderColor:i>=lastAct?"#E74C3C":"transparent",borderType:i>=lastAct?"dashed":"solid",borderWidth:i>=lastAct?1:0}}:{value:0,itemStyle:{color:"transparent"}}),
+           label:{show:true,position:"top",fontSize:6,formatter:p=>p.value||''}},
+          {name:"员工人数", type:"line", smooth:true, symbol:"circle", symbolSize:4,
+           data:staffData,
+           lineStyle:{color:"#2ECC71",width:1.5}, itemStyle:{color:"#2ECC71"},
+           label:{show:true,fontSize:6,formatter:p=>p.value!=null?p.value:''}}
+        ]
       });
+    }
+    // 预测摘要
+    const predBox = document.getElementById("cpPred");
+    if(predBox){
+      predBox.innerHTML = `
+        <div class="pb-title">🔮 预测摘要（线性回归）</div>
+        <div class="pb-row">
+          <div class="pb-item"><div class="pb-l">下月预计家数</div><div class="pb-v">${predHouse[0]!=null?predHouse[0].toLocaleString():'—'}</div></div>
+          <div class="pb-item"><div class="pb-l">下月预计条数</div><div class="pb-v">${predItem[0]!=null?predItem[0].toLocaleString():'—'}</div></div>
+          <div class="pb-item"><div class="pb-l">下月预计人数</div><div class="pb-v">${predStaff[0]!=null?predStaff[0]:'—'}</div></div>
+          <div class="pb-item"><div class="pb-l">预测方法</div><div class="pb-v" style="font-size:0.68rem;font-weight:400">按历史家数/条数/人数线性趋势</div></div>
+        </div>`;
     }
   }
 }
@@ -2160,13 +2245,20 @@ function renderBudgetTab(tasks, m){
   const collectVals = monthNames.map(mm => monthlyCollected[mm]||0);
   const predCollect = monthsToPredict > 0 ? predict(collectVals, monthsToPredict) : [];
 
+  // 优化6：去年费用对比（settlements 去年支出费用字段）
+  const lastYearByMonth = {};
+  s.forEach(x => { if(x.去年支出费用!=null){ const mm=x.月份||x.month; lastYearByMonth[mm]=(lastYearByMonth[mm]||0)+x.去年支出费用; } });
+  const hasLastYear = Object.keys(lastYearByMonth).length > 0;
+  const lastYearTotal = s.reduce((sum,x) => sum + num(x.去年支出费用), 0);
+
   panel.innerHTML = `
     <div class="focus-metrics">
       <div class="fm-box"><div class="fm-l">年度总预算</div><div class="fm-v">¥${(totalBudget/10000).toFixed(0)}万</div><div class="fm-d">采集加工总预算</div></div>
       <div class="fm-box"><div class="fm-l">累计执行</div><div class="fm-v">¥${(totalAmount/10000).toFixed(1)}万</div><div class="fm-d">截至${monthNames[monthNames.length-1]||"4月"}</div></div>
       <div class="fm-box"><div class="fm-l">预算执行率</div><div class="fm-v">${execRate}%</div><div class="fm-d">累计/年度</div></div>
+      ${hasLastYear ? `<div class="fm-box"><div class="fm-l">去年总支出</div><div class="fm-v">¥${(lastYearTotal/10000).toFixed(1)}万</div><div class="fm-d">去年同期对比</div></div>` : ''}
     </div>
-    <div class="section-subtitle">📊 费用执行趋势（已发生+预测）</div>
+    <div class="section-subtitle">📊 费用执行趋势（已发生+预测，虚线柱=未发生预测）</div>
     <div class="chart-box" id="bdChart1" style="height:190px;width:100%;margin-bottom:10px"></div>
     <div class="pred-box" id="predBox"></div>
     <div class="section-subtitle">🧩 总费用构成</div>
@@ -2187,22 +2279,34 @@ function renderBudgetTab(tasks, m){
         if (idx < allMonths.length) predData[idx] = +(pred/10000).toFixed(1);
       });
     }
+    // 优化6：预测费用用虚线虚框（未发生）；去年费用对比折线
+    const series = [
+      {name:"已产生费用", type:"bar",
+       data:actualData.map(v=>v!==null?{value:v,itemStyle:{color:"#3498DB",borderRadius:[4,4,0,0]}}:{value:0,itemStyle:{color:"transparent"}}),
+       barWidth:14,
+       label:{show:true,position:"top",formatter:p=>p.value>0?p.value+"万":"",fontSize:6}},
+      {name:"预测费用", type:"bar",
+       data:predData.map(v=>v!==null?{value:v,itemStyle:{color:"rgba(231,76,60,0.12)",borderColor:"#E74C3C",borderType:"dashed",borderWidth:1,borderRadius:[4,4,0,0]}}:{value:0,itemStyle:{color:"transparent"}}),
+       barWidth:8,barGap:'30%',
+       label:{show:true,position:"top",formatter:p=>p.value>0?p.value+"万":"",fontSize:6,color:"#E74C3C"}}
+    ];
+    if(hasLastYear){
+      series.push({
+        name:"去年费用", type:"line", smooth:true, symbol:"circle", symbolSize:4,
+        data:allMonths.map(mm => lastYearByMonth[mm]!=null ? +(lastYearByMonth[mm]/10000).toFixed(1) : null),
+        lineStyle:{color:"#9B59B6",width:1.5,type:"dashed"}, itemStyle:{color:"#9B59B6"},
+        label:{show:true,fontSize:6,formatter:p=>p.value!=null?p.value+"万":""}
+      });
+    }
+    const legendData = ["已产生费用","预测费用"];
+    if(hasLastYear) legendData.push("去年费用");
     c1.setOption({
       tooltip:{trigger:"axis"},
-      legend:{data:["已产生费用","预测费用"], bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
+      legend:{data:legendData, bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
       grid:{top:6,bottom:28,left:4,right:4,containLabel:true},
       xAxis:{type:"category", data:allMonths, axisLabel:{fontSize:6}},
       yAxis:{type:"value", axisLabel:{fontSize:6,formatter:"{value}万"}},
-      series:[
-        {name:"已产生费用", type:"bar",
-         data:actualData.map(v=>v!==null?{value:v,itemStyle:{color:"#3498DB",borderRadius:[4,4,0,0]}}:{value:0,itemStyle:{color:"transparent"}}),
-         barWidth:14,
-         label:{show:true,position:"top",formatter:p=>p.value>0?p.value+"万":"",fontSize:6}},
-        {name:"预测费用", type:"bar",
-         data:predData.map(v=>v!==null?{value:v,itemStyle:{color:"#E74C3C",borderRadius:[4,4,0,0]}}:{value:0,itemStyle:{color:"transparent"}}),
-         barWidth:8,barGap:'30%',
-         label:{show:true,position:"top",formatter:p=>p.value>0?p.value+"万":"",fontSize:6,color:"#E74C3C"}}
-      ]
+      series:series
     });
   }
   // 饼图：总费用按数据类型分类
@@ -2275,12 +2379,19 @@ function renderTaskTable(tasks){
     if(v > 100) return {val:"超额", pct:100, cls:"good"};
     return {val: v+"%", pct: v, cls: v >= 80 ? "good" : v >= 60 ? "warn" : "bad"};
   };
-  const cls = (t) => {
-    const c = (t.closed || "").trim();
-    if(c === "是" || c === "全部闭环" || c === "关闭") return "s-closed";
-    if(c === "进行中") return "s-进行中";
-    if(c === "暂未启动") return "s-暂未启动";
-    return "";
+  // 优化5：闭环三态 — 是 / 否 / 跨月跟进（区分是否当月任务）
+  const curFilterMonth = (filters.month && filters.month !== '全部') ? filters.month : null;
+  const lastTaskMonth = tasks.map(t=>t.month).filter(Boolean).sort().pop() || null;
+  const curMonth = curFilterMonth || lastTaskMonth;
+  const closedState = (t) => {
+    const done = (t.completionRate!=null && t.completionRate>=100)
+      || (num(t.collected)>0 && num(t.issuedQty)>0 && num(t.collected)>=num(t.issuedQty));
+    if(done) return {cls:'s-closed', txt:'是'};
+    if(!curMonth) return {cls:'', txt:'否'};
+    const tm = MONTH_KEYS_FULL[t.month]||t.month||'';
+    const cm = MONTH_KEYS_FULL[curMonth]||curMonth;
+    if(tm && cm && tm < cm) return {cls:'s-follow', txt:'跨月跟进'};
+    return {cls:'', txt:'否'};
   };
   
 
@@ -2291,11 +2402,13 @@ function renderTaskTable(tasks){
   });
 
   let html = `<div class="task-table-wrap"><table class="task-table">
-    <thead><tr><th>需求项</th><th>月份</th><th>结算类型</th><th>需求名称</th><th>总条数</th><th>下发数</th><th>采集完成</th><th>完成率</th><th>初审问题</th><th>闭环状态</th></tr></thead><tbody>`;
+    <thead><tr><th>需求项</th><th>月份</th><th>约定完成</th><th>结算类型</th><th>需求名称</th><th>总条数</th><th>下发数</th><th>采集完成</th><th>完成率</th><th>初审问题</th><th>闭环状态</th></tr></thead><tbody>`;
   sorted.forEach(t => {
     const r = cr(t);
+    const st = closedState(t);
     html += `<tr><td>${t.demandItem||"—"}</td>
       <td>${t.month||"—"}</td>
+      <td>${t.dueMonth||"—"}</td>
       <td>${t.settleType||"—"}</td>
       <td><strong>${t.name}</strong></td>
       <td>${num(t.totalPoints).toLocaleString()||"—"}</td>
@@ -2303,7 +2416,7 @@ function renderTaskTable(tasks){
       <td>${num(t.collected).toLocaleString()||"—"}</td>
       <td><div class="progress-wrap"><div class="bar-wrap"><div class="progress-bar" style="width:${r.pct}%;background:${r.cls==='good'?'#2ECC71':r.cls==='warn'?'#F39C12':'#E74C3C'}"></div></div><span>${r.val}</span></div></td>
       <td>${num(t.reviewIssues).toLocaleString()||"—"}</td>
-      <td><span class="status-badge ${cls(t)}">${t.closed || "—"}</span></td></tr>`;
+      <td><span class="status-badge ${st.cls}" title="${st.txt==='跨月跟进'?'历史月份任务未闭环，持续跟踪':st.txt==='是'?'采集完成率≥100%，已闭环':'当月任务未闭环'}">${st.txt}</span></td></tr>`;
   });
   html += `</tbody></table></div>`;
   panel.innerHTML = html;
@@ -2480,14 +2593,20 @@ function renderMonthlyTrendOverview(tasks, m){
     const xData = months;
 
     function baseOpt(extraY, series){
+      // 优化4：图例自动从 series 提取名称
+      const legend = series.length > 1 ? {
+        data: series.map(s => s.name).filter(Boolean),
+        bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6
+      } : undefined;
       return {
         tooltip:{trigger:'axis', formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+(i.value!=null?i.value:'—')).join('<br/>')}`},
-        grid:{top:4,bottom:10,left:4,right:extraY?30:4,containLabel:true},
+        grid:{top:4,bottom:legend?26:10,left:4,right:extraY?30:4,containLabel:true},
         xAxis:{type:'category', data:xData, axisLabel:{fontSize:6}, axisLine:{show:false}, axisTick:{show:false}},
         yAxis:extraY
           ? [{type:'value', axisLabel:{fontSize:5}, splitLine:{lineStyle:{type:'dashed',color:'#eee'}}},
              {type:'value', axisLabel:{fontSize:5,formatter:'{value}%'}, splitLine:{show:false}}]
           : {type:'value', min:0, axisLabel:{fontSize:5}, splitLine:{lineStyle:{type:'dashed',color:'#eee'}}},
+        legend,
         series:series
       };
     }
@@ -2525,13 +2644,15 @@ function renderMonthlyTrendOverview(tasks, m){
         markLine: card.target && li===0 ? {silent:true,symbol:'none',lineStyle:{type:'dashed',color:'#2ECC71',width:1},label:{formatter:'目标'+card.target+'%',fontSize:5,color:'#2ECC71'},data:[{yAxis:card.target}]} : undefined
       }));
       const hasPct = card.lines.some(l=>l.data.some(d=>d!==null&&d>100));
+      const lg2 = s.length > 1 ? {data:s.map(x=>x.name).filter(Boolean), bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6} : undefined;
       opt = {
         tooltip:{trigger:'axis', formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+(i.value!=null?i.value+'%':'—')).join('<br/>')}`},
-        grid:{top:4,bottom:10,left:4,right:4,containLabel:true},
+        grid:{top:4,bottom:lg2?26:10,left:4,right:4,containLabel:true},
         xAxis:{type:'category', data:xData, axisLabel:{fontSize:6}, axisLine:{show:false}, axisTick:{show:false}},
         yAxis:hasPct
           ? {type:'value', axisLabel:{fontSize:5}, splitLine:{lineStyle:{type:'dashed',color:'#eee'}}}
           : {type:'value', min:0, max:100, axisLabel:{fontSize:5,formatter:'{value}%'}, splitLine:{lineStyle:{type:'dashed',color:'#eee'}}},
+        legend:lg2,
         series:s
       };
     }
@@ -2553,14 +2674,16 @@ function renderMonthlyTrendOverview(tasks, m){
          itemStyle:{color:'#E74C3C',borderRadius:[3,3,0,0]},
          label:{show:true,position:'top',fontSize:5,formatter:p=>p.value}}
       ];
+      const lg3 = s.length > 1 ? {data:s.map(x=>x.name).filter(Boolean), bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6} : undefined;
       opt = {
         tooltip:{trigger:'axis', formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+(i.value!=null?(i.seriesName.includes('率')?i.value+'%':i.value):'—')).join('<br/>')}`},
-        grid:{top:4,bottom:10,left:4,right:30,containLabel:true},
+        grid:{top:4,bottom:lg3?26:10,left:4,right:30,containLabel:true},
         xAxis:{type:'category', data:xData, axisLabel:{fontSize:6}, axisLine:{show:false}, axisTick:{show:false}},
         yAxis:[
           {type:'value', min:0, max:100, axisLabel:{fontSize:5,formatter:'{value}%'}, splitLine:{lineStyle:{type:'dashed',color:'#eee'}}},
           {type:'value', axisLabel:{fontSize:5}, splitLine:{show:false}}
         ],
+        legend:lg3,
         series:s
       };
     }
@@ -2683,11 +2806,31 @@ function detectField(headers,f){const kws=FIELD_MAP[f]||[];for(const h of header
 // 模板自动导入 — 解析全部6个Sheet
 // ============================================================
 const TPL_COL = {
-  // 各项需求跟踪 → 0-indexed 列号
-  tasks: { month:0, demandItem:1, settleType:2, name:3, source:4, timelyRate:9,
-           totalPoints:10, itemCount:11, reviewIssues:12, accuracyRate:15,
-           collected:19, completionRate:21, invalidData:22, invalidRate:23, publishedData:24 }
+  // 各项需求跟踪 → 0-indexed 列号（升级版27列，与 Python 解析器 COL_MAP 一一对应）
+  tasks: { month:1, demandItem:2, settleType:3, name:4, source:5, dueMonth:6,
+           matQty:8, timelyRate:11, totalPoints:12, itemCount:13, reviewIssues:14,
+           accuracyRate:17, collected:21, completionRate:23, invalidData:24,
+           invalidRate:25, publishedData:26 },
+  // 预算与结算 → 0-indexed（去年值5列 col7-11）
+  settlements: { month:0, module:1, type:2, qty:3, price:4, cost:5,
+                 lastModule:6, lastType:7, lastQty:8, lastPrice:9, lastCost:10 },
+  // 加工预审 → 0-indexed（价格审核结果col9、不通过原因col10）
+  preReview: { reviewer:2, month:1, isNew:6, passed:7, priceAudit:8, reason:9 },
+  // 采集产能 → 0-indexed
+  capacity: { month:0, planHouse:1, planItem:2, actHouse:3, actItem:4, staff:5, note:6 }
 };
+
+function cellNum(v){ if(v==null||v==='') return null; const n=parseFloat(v); return isNaN(n)?null:n; }
+
+function fmtDueMonth(v){
+  if(v==null) return null;
+  const s = String(v).trim();
+  let m = s.match(/(\d{1,2})\s*月/);                  // "7月" / "2026年7月"
+  if(m) return String(parseInt(m[1])).padStart(2,'0')+'月';
+  m = s.match(/(?:-|\.|\/)(\d{1,2})(?:-|\.|\/|$)/);   // "2026-07-31"
+  if(m) return String(parseInt(m[1])).padStart(2,'0')+'月';
+  return null;
+}
 
 function parseTasksSheet(aoa){
   const tasks = [], seen = new Set(), col = TPL_COL.tasks;
@@ -2703,10 +2846,21 @@ function parseTasksSheet(aoa){
       const n = parseInt(monthRaw.replace('月','').trim());
       month = String(n).padStart(2,'0')+'月';
     }
-    const totalPts = parseFloat(row[col.totalPoints]) || 0;
-    const completed = row[col.completionRate];
-    const accuracy = row[col.accuracyRate];
-    const invRate = row[col.invalidRate];
+    // 派生值自算（与 Python 解析器一致，XLSX 读公式无缓存时兜底）
+    const itemCnt = cellNum(row[col.itemCount]);
+    const matQty = cellNum(row[col.matQty]);
+    const review = cellNum(row[col.reviewIssues]);
+    const derivedItem = itemCnt!=null ? itemCnt : (matQty!=null && review!=null ? matQty-review : null);
+    const totalPts = cellNum(row[col.totalPoints]);
+    const derivedTotal = totalPts!=null ? totalPts : (derivedItem!=null ? derivedItem*3 : null);
+    const collected = cellNum(row[col.collected]);
+    const completed = cellNum(row[col.completionRate]);
+    const compRate = completed!=null ? completed*100 : (derivedTotal ? +((collected||0)/derivedTotal*100).toFixed(1) : null);
+    const accuracy = cellNum(row[col.accuracyRate]);
+    const accRate = accuracy!=null ? accuracy*100 : (matQty ? +(derivedItem/matQty*100).toFixed(1) : null);
+    const invRateRaw = cellNum(row[col.invalidRate]);
+    const invData = cellNum(row[col.invalidData]);
+    const invRate = invRateRaw!=null ? invRateRaw*100 : (collected ? +(invData/collected*100).toFixed(1) : null);
     const timely = row[col.timelyRate];
 
     tasks.push({
@@ -2715,17 +2869,18 @@ function parseTasksSheet(aoa){
       source: String(row[col.source]||'').trim() || null,
       demandItem: String(row[col.demandItem]||'').trim(),
       month,
-      totalPoints: totalPts || null,
-      itemCount: parseInt(row[col.itemCount]) || null,
-      reviewIssues: parseInt(row[col.reviewIssues]) || 0,
-      issuedQty: totalPts || null,
-      collected: parseFloat(row[col.collected]) || null,
-      completionRate: completed!=null ? +(parseFloat(completed)*100).toFixed(1) : null,
-      accuracyRate: accuracy!=null ? +(parseFloat(accuracy)*100).toFixed(1) : null,
-      invalidData: parseInt(row[col.invalidData]) || null,
-      invalidRate: invRate!=null ? +(parseFloat(invRate)*100).toFixed(1) : null,
-      publishedData: parseInt(row[col.publishedData]) || null,
-      timelyRate: timely!=null ? (parseFloat(timely)===1?1:0) : null,
+      dueMonth: fmtDueMonth(row[col.dueMonth]),
+      totalPoints: derivedTotal!=null ? Math.round(derivedTotal) : null,
+      itemCount: derivedItem!=null ? Math.round(derivedItem) : null,
+      reviewIssues: review!=null ? Math.round(review) : 0,
+      issuedQty: derivedTotal!=null ? Math.round(derivedTotal) : null,
+      collected: collected!=null ? Math.round(collected) : null,
+      completionRate: compRate!=null ? +compRate.toFixed(1) : null,
+      accuracyRate: accRate!=null ? +accRate.toFixed(1) : null,
+      invalidData: invData!=null ? Math.round(invData) : null,
+      invalidRate: invRate!=null ? +invRate.toFixed(1) : null,
+      publishedData: cellNum(row[col.publishedData])!=null ? Math.round(cellNum(row[col.publishedData])) : null,
+      timelyRate: timely!=null ? (cellNum(timely)===1?1:0) : null,
       feedbackMat: null, expertVerify: null, supplierRejects: null,
       closed: null, allClosed: null, notes: null,
     });
@@ -2734,15 +2889,25 @@ function parseTasksSheet(aoa){
 }
 
 function parseSettlementsSheet(aoa){
-  const settlements = [];
+  const settlements = [], col = TPL_COL.settlements;
   for(let r=2; r<aoa.length; r++){ // skip rows 0(title),1(header),2→data
     const row = aoa[r]; if(!row) continue;
-    const month=row[0], module=row[1], type=row[2];
+    const month=row[col.month], module=row[col.module], type=row[col.type];
     if(!month || !module || !type) continue;
+    const qty = cellNum(row[col.qty])||0, price = cellNum(row[col.price])||0;
+    const costRaw = cellNum(row[col.cost]);
+    const lQty = cellNum(row[col.lastQty]), lPrice = cellNum(row[col.lastPrice]);
     settlements.push({
       "月份":String(month).trim(), "产品模块":String(module).trim(),
-      "需求类型":String(type).trim(), "需求数量":parseInt(row[3])||0,
-      "结算单价":parseFloat(row[4])||0, "结算金额":parseFloat(row[5])||0,
+      "需求类型":String(type).trim(), "需求数量":Math.round(qty),
+      "结算单价":price,
+      // 结算金额 = 需求数量 × 结算单价（公式列无缓存时自算）
+      "结算金额":costRaw!=null ? costRaw : +(qty*price).toFixed(2),
+      "去年产品模块":row[col.lastModule] ? String(row[col.lastModule]).trim() : null,
+      "去年需求类型":row[col.lastType] ? String(row[col.lastType]).trim() : null,
+      "去年需求数量":lQty!=null ? Math.round(lQty) : null,
+      "去年结算单价":lPrice!=null ? +lPrice.toFixed(2) : null,
+      "去年支出费用":(lQty!=null && lPrice!=null) ? +(lQty*lPrice).toFixed(2) : null,
     });
   }
   return settlements;
@@ -2780,11 +2945,15 @@ function parseProductAcceptanceSheet(aoa){
 }
 
 function parsePreReviewSheet(aoa){
-  const stats = {total:0, passed:0, failed:0, by_reviewer:{}, by_month:{}, fail_reasons:{}, new_enterprise:0};
+  const stats = {total:0, passed:0, failed:0, by_reviewer:{}, by_month:{}, fail_reasons:{},
+                 new_enterprise:0, old_enterprise:0, price_audit:{total:0, passed:0}};
   let has = false;
+  const col = TPL_COL.preReview;
   for(let r=2; r<aoa.length; r++){ // skip header row (index 1), start from data
     const row = aoa[r]; if(!row) continue;
-    const reviewer=row[2], passed=String(row[7]||'').trim(), month=row[1], reason=row[8], isNew=row[6];
+    const reviewer=row[col.reviewer], passed=String(row[col.passed]||'').trim(),
+          month=row[col.month], reason=row[col.reason], isNew=row[col.isNew],
+          priceAudit=String(row[col.priceAudit]||'').trim();
     if(!reviewer) continue;
     has = true; stats.total++;
     const ok = passed === '是';
@@ -2800,10 +2969,16 @@ function parsePreReviewSheet(aoa){
       if(ok) stats.by_month[m].passed++;
     }
     if(reason && !ok){ const rs=String(reason).trim(); if(rs) stats.fail_reasons[rs] = (stats.fail_reasons[rs]||0)+1; }
+    // 新老供应商占比
     if(isNew && (String(isNew).trim()==='是'||String(isNew).trim()==='新增')) stats.new_enterprise++;
+    else if(isNew && String(isNew).trim()==='更新登记表') stats.old_enterprise++;
+    // 价格审核通过率（col9）
+    if(priceAudit==='是' || priceAudit==='通过'){ stats.price_audit.total++; stats.price_audit.passed++; }
+    else if(priceAudit==='否' || priceAudit==='不通过'){ stats.price_audit.total++; }
   }
   if(!has) return null;
   stats.passRate = stats.total ? +(stats.passed/stats.total*100).toFixed(1) : 0;
+  stats.price_audit.passRate = stats.price_audit.total ? +(stats.price_audit.passed/stats.price_audit.total*100).toFixed(1) : 0;
   Object.values(stats.by_reviewer).forEach(v => { v.passRate = v.total ? +(v.passed/v.total*100).toFixed(1) : 0; });
   Object.values(stats.by_month).forEach(v => { v.passRate = v.total ? +(v.passed/v.total*100).toFixed(1) : 0; });
   return stats;
@@ -2822,6 +2997,25 @@ function parseFeedbackSheet(aoa){
   }
   if(Object.keys(labels).length) fb['已共识问题标签'] = labels;
   return Object.keys(fb).length ? fb : null;
+}
+
+function parseCollectionCapacitySheet(aoa){
+  const items = [], col = TPL_COL.capacity;
+  for(let r=1; r<aoa.length; r++){
+    const row = aoa[r]; if(!row) continue;
+    const month = row[col.month];
+    if(!month) continue;
+    items.push({
+      "月份": String(month).trim(),
+      "计划采集家数": cellNum(row[col.planHouse]),
+      "计划采集条数": cellNum(row[col.planItem]),
+      "实际采集家数": cellNum(row[col.actHouse]),
+      "实际采集条数": cellNum(row[col.actItem]),
+      "员工总人数": cellNum(row[col.staff]),
+      "备注": row[col.note]!=null ? String(row[col.note]).trim() : null,
+    });
+  }
+  return items;
 }
 
 function computeMonthlyTrend(tasks){
@@ -2854,6 +3048,7 @@ function autoImportTemplate(wb){
   const preReview = parsePreReviewSheet(XLSX.utils.sheet_to_json(wb.Sheets['加工预审'], {header:1, defval:null}));
   const issueFeedback = parseFeedbackSheet(XLSX.utils.sheet_to_json(wb.Sheets['问题反馈'], {header:1, defval:null}));
   const productAcc = wb.Sheets['产品验收'] ? parseProductAcceptanceSheet(XLSX.utils.sheet_to_json(wb.Sheets['产品验收'], {header:1, defval:null})) : null;
+  const capacity = wb.Sheets['采集产能'] ? parseCollectionCapacitySheet(XLSX.utils.sheet_to_json(wb.Sheets['采集产能'], {header:1, defval:null})) : [];
   const monthlyTrend = computeMonthlyTrend(tasks);
 
   // 更新 DATA
@@ -2863,6 +3058,7 @@ function autoImportTemplate(wb){
   if(preReview) DATA.preReview = preReview;
   if(issueFeedback && issueFeedback.问题反馈量) DATA.issueFeedback = issueFeedback;
   if(productAcc) DATA.productAcceptance = productAcc;
+  if(capacity.length) DATA.collectionCapacity = capacity;
   DATA.monthlyTrend = monthlyTrend;
   // 更新 filterOptions (收集唯一值)
   const di = [...new Set(tasks.map(t=>t.demandItem).filter(Boolean))].sort();

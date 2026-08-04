@@ -4,10 +4,25 @@ Thumbs.db
 *.swp
 *.swo
 
-# Local overrides (user can create local data.json for testing)
-local/
+# Python
+__pycache__/
+*.pyc
+
+# 解析/调试中间产物（勿提交）
+_full_data.json
+_sheets_info.json
 看板分析结果.json
 需求下发登记表_sample.json
 tasks.json
 settlement.json
 需求下发登记表.xlsx
+
+# 用户本地文件（勿提交）
+会话.txt
+指标网-采集检视表.xlsx
+
+# 备份目录（workbuddy 改动备份 / 模板备份，勿删）
+.workbuddy/
+
+# 模板升级副本（主模板已替换为升级版，可从 HEAD 模板用 _upgrade_template.py 再生成）
+看板数据录入模板-调整_升级版.xlsx
