@@ -8,6 +8,26 @@ from collections import defaultdict
 
 sys.stdout.reconfigure(encoding='utf-8')
 
+
+def sync_embed_data(index_html_path, data):
+    """把解析结果同步写入 index.html 的 dataEmbed 内嵌块（离线 fallback 用，保持数据新鲜）。
+    仅在 index.html 存在且含 dataEmbed 块时生效，幂等。"""
+    if not os.path.exists(index_html_path):
+        print(f"   ⚠️ index.html 不存在，跳过内嵌数据同步: {index_html_path}")
+        return False
+    with open(index_html_path, 'r', encoding='utf-8') as f:
+        html = f.read()
+    pat = re.compile(r'(<script id="dataEmbed" type="application/json">)([\s\S]*?)(</script>)')
+    if not pat.search(html):
+        print("   ⚠️ index.html 未找到 dataEmbed 块，跳过内嵌数据同步")
+        return False
+    new_json = json.dumps(data, ensure_ascii=False, indent=2)
+    html_new = pat.sub(lambda m: m.group(1) + '\n' + new_json + '\n' + m.group(3), html, count=1)
+    with open(index_html_path, 'w', encoding='utf-8') as f:
+        f.write(html_new)
+    print(f"   ✅ 已同步内嵌数据到 index.html (dataEmbed 块, {len(new_json)} 字符)")
+    return True
+
 # 支持命令行指定模板/输出：python parse_template.py [模板.xlsx] [输出.json]
 _default_tpl = '看板数据录入模板-调整.xlsx'
 _default_out = 'data.json'
@@ -767,6 +787,11 @@ data = {
 # 写入文件
 with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
     json.dump(data, f, ensure_ascii=False, indent=2)
+
+# 同步内嵌数据到 index.html 的 dataEmbed 块（离线 fallback 保持新鲜，避免显示过时快照）
+# 仅在输出为默认 data.json 时同步；跑 test.json 等自定义输出不碰 index.html
+if os.path.basename(OUTPUT_PATH) == _default_out:
+    sync_embed_data(os.path.join(os.path.dirname(__file__), 'index.html'), data)
 
 print(f"✅ 解析完成！共 {len(tasks)} 条任务, {len(settlements)} 条结算记录")
 print(f"   月份: {months_in_data}")
