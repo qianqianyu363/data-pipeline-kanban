@@ -4,7 +4,7 @@
 
 ## 项目概况
 
-- 目录：`D:\AI实操\看板`，git 仓库，main 分支（领先 origin 12 commits）
+- 目录：`D:\AI实操\看板`，git 仓库，main 分支（2026-08-04 晚：origin 已同步至 b9cf068，本地领先 1 提交 `4dcbbbb` 待推）
 - 看板已部署到 GitHub Pages（index.html 直接渲染 data.json）
 - 业务：数据采集加工全链路（需求下发 → 采集执行 → 数据加工/审核 → 上线发布 → 加工审核发布 → 质量审核），多流程 ECharts 看板
 
@@ -24,12 +24,12 @@
 
 | 文件 | 作用 |
 |---|---|
-| `看板数据录入模板-调整.xlsx` | 看板主数据源（当前仍为 HEAD 旧版，被 Excel 锁定） |
-| `看板数据录入模板-调整_升级版.xlsx` | **已升级的模板**（含4处新结构，已验证），待替换主文件 |
-| `parse_template.py` | Python 解析器 → data.json（**已加入对话登记台账合并**） |
+| `看板数据录入模板-调整.xlsx` | 看板主数据源（**2026-08-04 已替换为升级版**，含约定采集完成时间/去年值5列/价格审核/采集产能） |
+| `看板数据录入模板-调整_升级版.xlsx` | 升级版源文件（已 gitignore，可用 `_upgrade_template.py` 从 HEAD 模板再生成） |
+| `parse_template.py` | Python 解析器 → data.json（**含对话台账合并 + 质量抽审公式求值**） |
 | `需求下发登记.json` | **对话登记台账**（Claude 对话写入，解析器合并进 data.json） |
-| `index.html` | 看板前端（**已实现7项优化** + 浏览器导入适配升级版） |
-| `data.json` | 仍为 HEAD 旧版（未重新生成，等替换模板后跑解析器更新） |
+| `index.html` | 看板前端（**7项优化 + UI指标去重修复 + dataEmbed 内嵌块由解析器自动同步**） |
+| `data.json` | **2026-08-04 已重新生成**（21任务/26结算/3725加工预审，结算金额 sum=902,077.2） |
 | `需求下发登记表.xlsx` | 用户手动维护的详细登记台账（"需求下发"sheet 33列含"智能总结"列、"供采试点下发需求""结算明细"等） |
 | `_upgrade_template.py` | 模板升级脚本（已验证，可从 HEAD 模板重新生成升级版） |
 | `.workbuddy/backup_20260803/` | workbuddy 改动备份 + HEAD 模板备份 |
@@ -73,7 +73,14 @@
 - ✅ **对话式需求下发登记功能**：`需求下发登记.json` 台账 + parse_template.py 合并逻辑（load_ledger/merge_ledger_tasks）。本次再验证：用主模板+测试台账跑通——新增1条(07月测试比价)/模板重复跳过1(北京比价/03月,模板原值保留)/派生值全对(totalPoints=150=50×3,completionRate=80.0=120/150,accuracyRate=50.0=50/100)/07月入 months/monthlyTrend 含07月
 - ✅ **前端冒烟**：`node _smoke_test.js [data.json] [index.html]`（自包含：自动从 index.html 提取主脚本，注入 DOM/ECharts/fetch/ResizeObserver stub）。真实 data.json 与含台账合并的 test_ledger_data.json 均 renderAll + 4 tab 5/5 通过无异常
 - ✅ **生成 data.json 并全量验证**：`python parse_template.py 看板数据录入模板-调整.xlsx data.json` → 21任务/26结算/3725加工预审/结算金额 sum=902,077.2 与缓存一致；因模板已替换为升级版，无需再替换主文件
-- ✅ **提交**：见 git 工作区（本次提交后工作区应仅剩待用户填写的模板数据）
+- ✅ **提交部署**：05d89e3（模板替换+解析器+台账合并+7项优化+冒烟）→ 已 push；b9cf068（B方案内嵌同步）→ 已 push
+- ✅ **前端UI指标去重修复**（4dcbbbb，2026-08-04，已提交待推）：
+  - 需求下发卡去「需求总量」（保留需求总条数）；需求校核卡去「反馈问题」「需求问题率」（保留初审问题数/初审问题率）；数据采集卡去「当月承接」（保留采集下发数）；问题闭环卡去「未共识量」「总反馈量」「双方有效共识率」（保留采集反馈问题/共识量/共识率）；加工审核发布卡去「审核人」明细
+  - 质量抽审详情重写：按 类目→月份 展开 by_month 嵌套、跳过对象值，修复 [object Object]
+- ✅ **质量抽审公式求值**（4dcbbbb）：质量抽审 sheet 的 `=E2-E3` 等公式复用 `cell_val` 求值（eval_formula **实际支持跨行**，CLAUDE.md 记"限同行"不准确）；已验证 初审不通过=96/初审通过率=85.5%/报价偏高=15/高质量报价=73.7%
+- ⏳ **push 待网络恢复**：`4dcbbbb` 领先 origin 1。github.com TLS 时段性被阻断（api.github.com 正常）。已设定时任务 `1ba47948` 每13分钟自动重试补推；用户可手动 `git push origin main`
+- ⏳ **指标释义（METRIC_TIPS）内容由用户补充替换**（结构未动，'反馈问题'/'需求问题率'死条目已删）
+- ⏳ **模板业务数据待填**：约定采集完成时间/采集产能/去年值5列/价格审核结果（前端对应显示"—"）
 
 ### 数据现状提醒
 - **约定采集完成时间(col7/dueMonth) 当前模板全空** → 前端"当月采集完成率"和任务清单"约定完成"列显示"—"，待用户在模板 col7 填日期后才有值
@@ -83,23 +90,19 @@
 ### 重要发现（回滚后）
 - **磁盘模板 `看板数据录入模板-调整.xlsx` 的数据比 git HEAD 的 data.json 新**（git 提交里模板与 data.json 本就不同步）。生成 data.json 必须以**模板**为准，HEAD data.json 仅作旧值参考
 
-## 当前 git 工作区（2026-08-04 提交后状态）
+## 当前 git 工作区（2026-08-04 晚状态）
 
 ```
- M parse_template.py        # 解析器升级（公式求值器+列映射）+ 对话台账合并逻辑
- M index.html               # 前端7项优化 + 浏览器导入适配
- M data.json                # 升级版模板重新生成（21任务/26结算，结算金额 sum=902,077.2）
- M 看板数据录入模板-调整.xlsx # 主模板已替换为升级版
- M .gitignore               # 追加 __pycache__/.workbuddy/会话.txt/指标网/_升级版副本等
- D 看板_完整项目.zip        # 有意删除
- D _full_data.json _sheets_info.json  # 调试产物移出跟踪（本地保留）
-?? CLAUDE.md                # 本恢复文档
-?? _upgrade_template.py     # 模板升级脚本
-?? _smoke_test.js           # 前端冒烟脚本（自包含，可复用）
-?? 需求下发登记.json         # 对话登记台账（空 records，待用户实际登记）
+origin/main = b9cf068（已同步）；本地 main = 4dcbbbb（领先 1 提交待推）
 ```
-- `.workbuddy/`（备份）、`会话.txt`、`指标网-采集检视表.xlsx`、`_升级版.xlsx`（主文件已替换，可从 HEAD 模板再生成）已 gitignore，不入库
-- 下次提交建议仅当：台账有新登记（`需求下发登记.json` + 重跑解析器 + data.json + CLAUDE.md 状态）或模板/前端有改动
+- 已提交且推送成功：`05d89e3`（模板替换+解析器升级+台账合并+7项优化+冒烟+gitignore）、`b9cf068`（B方案：解析器自动同步 index.html dataEmbed 内嵌块）
+- 已提交**待推**：`4dcbbbb`（UI指标去重修复 + 质量抽审公式求值）——因 github.com 网络时段性阻断，已设定时任务 `1ba47948` 自动补推
+- 工作区干净（无未提交改动）
+- `.workbuddy/`（备份）、`会话.txt`、`指标网-采集检视表.xlsx`、`_升级版.xlsx` 已 gitignore
+
+### 网络方案（重要，可复用）
+**github.com 亚太节点（20.205.243.166）443 被阻断时**：在 `C:\Windows\System32\drivers\etc\hosts` 追加 `140.82.112.3 github.com`（GitHub 美国节点，已验证 HTTPS+git 协议可达）→ `ipconfig /flushdns` → push 恢复。该记录当前仍在 hosts，删两行即可撤销。若该节点也 TLS 失败（时段性干扰），可换 `140.82.114.4`/`140.82.113.3`。诊断：`curl -sI https://github.com`（走 hosts）、`curl --resolve github.com:443:<IP> https://github.com/` 测具体节点。
+- 下一次提交建议仅当：台账有新登记（`需求下发登记.json` + 重跑解析器 + data.json + CLAUDE.md 状态）或模板/前端有改动
 
 ## 验证/测试命令（重要）
 
