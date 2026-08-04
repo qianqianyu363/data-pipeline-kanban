@@ -1535,8 +1535,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         "6月": {
           "审核": 663,
           "初审通过": 567,
-          "初审不通过": "=E2-E3",
-          "初审通过率": "=E3/E2",
+          "初审不通过": 96.0,
+          "初审通过率": 0.8552036199095022,
           "无问题采集员": 8,
           "问题采集员": 1
         }
@@ -1551,10 +1551,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
         "6月": {
           "抽审量": 76,
           "报价量": 38,
-          "报价偏高": "=E13-E15",
+          "报价偏高": 15.0,
           "报价偏低": 23,
           "偏差率＜15%": 13,
-          "高质量报价": "=(E16+E14)/E13"
+          "高质量报价": 0.7368421052631579
         }
       }
     }
@@ -1761,8 +1761,6 @@ const METRIC_TIPS = {
   '需求项数': '下发材料数量',
   '初审问题数': '预审发现的问题数据条数',
   '初审通过率': '1 − 初审问题率，反映需求下发质量',
-  '反馈问题': '需求校核阶段反馈的问题量',
-  '需求问题率': '初审问题数 ÷ 需求总条数 ×100%',
   '采集完成率': '实际采集完成量 ÷ 下发数量（含多家）×100%',
   '采集下发数': '采集阶段下发的总条数',
   '采集完成数': '实际采集完成的条数',
@@ -1901,7 +1899,6 @@ function renderFlowKPIs(tasks, m){
   const stages = [
     { name:'需求下发', color:'#E74C3C', icon:'📋',
       items:[
-        {l:'需求总量', v:(tasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2)+'W', c:''},
         {l:'需求及时率', v:m.timelyRate!=null?m.timelyRate+'%':'—', c:clr(m.timelyRate)},
         {l:'需求总条数', v:m.totalPoints?m.totalPoints+'条':'—', c:''},
         {l:'需求项数', v:m.itemCount?m.itemCount+'项':'—', c:''},
@@ -1910,14 +1907,11 @@ function renderFlowKPIs(tasks, m){
       ]},
     { name:'需求校核', sub:'前置校验', color:'#E67E22', icon:'🔍',
       items:[
-        {l:'反馈问题', v:m.reviewIssues?(m.reviewIssues/10000).toFixed(2)+'W':'—', c:m.reviewIssues?'#E74C3C':''},
-        {l:'需求问题率', v:m.reviewIssueRate!=null?m.reviewIssueRate+'%':'—', c:clr(m.reviewIssueRate,true)},
         {l:'初审问题数', v:m.reviewIssues?m.reviewIssues+'条':'—', c:m.reviewIssues?'#E74C3C':''},
         {l:'初审问题率', v:m.reviewIssueRate!=null?m.reviewIssueRate+'%':'—', c:clr(m.reviewIssueRate,true)},
       ]},
     { name:'数据采集', sub:'核心执行', color:'#F39C12', icon:'🔧',
       items:[
-        {l:'当月承接', v:tasks.length?(tasks.reduce((s,t)=>s+(t.totalPoints||0),0)/10000).toFixed(2)+'W':'—', c:''},
         {l:'当月采集完成率', v:monthCompRate!=null?monthCompRate+'%':'—', c:clr(monthCompRate)},
         {l:'采集完成率', v:m.completionRate!=null?m.completionRate+'%':'—', c:clr(m.completionRate)},
         {l:'采集下发数', v:m.issuedQty?m.issuedQty+'条':'—', c:''},
@@ -1928,10 +1922,7 @@ function renderFlowKPIs(tasks, m){
     { name:'问题闭环', sub:'过程纠偏', color:'#2ECC71', icon:'✅',
       items:[
         {l:'采集反馈问题', v:fbTotal?fbTotal+'条':'—', c:fbTotal?'#E74C3C':''},
-        {l:'双方有效共识率', v:consRate!=null?consRate+'%':'—', c:clr(consRate)},
-        {l:'总反馈量', v:fbTotal?fbTotal.toLocaleString():'—', c:''},
         {l:'共识量', v:fb?fb.双方共识量.toLocaleString():'—', c:'#2ECC71'},
-        {l:'未共识量', v:fb?fb.双方未达成共识量.toLocaleString():'—', c:'#F39C12'},
         {l:'共识率', v:consRate!=null?consRate+'%':'—', c:clr(consRate)},
       ]},
     { name:'质量审核', sub:'质量管控', color:'#9B59B6', icon:'📊',
@@ -1965,25 +1956,23 @@ function renderFlowKPIs(tasks, m){
       lk.forEach(k => stages[3].items.push({l:k, v:labels[k].toString(), c:'', raw:false}));
     }
   }
-  // 加工预审审核人详情
-  if(pr && pr.total){
-    const revs = Object.entries(pr.by_reviewer||{});
-    if(revs.length){
-      stages[5].items.push({l:'', v:'<div style="margin-top:4px;padding-top:4px;border-top:1px dashed #eee;font-size:0.6rem;font-weight:600;color:var(--tl)">👤 审核人</div>', c:'', raw:true});
-      revs.sort((a,b)=>b[1].total-a[1].total).forEach(([n,s]) =>
-        stages[5].items.push({l:n, v:s.total+'条/'+(s.passRate||0)+'%', c:'', raw:false})
-      );
-    }
-  }
-  // 质量抽审详情
+  // (审核人详情已移除：加工审核发布卡不再展示审核人明细)
+  // 质量抽审详情（展开 by_month 嵌套，跳过对象值，避免渲染 [object Object]）
   const qrData = DATA.qualityReview;
   if(qrData && Object.keys(qrData).length){
     Object.entries(qrData).forEach(([nm, data]) => {
       if(nm==='抽审任务') return;
+      const bm = (data && typeof data==='object') ? data.by_month : null;
+      if(!bm || typeof bm!=='object' || !Object.keys(bm).length) return;
       stages[4].items.push({l:'', v:'<div style="margin-top:4px;padding-top:4px;border-top:1px dashed #eee;font-size:0.6rem;font-weight:600;color:var(--dark)">📊 '+nm+'</div>', c:'', raw:true});
-      Object.entries(data).filter(([k])=>k!=='月份'&&k!=='month').forEach(([k,v]) => {
-        const val = typeof v==='number'?(v>1?v.toFixed(0):(v*100).toFixed(1)+'%'):v;
-        stages[4].items.push({l:k, v:val, c:'', raw:false});
+      Object.entries(bm).forEach(([month, metrics]) => {
+        if(!metrics || typeof metrics!=='object') return;
+        stages[4].items.push({l:'', v:'<div style="margin-top:2px;padding-top:2px;border-top:1px dashed #f0f0f0;font-size:0.58rem;font-weight:600;color:var(--tl)">🗓 '+month+'</div>', c:'', raw:true});
+        Object.entries(metrics).forEach(([k, v]) => {
+          if(v===null || typeof v==='object') return; // 跳过嵌套对象/数组
+          const val = typeof v==='number'?(v>1?v.toFixed(0):(v*100).toFixed(1)+'%'):v;
+          stages[4].items.push({l:k, v:val, c:'', raw:false});
+        });
       });
     });
   }

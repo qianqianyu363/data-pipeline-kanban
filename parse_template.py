@@ -436,6 +436,9 @@ for r in range(1, ws3.max_row + 1):
             quality_review[current_task]["by_month"][current_month] = {}
 
     if current_task and current_month and d is not None and e is not None:
+        # 公式值（如 =E2-E3、=(E16+E14)/E13）经求值器还原为数值，避免前端显示公式文本
+        if isinstance(e, str) and e.startswith('='):
+            e = cell_val(ws3, 5, r)
         quality_review[current_task]["by_month"][current_month][str(d).strip()] = e
 
 # ============================================================
