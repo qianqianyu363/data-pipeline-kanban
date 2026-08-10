@@ -123,7 +123,12 @@ origin/main = 本次 08-10 提交（解析器/前端/模板/data.json 适配刷�
 - `.workbuddy/`（含 backup_20260810 主模板备份）、`会话.txt`、`指标网-采集检视表.xlsx`、`_升级版.xlsx` 已 gitignore
 
 ### 网络方案（重要，可复用）
-**github.com 亚太节点（20.205.243.166）443 被阻断时**：在 `C:\Windows\System32\drivers\etc\hosts` 追加 `140.82.112.3 github.com`（GitHub 美国节点，已验证 HTTPS+git 协议可达）→ `ipconfig /flushdns` → push 恢复。该记录当前仍在 hosts，删两行即可撤销。若该节点也 TLS 失败（时段性干扰），可换 `140.82.114.4`/`140.82.113.3`。诊断：`curl -sI https://github.com`（走 hosts）、`curl --resolve github.com:443:<IP> https://github.com/` 测具体节点。
+**github.com 亚太节点（20.205.243.166）443 被阻断时**：在 `C:\Windows\System32\drivers\etc\hosts` 追加一个 GitHub 美国节点 → `ipconfig /flushdns` → push 恢复。该记录当前仍在 hosts（2026-08-10 起指向 `140.82.121.3`），删两行即可撤销。
+- **节点会快速翻转（时段性干扰）**：2026-08-10 实测某节点扫描时 `--resolve` 返回 200、几秒后变 000。**不要固定信任单一节点**，push 失败就重扫。
+- 2026-08-10 实测可用顺序：`140.82.121.3`、`140.82.121.4`（200）；`140.82.112.3`、`140.82.113.3`、`140.82.114.3`、`140.82.116.3`、`20.205.243.166`、`20.27.177.113` 当日不可用。历史曾用 `140.82.112.3`/`140.82.113.3`/`140.82.114.4`。
+- **诊断**：`curl -sI https://github.com`（走 hosts）、`curl --resolve github.com:443:<IP> https://github.com/` 测具体节点（`--resolve` 强制 IP，不依赖 hosts，最可靠）。
+- **git push 依赖 hosts 生效**：本环境 Python/curl 走 Windows 解析器会读 hosts（改 hosts + flushdns 后 `socket.getaddrinfo('github.com')` 应返回新 IP）；git 同样走系统解析器。`curl --resolve` 只验证节点可达性，不代表 git 必达——push 才是最终判据。
+- **自动重推脚本（2026-08-10 验证有效）**：临时写 `_retry_push.py`，每轮循环「扫描可达节点→更新 hosts→flushdns→`git push origin main`」，第 2 轮即成功。脚本内注意 Windows 控制台 GBK 编码打不出 ✅ emoji（会 UnicodeEncodeError，改用 ASCII 输出）。推送成功后已删除临时脚本。
 - 下一次提交建议仅当：台账有新登记（`需求下发登记.json` + 重跑解析器 + data.json + CLAUDE.md 状态）或模板/前端有改动
 
 ## 验证/测试命令（重要）
