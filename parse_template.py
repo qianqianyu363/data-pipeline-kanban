@@ -128,7 +128,7 @@ def fmt_month(m):
 
 
 def fmt_due_month(v):
-    """约定采集完成时间 → 'MM月'。兼容 datetime/日期序列号/文本('7月'、'2026-07-31')"""
+    """约定采集完成时间 → 'MM月'。兼容 datetime/日期序列号/文本('7月'、'2026-07-31')/MMDD数值(730→07月)"""
     if v is None or v == '':
         return None
     if isinstance(v, datetime.datetime):
@@ -136,6 +136,12 @@ def fmt_due_month(v):
     if isinstance(v, datetime.date):
         return f"{v.month:02d}月"
     if isinstance(v, (int, float)):
+        # MMDD 无分隔数值（如 730=7月30、1030=10月30）；真实日期序列号远大于此范围
+        n = int(v)
+        if 101 <= n <= 1231:
+            month = n // 100
+            if 1 <= month <= 12:
+                return f"{month:02d}月"
         try:  # Excel 日期序列号（1900-01-01 基准，实际用 1899-12-30）
             dt = datetime.date(1899, 12, 30) + datetime.timedelta(days=float(v))
             return f"{dt.month:02d}月"
@@ -371,17 +377,16 @@ tasks.sort(key=lambda t: (month_order.get(t['month'], 99), t['name'] or ''))
 # ============================================================
 ws2 = wb['预算与结算']
 settlements = []
-for r in range(3, ws2.max_row + 1):
+# 新版模板：row1=标题'结算明细'、row2=分组表头(26年 col4-6 / 25年 col7-9)、row3=子表头(需求数量/结算单价/支出费用)、row4 起数据
+for r in range(4, ws2.max_row + 1):
     month = ws2.cell(row=r, column=1).value
     module = ws2.cell(row=r, column=2).value
     demand_type = ws2.cell(row=r, column=3).value
     qty = cell_val(ws2, 4, r)
     price = cell_val(ws2, 5, r)
-    # 去年值5列（新，col7-11）
-    last_module = ws2.cell(row=r, column=7).value
-    last_type = ws2.cell(row=r, column=8).value
-    last_qty = cell_val(ws2, 9, r)
-    last_price = cell_val(ws2, 10, r)
+    # 25年对比 3 列（col7-9：去年需求数量/结算单价/支出费用；模板已删去年模块/需求类型）
+    last_qty = cell_val(ws2, 7, r)
+    last_price = cell_val(ws2, 8, r)
 
     if not month or not module or not demand_type:
         continue
@@ -404,8 +409,6 @@ for r in range(3, ws2.max_row + 1):
         # 结算金额 = 需求数量 × 结算单价（openpyxl 丢缓存，自算）
         "结算金额": round(q * p, 2),
         # 去年对比（新，供前端"费用执行去年对比"）
-        "去年产品模块": str(last_module).strip() if last_module else None,
-        "去年需求类型": str(last_type).strip() if last_type else None,
         "去年需求数量": int(lq) if has_last else None,
         "去年结算单价": round(lp, 2) if last_price is not None else None,
         # 去年支出费用 = 去年需求数量 × 去年结算单价
@@ -535,7 +538,7 @@ issue_labels = {}
 
 for r in range(1, ws5.max_row + 1):
     label = ws5.cell(row=r, column=2).value
-    val = ws5.cell(row=r, column=3).value
+    val = cell_val(ws5, 3, r)   # 公式列（如 =C2-C3 双方未达成共识量）求值
 
     if not label:
         continue
@@ -599,12 +602,14 @@ if '采集产能' in wb.sheetnames:
 
         collection_capacity.append({
             "月份": str(month).strip(),
-            "计划采集家数": cap_num(ws7.cell(row=r, column=2).value),
-            "计划采集条数": cap_num(ws7.cell(row=r, column=3).value),
-            "实际采集家数": cap_num(ws7.cell(row=r, column=4).value),
-            "实际采集条数": cap_num(ws7.cell(row=r, column=5).value),
-            "员工总人数": cap_num(ws7.cell(row=r, column=6).value),
-            "备注": ws7.cell(row=r, column=7).value,
+            "计划需求量": cap_num(ws7.cell(row=r, column=2).value),
+            "计划采集家数": cap_num(ws7.cell(row=r, column=3).value),
+            "计划采集条数": cap_num(ws7.cell(row=r, column=4).value),
+            "实际需求量": cap_num(ws7.cell(row=r, column=5).value),
+            "实际采集家数": cap_num(ws7.cell(row=r, column=6).value),
+            "实际采集条数": cap_num(ws7.cell(row=r, column=7).value),
+            "员工总人数": cap_num(ws7.cell(row=r, column=8).value),
+            "备注": ws7.cell(row=r, column=9).value,
         })
 
 # ============================================================
