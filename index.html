@@ -2431,7 +2431,9 @@ function renderFlowKPIs(tasks, m){
     }
   }
   // (审核人详情已移除：加工审核发布卡不再展示审核人明细)
-  // 质量抽审详情（展开 by_month 嵌套，按当前筛选月份过滤，跳过对象值，避免渲染 [object Object]）
+  // 质量抽审详情：选具体月份→展开该月明细；选"全部"→按组聚合全月合计（不逐月展开）
+  // 格式化：比率字段按百分比、计数字段按千分位（修旧启发式把 问题采集员=1 误显示成 100%）
+  const fmtQr = (k, v) => (typeof v!=='number') ? v : (['初审通过率','高质量报价'].includes(k) ? (v*100).toFixed(1)+'%' : Number(v).toLocaleString());
   const qrData = DATA.qualityReview;
   if(qrData && Object.keys(qrData).length){
     Object.entries(qrData).forEach(([nm, data]) => {
@@ -2440,16 +2442,40 @@ function renderFlowKPIs(tasks, m){
       if(!bm || typeof bm!=='object' || !Object.keys(bm).length) return;
       const months = Object.entries(bm).filter(([m]) => !tgtKey || m.replace(/^0/,'') === tgtKey);
       if(!months.length) return; // 选中月份下无该组数据则整组不展示
-      stages[4].items.push({l:'', v:'<div style="margin-top:4px;padding-top:4px;border-top:1px dashed #eee;font-size:0.6rem;font-weight:600;color:var(--dark)">📊 '+nm+'</div>', c:'', raw:true});
-      months.forEach(([month, metrics]) => {
-        if(!metrics || typeof metrics!=='object') return;
-        stages[4].items.push({l:'', v:'<div style="margin-top:2px;padding-top:2px;border-top:1px dashed #f0f0f0;font-size:0.58rem;font-weight:600;color:var(--tl)">🗓 '+month+'</div>', c:'', raw:true});
-        Object.entries(metrics).forEach(([k, v]) => {
-          if(v===null || typeof v==='object') return; // 跳过嵌套对象/数组
-          const val = typeof v==='number'?(v>1?v.toFixed(0):(v*100).toFixed(1)+'%'):v;
-          stages[4].items.push({l:k, v:val, c:'', raw:false});
+      stages[4].items.push({l:'', v:'<div style="margin-top:4px;padding-top:4px;border-top:1px dashed #eee;font-size:0.6rem;font-weight:600;color:var(--dark)">📊 '+nm+(tgtKey?'':'（合计）')+'</div>', c:'', raw:true});
+      if(!tgtKey){
+        // "全部"：聚合全月 —— 计数类求和，比率字段加权重算（高质量报价无独立数量字段，按报价量加权）
+        const RATE_BASE = {'初审通过率':'审核','高质量报价':'报价量'};
+        const sums = {}, rateNum = {}, rateDen = {};
+        months.forEach(([m, metrics]) => {
+          if(!metrics || typeof metrics!=='object') return;
+          Object.entries(metrics).forEach(([k, v]) => {
+            if(v===null || typeof v==='object') return;
+            if(k in RATE_BASE){
+              const base = RATE_BASE[k];
+              rateNum[k] = (rateNum[k]||0) + v*(metrics[base]||0);
+              rateDen[k] = (rateDen[k]||0) + (metrics[base]||0);
+            } else {
+              sums[k] = (sums[k]||0) + v;
+            }
+          });
         });
-      });
+        Object.entries({...sums, ...rateNum}).forEach(([k]) => {
+          const val = (k in RATE_BASE) ? (rateDen[k] ? rateNum[k]/rateDen[k] : null) : sums[k];
+          if(val==null) return;
+          stages[4].items.push({l:k, v:fmtQr(k,val), c:'', raw:false});
+        });
+      } else {
+        // 选中单月：展开该月明细
+        months.forEach(([month, metrics]) => {
+          if(!metrics || typeof metrics!=='object') return;
+          stages[4].items.push({l:'', v:'<div style="margin-top:2px;padding-top:2px;border-top:1px dashed #f0f0f0;font-size:0.58rem;font-weight:600;color:var(--tl)">🗓 '+month+'</div>', c:'', raw:true});
+          Object.entries(metrics).forEach(([k, v]) => {
+            if(v===null || typeof v==='object') return; // 跳过嵌套对象/数组
+            stages[4].items.push({l:k, v:fmtQr(k,v), c:'', raw:false});
+          });
+        });
+      }
     });
   }
 
@@ -2668,17 +2694,18 @@ function renderCapacityTab(tasks, m){
   }
   caps.sort((a,b) => parseInt(a.月份)-parseInt(b.月份));
   const months = caps.map(c => String(c.月份).trim());
-  const actHouse = caps.map(c => num(c.实际采集家数));
-  const actItem = caps.map(c => num(c.实际采集条数));
-  const staff = caps.map(c => num(c.员工总人数));
+  const nOrNull = v => (v==null || v==='') ? null : +v;   // 保留缺失月份为 null，避免 num() 把空值当 0 柱/假人均
+  const actHouse = caps.map(c => nOrNull(c.实际采集家数));
+  const actItem = caps.map(c => nOrNull(c.实际采集条数));
+  const staff = caps.map(c => nOrNull(c.员工总人数));
   const lastIdx = caps.length-1;
-  const totalHouse = actHouse.reduce((s,v)=>s+v,0);
-  const totalItem = actItem.reduce((s,v)=>s+v,0);
+  const totalHouse = actHouse.reduce((s,v)=>s+(v||0),0);
+  const totalItem = actItem.reduce((s,v)=>s+(v||0),0);
   const lastStaff = staff[lastIdx]||0;
-  const perHouse = lastStaff ? +(actHouse[lastIdx]/lastStaff).toFixed(1) : null;
-  const perItem = lastStaff ? +(actItem[lastIdx]/lastStaff).toFixed(1) : null;
-  const perHouseSeries = staff.map((p,i) => p ? +(actHouse[i]/p).toFixed(1) : null);
-  const perItemSeries = staff.map((p,i) => p ? +(actItem[i]/p).toFixed(1) : null);
+  const perHouseSeries = staff.map((p,i) => (p>0 && actHouse[i]!=null) ? +(actHouse[i]/p).toFixed(1) : null);
+  const perItemSeries = staff.map((p,i) => (p>0 && actItem[i]!=null) ? +(actItem[i]/p).toFixed(1) : null);
+  const perHouse = perHouseSeries[lastIdx];
+  const perItem = perItemSeries[lastIdx];
   // 需求量（新版模板新增 计划需求量/实际需求量 列）
   const planQty = caps.map(c => num(c.计划需求量));
   const actQty = caps.map(c => num(c.实际需求量));
@@ -2689,9 +2716,10 @@ function renderCapacityTab(tasks, m){
   // 产能/人数预测（线性回归）
   const lastMonthNum = parseInt(months[lastIdx].replace('月','')) || 6;
   const monthsToPredict = Math.max(0, 12 - lastMonthNum);
-  const predHouse = monthsToPredict>0 ? predict(actHouse, monthsToPredict) : [];
-  const predItem = monthsToPredict>0 ? predict(actItem, monthsToPredict) : [];
-  const predStaff = monthsToPredict>0 ? predict(staff, monthsToPredict) : [];
+  const trimNull = a => { let n=a.length; while(n>0 && a[n-1]==null) n--; return a.slice(0,n); };
+  const predHouse = monthsToPredict>0 ? predict(trimNull(actHouse), monthsToPredict) : [];
+  const predItem = monthsToPredict>0 ? predict(trimNull(actItem), monthsToPredict) : [];
+  const predStaff = monthsToPredict>0 ? predict(trimNull(staff), monthsToPredict) : [];
 
   panel.innerHTML = `
     <div class="focus-metrics">
@@ -2702,31 +2730,29 @@ function renderCapacityTab(tasks, m){
       <div class="fm-box"><div class="fm-l">员工总人数</div><div class="fm-v">${lastStaff}</div><div class="fm-d">${months[lastIdx]}</div></div>
       ${hasQty ? `<div class="fm-box"><div class="fm-l">计划需求量</div><div class="fm-v">${(totalPlanQty/10000).toFixed(1)}万</div><div class="fm-d">累计计划</div></div><div class="fm-box"><div class="fm-l">实际需求量</div><div class="fm-v">${(totalActQty/10000).toFixed(1)}万</div><div class="fm-d">累计实际</div></div>` : ''}
     </div>
-    <div class="section-subtitle">📊 采集产能趋势（实际家数/条数 + 人均产能）</div>
-    <div class="chart-box" id="cpChart1" style="height:200px;width:100%;margin-bottom:6px"></div>
+    <div class="section-subtitle">📊 采集产能趋势（左：家数+人均家数；右：条数+人均条数）</div>
+    <div style="display:flex;gap:6px;width:100%;margin-bottom:6px">
+      <div class="chart-box" id="cpChart1a" style="height:200px;flex:1;min-width:0"></div>
+      <div class="chart-box" id="cpChart1b" style="height:200px;flex:1;min-width:0"></div>
+    </div>
     ${hasQty ? `<div class="section-subtitle">📦 采集需求量（计划 vs 实际）</div><div class="chart-box" id="cpChartQty" style="height:150px;width:100%;margin-bottom:6px"></div>` : ''}
     ${monthsToPredict>0 ? `<div class="section-subtitle">🔮 产能人数预测（${(lastMonthNum+1)}-12月）</div><div class="chart-box" id="cpChart2" style="height:150px;width:100%;margin-bottom:6px"></div><div class="pred-box" id="cpPred"></div>` : ''}`;
 
-  // 图表1：家数/条数柱状 + 人均产能折线
-  const c1 = initC("cpChart1", 200);
-  if(c1){
+  // 图表1：家数/条数左右双象限（各自独立刻度消除量级干扰；null=缺失月份断点）
+  function quadChart(id, barName, barData, barColor, lineName, lineData, lineColor){
+    const c = initC(id, 200);
+    if(!c) return;
     const s1 = [
-      {name:"实际采集家数", type:"bar", barWidth:10,
-       data: actHouse, itemStyle:{color:"#3498DB",borderRadius:[3,3,0,0]},
+      {name:barName, type:"bar", barWidth:8,
+       data: barData,
+       itemStyle:{color:barColor,borderRadius:[3,3,0,0]},
        label:{show:true,position:"top",fontSize:6,formatter:p=>p.value||''}},
-      {name:"实际采集条数", type:"bar", barWidth:10,
-       data: actItem, itemStyle:{color:"#5DADE2",borderRadius:[3,3,0,0]},
-       label:{show:true,position:"top",fontSize:6,formatter:p=>p.value||''}},
-      {name:"人均家数", type:"line", yAxisIndex:1, smooth:true, symbol:"circle", symbolSize:4,
-       data: perHouseSeries,
-       lineStyle:{color:"#E67E22",width:1.5}, itemStyle:{color:"#E67E22"},
-       label:{show:true,fontSize:6,formatter:p=>p.value!=null?p.value:'',color:"#E67E22"}},
-      {name:"人均条数", type:"line", yAxisIndex:1, smooth:true, symbol:"circle", symbolSize:4,
-       data: perItemSeries,
-       lineStyle:{color:"#9B59B6",width:1.5}, itemStyle:{color:"#9B59B6"},
-       label:{show:true,fontSize:6,formatter:p=>p.value!=null?p.value:'',color:"#9B59B6"}}
+      {name:lineName, type:"line", yAxisIndex:1, smooth:true, symbol:"circle", symbolSize:4,
+       data: lineData,
+       lineStyle:{color:lineColor,width:1.5}, itemStyle:{color:lineColor},
+       label:{show:true,fontSize:6,formatter:p=>p.value!=null?p.value:'',color:lineColor}}
     ];
-    c1.setOption({
+    c.setOption({
       tooltip:{trigger:"axis", formatter:p=>`<strong>${p[0].axisValue}</strong><br/>${p.map(i=>i.marker+' '+i.seriesName+': '+(i.value!=null?i.value:'—')).join('<br/>')}`},
       legend:{data:s1.map(x=>x.name), bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
       grid:{top:6,bottom:26,left:4,right:30,containLabel:true},
@@ -2735,6 +2761,8 @@ function renderCapacityTab(tasks, m){
       series:s1
     });
   }
+  quadChart("cpChart1a", "实际采集家数", actHouse, "#3498DB", "人均家数", perHouseSeries, "#E67E22");
+  quadChart("cpChart1b", "实际采集条数", actItem, "#5DADE2", "人均条数", perItemSeries, "#9B59B6");
 
   // 需求量趋势（计划 vs 实际，柱状）
   if(hasQty){
@@ -2846,14 +2874,23 @@ function renderBudgetTab(tasks, m){
     unitPrice[dt] = tq ? +(ta/tq).toFixed(2) : 0;
   });
 
-  const lastMonthNum = parseInt(monthNames[monthNames.length-1]) || 6;
+  // 实际执行月份 = 结算金额>0 的月份（settlements 含未来月份、金额=0，不能拿月份表直接判）
+  const monthlyTotals = monthNames.map(mm => {
+    const vals = Object.values(costByMonthType[mm]||{});
+    return vals.length ? vals.reduce((a,b)=>a+b,0) : 0;
+  });
+  let lastActiveIdx = -1;
+  for(let i=monthlyTotals.length-1;i>=0;i--){ if(monthlyTotals[i]>0){ lastActiveIdx=i; break; } }
+  const asOfMonth = lastActiveIdx>=0 ? monthNames[lastActiveIdx] : null;
+  const lastMonthNum = lastActiveIdx>=0 ? (parseInt(monthNames[lastActiveIdx])||0) : 0;
   const monthsToPredict = Math.max(0, 12 - lastMonthNum);
 
-  // 按类型预测需求量 × 固定单价 = 预测费用
+  // 按类型预测需求量 × 固定单价 = 预测费用（历史只用实际执行月份，避免未来 0 需求量拉低回归斜率）
   const predVals = new Array(monthsToPredict).fill(0);
   if (monthsToPredict > 0) {
+    const histMonths = monthNames.slice(0, lastActiveIdx+1);
     dataTypes.forEach(dt => {
-      const monthlyQtys = monthNames.map(mm => qtyByMT[mm][dt]||0);
+      const monthlyQtys = histMonths.map(mm => qtyByMT[mm][dt]||0);
       const predQtys = predict(monthlyQtys, monthsToPredict);
       const up = unitPrice[dt] || 0;
       predQtys.forEach((qty, i) => { predVals[i] += qty * up; });
@@ -2863,12 +2900,6 @@ function renderBudgetTab(tasks, m){
     return (lastMonthNum + 1 + i) + "月";
   }) : [];
 
-  // 历史月度总费用（用于图表展示）
-  const monthlyTotals = monthNames.map(mm => {
-    const vals = Object.values(costByMonthType[mm]||{});
-    return vals.length ? vals.reduce((a,b)=>a+b,0) : 0;
-  });
-
   // 检测已有实际数据的预测月份，计算偏差率
   const devItems = [];
   if (predVals.length) {
@@ -2876,7 +2907,7 @@ function renderBudgetTab(tasks, m){
       const m = lastMonthNum + 1 + i;
       const monthStr = m + "月";
       const actualIdx = monthNames.indexOf(monthStr);
-      if (actualIdx >= 0) {
+      if (actualIdx >= 0 && monthlyTotals[actualIdx] > 0) {
         const actual = monthlyTotals[actualIdx];
         const predWan = +(pred/10000).toFixed(1);
         const actWan = +(actual/10000).toFixed(1);
@@ -2897,7 +2928,9 @@ function renderBudgetTab(tasks, m){
     }
   });
   const collectVals = monthNames.map(mm => monthlyCollected[mm]||0);
-  const predCollect = monthsToPredict > 0 ? predict(collectVals, monthsToPredict) : [];
+  let lastCollectIdx = -1;
+  for(let i=collectVals.length-1;i>=0;i--){ if(collectVals[i]>0){ lastCollectIdx=i; break; } }
+  const predCollect = (lastCollectIdx>=0 && monthsToPredict>0) ? predict(collectVals.slice(0,lastCollectIdx+1), monthsToPredict) : [];
 
   // 优化6：去年费用对比（settlements 去年支出费用字段）
   const lastYearByMonth = {};
@@ -2908,52 +2941,54 @@ function renderBudgetTab(tasks, m){
   panel.innerHTML = `
     <div class="focus-metrics">
       <div class="fm-box"><div class="fm-l">年度总预算</div><div class="fm-v">¥${(totalBudget/10000).toFixed(0)}万</div><div class="fm-d">采集加工总预算</div></div>
-      <div class="fm-box"><div class="fm-l">累计执行</div><div class="fm-v">¥${(totalAmount/10000).toFixed(1)}万</div><div class="fm-d">截至${monthNames[monthNames.length-1]||"4月"}</div></div>
+      <div class="fm-box"><div class="fm-l">累计执行</div><div class="fm-v">¥${(totalAmount/10000).toFixed(1)}万</div><div class="fm-d">截至${asOfMonth||"—"}</div></div>
       <div class="fm-box"><div class="fm-l">预算执行率</div><div class="fm-v">${execRate}%</div><div class="fm-d">累计/年度</div></div>
-      ${hasLastYear ? `<div class="fm-box"><div class="fm-l">去年总支出</div><div class="fm-v">¥${(lastYearTotal/10000).toFixed(1)}万</div><div class="fm-d">去年同期对比</div></div>` : ''}
+      ${hasLastYear ? `<div class="fm-box"><div class="fm-l">25年总支出</div><div class="fm-v">¥${(lastYearTotal/10000).toFixed(1)}万</div><div class="fm-d">25年同期对比</div></div>` : ''}
     </div>
-    <div class="section-subtitle">📊 费用执行趋势（已发生+预测，虚线柱=未发生预测）</div>
+    <div class="section-subtitle">📊 费用执行趋势（26年费用 + 25年费用对比 + 预测，虚线柱=未发生预测）</div>
     <div class="chart-box" id="bdChart1" style="height:190px;width:100%;margin-bottom:10px"></div>
     <div class="pred-box" id="predBox"></div>
-    <div class="section-subtitle">🧩 总费用构成</div>
-    <div class="chart-box" id="bdPie" style="height:180px;width:100%;margin-bottom:6px"></div>`;
+    <div class="section-subtitle">🧩 总费用构成（26年 vs 25年）</div>
+    <div style="display:flex;gap:6px;width:100%;margin-bottom:6px">
+      <div class="chart-box" id="bdPie26" style="height:180px;flex:1;min-width:0"></div>
+      <div class="chart-box" id="bdPie25" style="height:180px;flex:1;min-width:0"></div>
+    </div>`;
 
-  // 合并图表：已发生费用（1-6月）+ 预测费用（后续月份）
+  // 合并图表：26年费用（实际执行月）+ 25年费用对比（条形）+ 预测费用（虚线虚框）
   const c1 = initC("bdChart1", 190);
   if(c1){
-    const allMonths = [...monthNames];
-    for (let m = lastMonthNum + 1; m <= 12; m++) allMonths.push(m + "月");
+    const allMonths = Array.from({length:12}, (_,i)=>(i+1)+"月");   // 固定1-12月，避免与 monthNames(含未来月) 重复
     const histVals = monthlyTotals.map(v=>+(v/10000).toFixed(1));
     const actualData = new Array(allMonths.length).fill(null);
-    for (let i = 0; i < histVals.length; i++) actualData[i] = histVals[i];
+    for (let i = 0; i <= lastActiveIdx; i++) actualData[i] = histVals[i];
     const predData = new Array(allMonths.length).fill(null);
     if (predVals.length) {
       predVals.forEach((pred, i) => {
-        const idx = monthNames.length + i;
+        const idx = lastMonthNum + i;
         if (idx < allMonths.length) predData[idx] = +(pred/10000).toFixed(1);
       });
     }
-    // 优化6：预测费用用虚线虚框（未发生）；去年费用对比折线
     const series = [
-      {name:"已产生费用", type:"bar",
+      {name:"26年费用", type:"bar",
        data:actualData.map(v=>v!==null?{value:v,itemStyle:{color:"#3498DB",borderRadius:[4,4,0,0]}}:{value:0,itemStyle:{color:"transparent"}}),
-       barWidth:14,
+       barWidth:8,
        label:{show:true,position:"top",formatter:p=>p.value>0?p.value+"万":"",fontSize:6}},
       {name:"预测费用", type:"bar",
        data:predData.map(v=>v!==null?{value:v,itemStyle:{color:"rgba(231,76,60,0.12)",borderColor:"#E74C3C",borderType:"dashed",borderWidth:1,borderRadius:[4,4,0,0]}}:{value:0,itemStyle:{color:"transparent"}}),
-       barWidth:8,barGap:'30%',
+       barWidth:8,barGap:'20%',
        label:{show:true,position:"top",formatter:p=>p.value>0?p.value+"万":"",fontSize:6,color:"#E74C3C"}}
     ];
     if(hasLastYear){
       series.push({
-        name:"去年费用", type:"line", smooth:true, symbol:"circle", symbolSize:4,
+        name:"25年费用", type:"bar",
         data:allMonths.map(mm => lastYearByMonth[mm]!=null ? +(lastYearByMonth[mm]/10000).toFixed(1) : null),
-        lineStyle:{color:"#9B59B6",width:1.5,type:"dashed"}, itemStyle:{color:"#9B59B6"},
-        label:{show:true,fontSize:6,formatter:p=>p.value!=null?p.value+"万":""}
+        barWidth:8,
+        itemStyle:{color:"rgba(155,89,182,0.30)",borderColor:"#9B59B6",borderWidth:1,borderRadius:[4,4,0,0]},
+        label:{show:true,position:"top",fontSize:5,formatter:p=>p.value>0?p.value+"万":""}
       });
     }
-    const legendData = ["已产生费用","预测费用"];
-    if(hasLastYear) legendData.push("去年费用");
+    const legendData = ["26年费用","预测费用"];
+    if(hasLastYear) legendData.push("25年费用");
     c1.setOption({
       tooltip:{trigger:"axis"},
       legend:{data:legendData, bottom:0, textStyle:{fontSize:6}, itemWidth:8, itemHeight:6},
@@ -2963,35 +2998,40 @@ function renderBudgetTab(tasks, m){
       series:series
     });
   }
-  // 饼图：总费用按数据类型分类
-  const c3 = initC("bdPie", 180);
-  if(c3){
-    const totalByType = {};
-    monthNames.forEach(mm => {
-      Object.entries(costByMonthType[mm]||{}).forEach(([dt,amt]) => {
-        totalByType[dt] = (totalByType[dt]||0) + amt;
-      });
+  // 总费用构成两个环形图：26年（结算金额按需求类型）+ 25年（去年支出费用按需求类型）
+  // value 存原始金额（元），占比由 ECharts 自算（p.percent），避免按总预算反推金额的偏差
+  function donutChart(id, byType){
+    const c = initC(id, 180);
+    if(!c) return;
+    const pieData = Object.entries(byType).map(([k,v]) => ({name:k, value:Math.round(v*100)/100})).filter(d=>d.value>0);
+    if(!pieData.length) return;
+    c.setOption({
+      tooltip:{formatter:p=>`<strong>${p.name}</strong><br/>金额: ¥${(p.value/10000).toFixed(1)}万<br/>占比: ${p.percent}%`},
+      series:[{type:"pie", radius:["30%","60%"], center:["50%","50%"],
+        data:pieData, label:{fontSize:6,formatter:'{b}\n{d}%'},
+        itemStyle:{borderRadius:4,borderColor:"#fff",borderWidth:1},
+        emphasis:{itemStyle:{shadowBlur:6,shadowColor:"rgba(0,0,0,0.2)"}}
+      }]
     });
-    const pieData = Object.entries(totalByType).map(([k,v]) => ({name:k, value:+((v/totalAmount*100).toFixed(1))})).filter(d=>d.value>0);
-    if(pieData.length){
-      c3.setOption({
-        tooltip:{formatter:p=>`<strong>${p.name}</strong><br/>占比: ${p.value}%<br/>金额: ¥${((p.value/100)*totalBudget/10000).toFixed(1)}万`},
-        series:[{type:"pie", radius:["30%","60%"], center:["50%","50%"],
-          data:pieData, label:{fontSize:7,formatter:p=>`${p.name}\n${p.value}%`},
-          itemStyle:{borderRadius:4,borderColor:"#fff",borderWidth:1},
-          emphasis:{itemStyle:{shadowBlur:6,shadowColor:"rgba(0,0,0,0.2)"}}
-        }]
-      });
-    }
   }
+  const totalByType = {};
+  monthNames.forEach(mm => {
+    Object.entries(costByMonthType[mm]||{}).forEach(([dt,amt]) => {
+      totalByType[dt] = (totalByType[dt]||0) + amt;
+    });
+  });
+  const lastYearByType = {};
+  s.forEach(x => { if(x.去年支出费用!=null){ const dt=x.需求类型||x.type||"其他"; lastYearByType[dt]=(lastYearByType[dt]||0)+x.去年支出费用; } });
+  donutChart("bdPie26", totalByType);
+  donutChart("bdPie25", lastYearByType);
 
   // 预测结果摘要（含偏差率）
   const predBox = document.getElementById("predBox");
   if(predBox && (predVals.length || devItems.length)){
-    const lastCost = +(monthlyTotals[monthlyTotals.length-1]/10000).toFixed(1);
+    const lastCost = lastActiveIdx>=0 ? +(monthlyTotals[lastActiveIdx]/10000).toFixed(1) : 0;
     const nextCost = predVals.length ? +(predVals[0]/10000).toFixed(1) : 0;
     const chg = lastCost && nextCost ? +((nextCost-lastCost)/lastCost*100).toFixed(1) : 0;
-    const lastCol = collectVals[collectVals.length-1]||0;
+    const lastCol = lastCollectIdx>=0 ? (collectVals[lastCollectIdx]||0) : 0;
     const nextCol = predCollect.length ? predCollect[0] : 0;
     const colChg = lastCol && nextCol ? +((nextCol-lastCol)/lastCol*100).toFixed(1) : 0;
     let devHtml = "";
@@ -3009,7 +3049,7 @@ function renderBudgetTab(tasks, m){
       devHtml += '</div>';
     }
     predBox.innerHTML = `
-      <div class="pb-title">🔮 未来费用预测（7-12月）</div>
+      <div class="pb-title">🔮 未来费用预测（${lastMonthNum+1}-12月）</div>
       <div class="pb-row">
         <div class="pb-item"><div class="pb-l">下月预计费用</div><div class="pb-v">¥${nextCost}万</div><div class="pb-l" style="font-size:0.6rem;color:${chg>=0?"var(--red)":"var(--green)"}">${chg>=0?"↑"+chg:"↓"+Math.abs(chg)}%</div></div>
         <div class="pb-item"><div class="pb-l">下月预计采集量</div><div class="pb-v">${nextCol.toLocaleString()}</div><div class="pb-l" style="font-size:0.6rem;color:${colChg>=0?"var(--green)":"var(--red)"}">${colChg>=0?"↑"+colChg:"↓"+Math.abs(colChg)}%</div></div>
