@@ -118,8 +118,9 @@
 ```
 origin/main = 本次 08-10 提交（解析器/前端/模板/data.json 适配刷新 + CLAUDE.md 同步）
 ```
-- 历史已推送：`05d89e3`（模板替换+解析器升级+台账合并+7项优化+冒烟）、`b9cf068`（dataEmbed 内嵌同步）、`4dcbbbb`（UI指标去重+质量抽审求值）、`e25cbf4`（CLAUDE.md 更新）
+- 历史已推送：`05d89e3`（模板替换+解析器升级+台账合并+7项优化+冒烟）、`b9cf068`（dataEmbed 内嵌同步）、`4dcbbbb`（UI指标去重+质量抽审求值）、`e25cbf4`（CLAUDE.md 更新）、`73c44e6`（08-10 模板适配刷新）、`89a3740`（CLAUDE.md 网络方案补充）
 - 本次提交：08-10 升级版模板适配（parse_template.py + index.html TPL_COL/需求量展示 + 主模板同步 + data.json + CLAUDE.md）
+- 清理提交：`git rm` 旧模板 `看板数据录入模板.xlsx` + 2 张无引用截图（企业微信截图/全链路看板.png）+ 更新 README/看板使用与数据说明/看板设计文档 到当前 8 环节/6 Sheet/模板→解析器 结构 + 删除本地调试产物（_full_data/_sheets_info/tasks/settlement/看板分析结果/登记表_sample）
 - `.workbuddy/`（含 backup_20260810 主模板备份）、`会话.txt`、`指标网-采集检视表.xlsx`、`_升级版.xlsx` 已 gitignore
 
 ### 网络方案（重要，可复用）
