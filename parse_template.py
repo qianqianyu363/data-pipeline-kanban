@@ -93,25 +93,27 @@ ws1 = wb['各项需求跟踪']
 tasks = []
 month_names_set = set()
 
-# 列映射 (列号→字段名) — 适配升级版模板（各项需求跟踪 27 列）
+# 列映射 (列号→字段名) — 适配升级版模板（各项需求跟踪 29 列，08-17 新增 采集完成时间 col22 / 闭环状态 col29）
 COL_MAP = {
     2: 'month_raw',    # 月份
     3: 'demandItem',   # 需求项
     4: 'settleType',   # 结算类型
     5: 'name',         # 需求名称
     6: 'source',       # 需求来源
-    7: 'dueMonth',     # 约定采集完成时间（新）
-    9: 'matQty',       # 材料数量（新，需求准确率分母）
+    7: 'dueMonth',     # 约定采集完成时间
+    9: 'matQty',       # 材料数量（需求准确率分母）
     12: 'timelyRate',  # 需求发布及时率 (0/1)
     13: 'totalPoints', # 下发数量(含多家）
     14: 'itemCount',   # 下发材料
     15: 'reviewIssues',# 预审问题数据
     18: 'accuracyRate',# 需求准确率（自算 = itemCount/matQty）
-    22: 'collected',   # 实际采集完成量
-    24: 'completionRate', # 采集完成率（自算 = collected/totalPoints）
-    25: 'invalidData', # 无效数据
-    26: 'invalidRate', # 无效数据占比（自算 = invalidData/collected）
-    27: 'published',   # 发布数据
+    22: 'collectedTime',  # 采集完成时间（新，08-17）
+    23: 'collected',   # 实际采集完成量
+    25: 'completionRate', # 采集完成率（自算 = collected/totalPoints）
+    26: 'invalidData', # 无效数据
+    27: 'invalidRate', # 无效数据占比（自算 = invalidData/collected）
+    28: 'published',   # 发布数据
+    29: 'closed',      # 闭环状态（新，08-17）
 }
 
 # 月份格式化
@@ -157,6 +159,34 @@ def fmt_due_month(v):
             if len(parts) >= 2 and parts[1].strip().isdigit():
                 return f"{int(parts[1].strip()):02d}月"
     return None
+
+
+def fmt_collect_time(v):
+    """采集完成时间 → 'YYYY-MM-DD'（完整日期序列号）或 'MM月'（MMDD 数值）。"""
+    if v is None or v == '':
+        return None
+    if isinstance(v, datetime.datetime):
+        return v.strftime('%Y-%m-%d')
+    if isinstance(v, datetime.date):
+        return v.isoformat()
+    if isinstance(v, (int, float)):
+        n = int(v)
+        if 101 <= n <= 1231 and 1 <= n // 100 <= 12:  # MMDD 无分隔（如 730=7月30）
+            return f"{n // 100:02d}月"
+        try:  # Excel 日期序列号
+            dt = datetime.date(1899, 12, 30) + datetime.timedelta(days=float(v))
+            return dt.isoformat()
+        except Exception:
+            return None
+    s = str(v).strip()
+    for sep in ('-', '.', '/'):  # '2026-08-01'
+        parts = s.split(sep)
+        if len(parts) >= 3 and parts[0].strip().isdigit() and len(parts[0].strip()) == 4:
+            try:
+                return datetime.date(int(parts[0]), int(parts[1]), int(parts[2])).isoformat()
+            except Exception:
+                pass
+    return s or None
 
 
 # ============================================================
@@ -315,14 +345,16 @@ for r in range(3, ws1.max_row + 1):
     item_cnt = nv(14)
     mat_qty = nv(9)        # 材料数量（需求准确率分母）
     review_issues = nv(15)
-    collected = nv(22)
-    comp_rate = nv(24)     # 模板缓存（升级版 openpyxl 保存后无缓存，通常 None）
+    collected = nv(23)
+    comp_rate = nv(25)     # 模板缓存（升级版 openpyxl 保存后无缓存，通常 None）
     accuracy = nv(18)      # 模板缓存
-    invalid = nv(25)
-    invalid_rate = nv(26)  # 模板缓存
-    published = nv(27)
+    invalid = nv(26)
+    invalid_rate = nv(27)  # 模板缓存
+    published = nv(28)
     timely = nv(12)
-    due_month_raw = ws1.cell(row=r, column=7).value  # 约定采集完成时间
+    due_month_raw = ws1.cell(row=r, column=7).value   # 约定采集完成时间
+    collect_time_raw = ws1.cell(row=r, column=22).value  # 采集完成时间（新，08-17）
+    closed_raw = ws1.cell(row=r, column=29).value     # 闭环状态（新，08-17）
 
     # ---- 派生值自算（openpyxl 保存丢公式缓存，必须自算，遵循模板公式语义）----
     # 采集完成率 = 实际采集完成量 / 下发数量(含多家)
@@ -343,6 +375,7 @@ for r in range(3, ws1.max_row + 1):
         "demandItem": demand_item,
         "month": month,
         "dueMonth": due_month,   # 约定采集完成时间（新，用于当月采集完成率）
+        "collectedTime": fmt_collect_time(collect_time_raw),  # 采集完成时间（新，08-17）
         "totalPoints": int(total_pts) if total_pts is not None else None,
         "itemCount": int(item_cnt) if item_cnt is not None else None,
         "reviewIssues": int(review_issues) if review_issues is not None else None,
@@ -358,7 +391,7 @@ for r in range(3, ws1.max_row + 1):
         "feedbackMat": None,
         "expertVerify": None,
         "supplierRejects": None,
-        "closed": None,
+        "closed": str(closed_raw).strip() if closed_raw is not None else None,  # 闭环状态（新，08-17）
         "allClosed": None,
         "notes": None,
     }
