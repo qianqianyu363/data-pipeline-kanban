@@ -1,6 +1,6 @@
 {
   "title": "需求下发登记全链路看板",
-  "updateDate": "2026-08-17",
+  "updateDate": "2026-08-18",
   "months": [
     "03月",
     "04月",
@@ -646,6 +646,32 @@
       "notes": null
     },
     {
+      "name": "北京比价",
+      "settleType": "价格采集",
+      "source": null,
+      "demandItem": "市场价",
+      "month": "08月",
+      "dueMonth": null,
+      "totalPoints": 15408,
+      "itemCount": 5136,
+      "reviewIssues": null,
+      "issuedQty": 15408,
+      "collected": null,
+      "completionRate": null,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 1,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": "5136条，每条要求采集3家，按时下发",
+      "reqQty": 3
+    },
+    {
       "name": "山东比价",
       "settleType": "价格采集",
       "source": "AI比价",
@@ -705,23 +731,24 @@
       "month": "08月",
       "dueMonth": "08月",
       "collectedTime": null,
-      "totalPoints": null,
-      "itemCount": null,
+      "totalPoints": 20058,
+      "itemCount": 6686,
       "reviewIssues": null,
-      "issuedQty": null,
+      "issuedQty": 20058,
       "collected": null,
       "completionRate": null,
       "accuracyRate": null,
       "invalidData": null,
       "invalidRate": null,
       "publishedData": null,
-      "timelyRate": null,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
       "closed": null,
       "allClosed": null,
-      "notes": null
+      "notes": null,
+      "reqQty": 3
     }
   ],
   "settlements": [
@@ -1457,7 +1484,7 @@
       4781,
       49478,
       43323,
-      24906
+      60372
     ],
     "采集下发数": [
       17626,
@@ -1465,7 +1492,7 @@
       4781,
       49478,
       43323,
-      24906
+      60372
     ],
     "采集完成数": [
       15595,

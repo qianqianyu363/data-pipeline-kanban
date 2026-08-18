@@ -392,7 +392,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <script id="dataEmbed" type="application/json">
 {
   "title": "需求下发登记全链路看板",
-  "updateDate": "2026-08-17",
+  "updateDate": "2026-08-18",
   "months": [
     "03月",
     "04月",
@@ -1038,6 +1038,32 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "notes": null
     },
     {
+      "name": "北京比价",
+      "settleType": "价格采集",
+      "source": null,
+      "demandItem": "市场价",
+      "month": "08月",
+      "dueMonth": null,
+      "totalPoints": 15408,
+      "itemCount": 5136,
+      "reviewIssues": null,
+      "issuedQty": 15408,
+      "collected": null,
+      "completionRate": null,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 1,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": "5136条，每条要求采集3家，按时下发",
+      "reqQty": 3
+    },
+    {
       "name": "山东比价",
       "settleType": "价格采集",
       "source": "AI比价",
@@ -1097,23 +1123,24 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "month": "08月",
       "dueMonth": "08月",
       "collectedTime": null,
-      "totalPoints": null,
-      "itemCount": null,
+      "totalPoints": 20058,
+      "itemCount": 6686,
       "reviewIssues": null,
-      "issuedQty": null,
+      "issuedQty": 20058,
       "collected": null,
       "completionRate": null,
       "accuracyRate": null,
       "invalidData": null,
       "invalidRate": null,
       "publishedData": null,
-      "timelyRate": null,
+      "timelyRate": 1,
       "feedbackMat": null,
       "expertVerify": null,
       "supplierRejects": null,
       "closed": null,
       "allClosed": null,
-      "notes": null
+      "notes": null,
+      "reqQty": 3
     }
   ],
   "settlements": [
@@ -1849,7 +1876,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       4781,
       49478,
       43323,
-      24906
+      60372
     ],
     "采集下发数": [
       17626,
@@ -1857,7 +1884,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       4781,
       49478,
       43323,
-      24906
+      60372
     ],
     "采集完成数": [
       15595,
@@ -3122,22 +3149,25 @@ function renderTaskTable(tasks){
   });
 
   let html = `<div class="task-table-wrap"><table class="task-table">
-    <thead><tr><th>需求项</th><th>月份</th><th>约定完成</th><th>采集完成</th><th>结算类型</th><th>需求名称</th><th>总条数</th><th>下发数</th><th>采集完成</th><th>完成率</th><th>初审问题</th><th>闭环状态</th></tr></thead><tbody>`;
+    <thead><tr><th>需求项</th><th>月份</th><th>结算类型</th><th>需求名称</th><th>需求项数</th><th>问题数</th><th>问题占比</th><th>总条数</th><th>采集完成数</th><th>采集完成占比</th><th>闭环状态</th></tr></thead><tbody>`;
   sorted.forEach(t => {
-    const r = cr(t);
-    // 闭环状态：模板「闭环状态」列优先，缺省回退完成率推断
+    const r = cr(t); // 采集完成占比 = 采集完成数/总条数
+    // 问题占比 = 问题数/需求项数（项级，与模板「需求反馈率」一致）
+    const itemCnt = num(t.itemCount);
+    const issueCnt = num(t.reviewIssues);
+    const issueRate = itemCnt ? +((issueCnt/itemCnt)*100).toFixed(1) : null;
+    const issueCls = issueRate==null ? '' : (issueRate>20 ? 'bad' : issueRate>0 ? 'warn' : 'good');
     const st = t.closed ? (t.closed==='是'||t.closed==='全部闭环' ? {cls:'s-closed', txt:'是'} : {cls:'', txt:'否'}) : closedState(t);
     html += `<tr><td>${t.demandItem||"—"}</td>
       <td>${t.month||"—"}</td>
-      <td>${t.dueMonth||"—"}</td>
-      <td>${t.collectedTime||"—"}</td>
       <td>${t.settleType||"—"}</td>
       <td><strong>${t.name}</strong></td>
+      <td>${itemCnt?itemCnt.toLocaleString():"—"}</td>
+      <td>${issueCnt?issueCnt.toLocaleString():"—"}</td>
+      <td title="问题占比 = 问题数 ÷ 需求项数" style="color:${issueCls==='bad'?'#E74C3C':issueCls==='warn'?'#F39C12':'#2ECC71'}">${issueRate!=null?issueRate+"%":"—"}</td>
       <td>${num(t.totalPoints).toLocaleString()||"—"}</td>
-      <td>${num(t.issuedQty).toLocaleString()||"—"}</td>
       <td>${num(t.collected).toLocaleString()||"—"}</td>
       <td><div class="progress-wrap"><div class="bar-wrap"><div class="progress-bar" style="width:${r.pct}%;background:${r.cls==='good'?'#2ECC71':r.cls==='warn'?'#F39C12':'#E74C3C'}"></div></div><span>${r.val}</span></div></td>
-      <td>${num(t.reviewIssues).toLocaleString()||"—"}</td>
       <td><span class="status-badge ${st.cls}" title="${st.txt==='跨月跟进'?'历史月份任务未闭环，持续跟踪':st.txt==='是'?'模板登记已闭环/采集完成率≥100%':'模板登记未闭环或当月任务未闭环'}">${st.txt}</span></td></tr>`;
   });
   html += `</tbody></table></div>`;

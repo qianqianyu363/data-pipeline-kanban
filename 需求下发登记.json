@@ -1,4 +1,73 @@
 {
   "version": 1,
-  "records": []
+  "records": [
+    {
+      "id": "08月-北京比价",
+      "name": "北京比价",
+      "month": "08月",
+      "demandItem": "市场价",
+      "settleType": "价格采集",
+      "source": null,
+      "itemCount": 5136,
+      "reqQty": 3,
+      "totalPoints": 15408,
+      "issuedQty": 15408,
+      "matQty": null,
+      "reviewIssues": null,
+      "collected": null,
+      "completionRate": null,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 1,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": "5136条，每条要求采集3家，按时下发",
+      "stages": {
+        "release": "2026-08-18",
+        "collection": null,
+        "publish": null
+      },
+      "createdAt": "2026-08-18T00:00:00",
+      "updatedAt": "2026-08-18T00:00:00"
+    },
+    {
+      "id": "08月-湖北比价",
+      "name": "湖北比价",
+      "month": "08月",
+      "demandItem": "市场价",
+      "settleType": "价格采集",
+      "source": null,
+      "itemCount": 6686,
+      "reqQty": 3,
+      "totalPoints": 20058,
+      "issuedQty": 20058,
+      "matQty": null,
+      "reviewIssues": null,
+      "collected": null,
+      "completionRate": null,
+      "accuracyRate": null,
+      "invalidData": null,
+      "invalidRate": null,
+      "publishedData": null,
+      "timelyRate": 1,
+      "feedbackMat": null,
+      "expertVerify": null,
+      "supplierRejects": null,
+      "closed": null,
+      "allClosed": null,
+      "notes": "6686条，每条要求采集3家，按时下发（补充模板空字段）",
+      "stages": {
+        "release": "2026-08-18",
+        "collection": null,
+        "publish": null
+      },
+      "createdAt": "2026-08-18T00:00:00",
+      "updatedAt": "2026-08-18T00:00:00"
+    }
+  ]
 }

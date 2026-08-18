@@ -26,9 +26,9 @@
 |---|---|
 | `看板数据录入模板-调整.xlsx` | 看板主数据源（**2026-08-10 已同步为用户最新升级版**：约定采集完成时间MMDD/25年对比3列/价格审核/采集产能9列含需求量） |
 | `看板数据录入模板-调整_升级版.xlsx` | 升级版源文件（**用户手工维护的最新数据在此**，已 gitignore，08-10 更新后已覆盖主文件） |
-| `parse_template.py` | Python 解析器 → data.json（**含对话台账合并 + 质量抽审公式求值 + 08-10 新版模板适配 + 08-17 各项需求跟踪列右移(col22采集完成时间/col29闭环状态)**） |
+| `parse_template.py` | Python 解析器 → data.json（**含对话台账合并（新增/补充模板空字段）+ 质量抽审公式求值 + 08-10 新版模板适配 + 08-17 各项需求跟踪列右移(col22采集完成时间/col29闭环状态)**） |
 | `需求下发登记.json` | **对话登记台账**（Claude 对话写入，解析器合并进 data.json） |
-| `index.html` | 看板前端（**7项优化 + UI指标去重修复 + dataEmbed 内嵌块自动同步 + 08-10 浏览器导入适配/产能需求量展示/质量抽审按月过滤 + 三模块可视化优化 + 08-17 任务清单新增采集完成列/闭环状态取模板真实值**） |
+| `index.html` | 看板前端（**7项优化 + UI指标去重修复 + dataEmbed 内嵌块自动同步 + 08-10 浏览器导入适配/产能需求量展示/质量抽审按月过滤 + 三模块可视化优化 + 08-17 采集完成时间/闭环状态列 + 08-18 任务清单改版(去时间列/项数条数分组)**） |
 | `data.json` | **2026-08-10 已重新生成**（26任务/51结算/4492加工预审，结算金额 sum=902,077.2） |
 | `需求下发登记表.xlsx` | 用户手动维护的详细登记台账（"需求下发"sheet 33列含"智能总结"列、"供采试点下发需求""结算明细"等） |
 | `_upgrade_template.py` | 模板升级脚本（已验证，可从 HEAD 模板重新生成升级版） |
@@ -151,13 +151,13 @@
 ### 重要发现（回滚后）
 - **磁盘模板 `看板数据录入模板-调整.xlsx` 的数据比 git HEAD 的 data.json 新**（git 提交里模板与 data.json 本就不同步）。生成 data.json 必须以**模板**为准，HEAD data.json 仅作旧值参考
 
-## 当前 git 工作区（2026-08-17 提交后）
+## 当前 git 工作区（2026-08-18 待提交）
 
 ```
-origin/main = df5f5dc：08-17 升级版模板适配（各项需求跟踪列右移 + 新增采集完成时间col22/闭环状态col29）+ 主模板覆盖 + data.json 刷新（结算 sum=1,218,356.6）+ CLAUDE.md 同步；已 push（经 140.82.121.4 节点）
+待提交：08-18 对话登记（北京比价08月 5136条×3家 按时、湖北比价08月 6686条×3家 按时 补充模板空字段）+ 任务清单表格改版（去约定完成/采集完成时间，改 项数/条数分组展示）+ 台账补充逻辑
 ```
-- 历史已推送：`d3fb1bf`（前端三模块可视化优化）、`55e0df3`（清理废弃文件+文档同步）、`89a3740`（CLAUDE.md 网络方案补充）、`73c44e6`（08-10 模板适配刷新）、`e25cbf4`（CLAUDE.md 更新）、`4dcbbbb`（UI指标去重+质量抽审求值）、`b9cf068`（dataEmbed 内嵌同步）、`05d89e3`（模板替换+解析器升级+台账合并+7项优化+冒烟）
-- 本次改动：parse_template.py（列右移+fmt_collect_time）、index.html（TPL_COL 右移+采集完成列+闭环真实值）、data.json、主模板覆盖；详见「08-17 升级版模板适配刷新」
+- 历史已推送：`7118337`（CLAUDE.md 记录 df5f5dc）、`df5f5dc`（08-17 模板适配）、`d3fb1bf`（前端三模块可视化优化）、`55e0df3`（清理废弃文件+文档同步）、`89a3740`（CLAUDE.md 网络方案补充）、`73c44e6`（08-10 模板适配刷新）、`e25cbf4`（CLAUDE.md 更新）、`4dcbbbb`（UI指标去重+质量抽审求值）、`b9cf068`（dataEmbed 内嵌同步）、`05d89e3`（模板替换+解析器升级+台账合并+7项优化+冒烟）
+- 本次改动：`需求下发登记.json`（北京/湖北 2条）、parse_template.py（`_fill_missing_fields` 补充模板空字段）、index.html（任务清单表格改版 + dataEmbed 同步）、data.json（27任务）；前端问题占比口径 = 问题数÷需求项数（项级，与模板需求反馈率一致，全局初审问题率口径不变）
 - `.workbuddy/`（含 backup_20260810 / backup_20260817 主模板备份）、`会话.txt`、`指标网-采集检视表.xlsx`、`_升级版.xlsx` 已 gitignore
 
 ### 网络方案（重要，可复用）
@@ -256,7 +256,7 @@ row2: 1=月份 2=产品模块 3=需求类型 **4-6='26年'组**（4=需求数量
 - **Step0 读上下文**：读 `data.json.tasks` + `需求下发登记.json.records`，建 `(name, month)` 现有键集
 - **Step1 解析自然语言**（正则+关键词）：month→`MM月`、name、demandItem(缺省"市场价"标注待确认)、settleType(缺省"价格采集")、timelyRate(按时→1/延迟→0，**未提及必须反问**)、itemCount、reqQty(每家几家)、totalPoints、matQty(可选供准确率)、collected/closed、publishedData
 - **Step2 关联核查+派生自算**：totalPoints=itemCount×reqQty；issuedQty=totalPoints；completionRate=collected/totalPoints×100；accuracyRate=itemCount/matQty×100（matQty缺省则null）
-- **Step3 去重（对话层）**：`(name,month)` 在 data.json → 提示"模板已存在该需求"，不登记；在台账且 stages 未全完成 → **阶段补录**（按 id=`{month}-{name}` 定位，只覆盖本次字段+置 stages 对应日期）；stages 全完成 → 提示"已登记完整，不重复"
+- **Step3 去重（对话层）**：`(name,month)` 在 data.json → 若模板该任务下发字段空（itemCount/totalPoints/timelyRate 均无，如 8月湖北比价只填基础列）→ **补充模板空字段**（`_fill_missing_fields` 只填空不覆盖，算"补充"不计"新增"）；否则提示"模板已存在该需求"，不登记；在台账且 stages 未全完成 → **阶段补录**（按 id=`{month}-{name}` 定位，只覆盖本次字段+置 stages 对应日期）；stages 全完成 → 提示"已登记完整，不重复"
 - **Step4 待确认指标清单**：表格展示解析+派生值，缺失字段标"？"，用户确认/修改
 - **Step5 写台账**：新记录 append（stages 相应置今天 + createdAt/updatedAt）；补录只覆盖字段并 updatedAt；`json.dump(..., ensure_ascii=False, indent=2)`
 - **Step6 更新看板**：`python parse_template.py 看板数据录入模板-调整.xlsx data.json`，确认控制台 `台账合并: 新增 N 条`

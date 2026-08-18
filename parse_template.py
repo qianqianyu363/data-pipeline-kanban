@@ -230,13 +230,37 @@ def _to_pct(v):
     return round(v, 1) if v is not None else None
 
 
+def _fill_missing_fields(task, rec):
+    """用台账记录补充模板任务中**为空**的下发字段（阶段补录），不覆盖模板已有值。
+    用于「模板已有同名任务但下发字段空」的场景（如 8月湖北比价 只填了基础列）。"""
+    changed = False
+    item_cnt = _norm_num(rec.get('itemCount'))
+    req_qty = _norm_num(rec.get('reqQty'))
+    total_pts = _norm_num(rec.get('totalPoints'))
+    if total_pts is None and item_cnt is not None and req_qty is not None:
+        total_pts = item_cnt * req_qty          # 下发数量 = 下发材料 × 要求数量
+
+    if task.get('itemCount') is None and item_cnt is not None:
+        task['itemCount'] = _to_int(item_cnt); changed = True
+    if task.get('totalPoints') is None and total_pts is not None:
+        task['totalPoints'] = _to_int(total_pts); changed = True
+    if task.get('issuedQty') is None and total_pts is not None:
+        task['issuedQty'] = _to_int(total_pts); changed = True
+    if task.get('timelyRate') is None and rec.get('timelyRate') is not None:
+        task['timelyRate'] = _to_int(_norm_num(rec.get('timelyRate'))); changed = True
+    if 'reqQty' not in task or task.get('reqQty') is None:
+        if req_qty is not None:
+            task['reqQty'] = _to_int(req_qty); changed = True   # 仅台账透传字段，前端忽略
+    return changed
+
+
 def merge_ledger_tasks(tasks, records, month_names_set):
     """把台账 records 并入 tasks（去重 name+month、字段归一化、缺失补 None、派生值自算）。
     模板优先：与模板任务重复的台账记录跳过，不覆盖。返回新增条数。
     副作用：修改 tasks（append）与 month_names_set（补新月份）。"""
     existing_keys = {(t.get('name'), t.get('month')) for t in tasks}
     seen_in_ledger = set()
-    merged = skipped_dup = skipped_tpl = 0
+    merged = skipped_dup = skipped_tpl = filled = 0
 
     for rec in records:
         if not isinstance(rec, dict):
@@ -255,10 +279,15 @@ def merge_ledger_tasks(tasks, records, month_names_set):
             continue
         seen_in_ledger.add(key)
 
-        # 与模板 tasks 去重（模板优先，不覆盖模板）
+        # 与模板 tasks 去重（模板优先，不覆盖模板；但允许补充模板为空的下发字段）
         if key in existing_keys:
-            skipped_tpl += 1
-            print(f"   ⚠️ 台账与模板重复，跳过（以模板为准）: {name}/{month}")
+            tpl_task = next((t for t in tasks if (t.get('name'), t.get('month')) == key), None)
+            if tpl_task is not None and _fill_missing_fields(tpl_task, rec):
+                filled += 1
+                print(f"   🔄 台账补充模板空字段: {name}/{month}")
+            else:
+                skipped_tpl += 1
+                print(f"   ⚠️ 台账与模板重复，跳过（以模板为准）: {name}/{month}")
             continue
 
         # ---- 字段读取与派生自算 ----
@@ -315,8 +344,8 @@ def merge_ledger_tasks(tasks, records, month_names_set):
         existing_keys.add(key)
         merged += 1
 
-    print(f"   📋 台账合并: 新增 {merged} 条 | 台账内部重复跳过 {skipped_dup} | 与模板重复跳过 {skipped_tpl}")
-    return merged
+    print(f"   📋 台账合并: 新增 {merged} 条 | 补充模板空字段 {filled} 条 | 台账内部重复跳过 {skipped_dup} | 与模板重复跳过 {skipped_tpl}")
+    return merged, filled
 
 
 for r in range(3, ws1.max_row + 1):
@@ -399,7 +428,7 @@ for r in range(3, ws1.max_row + 1):
 
 # ---- 合并对话登记台账（需求下发登记.json）----
 _ledger_records = load_ledger()
-_merged_count = merge_ledger_tasks(tasks, _ledger_records, month_names_set)
+_merged, _filled = merge_ledger_tasks(tasks, _ledger_records, month_names_set)
 
 # 按月份排序
 month_order = {f"{i:02d}月": i for i in range(1, 13)}
@@ -842,5 +871,5 @@ print(f"   问题反馈: {issue_feedback.get('问题反馈量', 'N/A') if issue_
 if preview_stats:
     print(f"   加工预审: {preview_stats['total']} 条, 通过率 {preview_stats.get('passRate', 0)}%, 新供应商 {preview_stats['new_enterprise']}, 老供应商 {preview_stats['old_enterprise']}, 价格审核 {preview_stats['price_audit']}")
 print(f"   采集产能: {len(collection_capacity)} 条")
-print(f"   台账合并: {_merged_count} 条")
+print(f"   台账合并: 新增 {_merged} 条 | 补充模板空字段 {_filled} 条")
 print(f"   已写入: {OUTPUT_PATH}")
