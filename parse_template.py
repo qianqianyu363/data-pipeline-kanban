@@ -515,7 +515,7 @@ preview_stats = {
     "passed": 0,
     "failed": 0,
     "by_reviewer": defaultdict(lambda: {"total": 0, "passed": 0}),
-    "by_month": defaultdict(lambda: {"total": 0, "passed": 0}),
+    "by_month": defaultdict(lambda: {"total": 0, "passed": 0, "new_enterprise": 0, "old_enterprise": 0, "price_audit": {"total": 0, "passed": 0}}),
     "fail_reasons": defaultdict(int),
     "new_enterprise": 0,
     "old_enterprise": 0,                       # 老供应商（更新登记表）
@@ -549,9 +549,21 @@ for r in range(3, ws4.max_row + 1):
 
     m = str(month or '').strip()
     if m:
-        preview_stats["by_month"][m]["total"] += 1
+        bm = preview_stats["by_month"][m]
+        bm["total"] += 1
         if passed_flag:
-            preview_stats["by_month"][m]["passed"] += 1
+            bm["passed"] += 1
+        _nf = str(is_new or '').strip()
+        if _nf in ('是', '新增'):
+            bm["new_enterprise"] += 1
+        elif _nf in ('更新登记表', '否'):
+            bm["old_enterprise"] += 1
+        _pa = str(price_audit or '').strip()
+        if _pa in ('是', '通过'):
+            bm["price_audit"]["total"] += 1
+            bm["price_audit"]["passed"] += 1
+        elif _pa in ('否', '不通过'):
+            bm["price_audit"]["total"] += 1
 
     if reason and not passed_flag:
         rsn = str(reason).strip()
@@ -587,6 +599,11 @@ if has_data:
         rv["passRate"] = round(rv["passed"] / rv["total"] * 100, 1) if rv["total"] else 0
     for bm in preview_stats["by_month"].values():
         bm["passRate"] = round(bm["passed"] / bm["total"] * 100, 1) if bm["total"] else 0
+        _pa_t = bm["price_audit"]["total"]
+        bm["price_audit"]["passRate"] = round(bm["price_audit"]["passed"] / _pa_t * 100, 1) if _pa_t else 0
+        _sup = bm["new_enterprise"] + bm["old_enterprise"]
+        bm["newRate"] = round(bm["new_enterprise"] / _sup * 100, 1) if _sup else 0
+        bm["oldRate"] = round(bm["old_enterprise"] / _sup * 100, 1) if _sup else 0
 else:
     preview_stats = None
 

@@ -392,7 +392,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <script id="dataEmbed" type="application/json">
 {
   "title": "需求下发登记全链路看板",
-  "updateDate": "2026-08-18",
+  "updateDate": "2026-08-20",
   "months": [
     "03月",
     "04月",
@@ -2008,37 +2008,100 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       "1月": {
         "total": 537,
         "passed": 535,
-        "passRate": 99.6
+        "new_enterprise": 206,
+        "old_enterprise": 120,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 99.6,
+        "newRate": 63.2,
+        "oldRate": 36.8
       },
       "2月": {
         "total": 155,
         "passed": 154,
-        "passRate": 99.4
+        "new_enterprise": 45,
+        "old_enterprise": 32,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 99.4,
+        "newRate": 58.4,
+        "oldRate": 41.6
       },
       "3月": {
         "total": 613,
         "passed": 613,
-        "passRate": 100.0
+        "new_enterprise": 200,
+        "old_enterprise": 155,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 100.0,
+        "newRate": 56.3,
+        "oldRate": 43.7
       },
       "4月": {
         "total": 858,
         "passed": 855,
-        "passRate": 99.7
+        "new_enterprise": 308,
+        "old_enterprise": 255,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 99.7,
+        "newRate": 54.7,
+        "oldRate": 45.3
       },
       "5月": {
         "total": 781,
         "passed": 781,
-        "passRate": 100.0
+        "new_enterprise": 281,
+        "old_enterprise": 250,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 100.0,
+        "newRate": 52.9,
+        "oldRate": 47.1
       },
       "6月": {
         "total": 781,
         "passed": 779,
-        "passRate": 99.7
+        "new_enterprise": 255,
+        "old_enterprise": 217,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 99.7,
+        "newRate": 54.0,
+        "oldRate": 46.0
       },
       "7月": {
         "total": 767,
         "passed": 764,
-        "passRate": 99.6
+        "new_enterprise": 220,
+        "old_enterprise": 240,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 99.6,
+        "newRate": 47.8,
+        "oldRate": 52.2
       }
     },
     "fail_reasons": {
@@ -2386,7 +2449,6 @@ function renderFlowKPIs(tasks, m){
   // 使用传入的已筛选数据
   // 预审/抽审/反馈数据（抽审按当前筛选月份过滤；反馈为全局数据）
   const pr = DATA.preReview;
-  const prPass = pr && pr.total ? pr.passRate : null;
   const curMonth = filters.month && filters.month !== '全部' ? filters.month : null;
   const tgtKey = curMonth ? curMonth.replace(/^0/,'') : null;
   const qr = DATA.qualityReview || {};
@@ -2400,19 +2462,36 @@ function renderFlowKPIs(tasks, m){
   const consRate = fb && fb.问题反馈量 ? +(fb.双方共识量/fb.问题反馈量*100).toFixed(1) : null;
   const budget = DATA.totalBudget||3900000;
 
+  // 结算与成本：按月（截至选中月的累计执行 + 预算执行率）；未选月份=全部累计
+  const sAll = DATA.settlements || [];
+  let totalAmtM = sAll.reduce((x,y) => x + num(y.结算金额||y.amount), 0);
+  if(curMonth){
+    const cmNum = parseInt(curMonth) || 0;
+    totalAmtM = sAll.filter(x => (parseInt(String(x.月份||'').replace('月',''))||0) <= cmNum)
+                    .reduce((s2,x) => s2 + num(x.结算金额||x.amount), 0);
+  }
+  const budRateM = budget ? +((totalAmtM/budget)*100).toFixed(1) : 0;
+  const totalCostM = +(totalAmtM/10000).toFixed(1);
+
   // 优化1：当月采集完成率（约定采集完成时间=筛选月的任务）
   const dueTasks = curMonth ? (DATA.tasks||[]).filter(t => t.dueMonth === curMonth) : [];
   const dueCol = dueTasks.reduce((s,t) => s + num(t.collected), 0);
   const dueIss = dueTasks.reduce((s,t) => s + num(t.totalPoints||t.issuedQty), 0);
   const monthCompRate = dueIss ? +((dueCol/dueIss)*100).toFixed(1) : null;
 
-  // 优化2：加工审核 — 新老供应商占比 + 价格审核通过率
-  const newCnt = pr ? (pr.new_enterprise||0) : 0;
-  const oldCnt = pr ? (pr.old_enterprise||0) : 0;
+  // 优化2：加工审核 — 新老供应商占比 + 价格审核通过率（按月跟随筛选；选中月无数据则"—"）
+  const prBM = (pr && pr.by_month) ? pr.by_month : {};
+  const curPr = (pr && tgtKey) ? prBM[tgtKey] : null;
+  const useMonthPr = curPr && curPr.total > 0;   // 选中月有审核记录才用月度，否则显示"—"（如 8月未审核）
+  const prPass = useMonthPr ? curPr.passRate : (tgtKey ? null : (pr && pr.total ? pr.passRate : null));
+  const newCnt = useMonthPr ? curPr.new_enterprise : (tgtKey ? 0 : (pr ? (pr.new_enterprise||0) : 0));
+  const oldCnt = useMonthPr ? curPr.old_enterprise : (tgtKey ? 0 : (pr ? (pr.old_enterprise||0) : 0));
   const supTotal = newCnt + oldCnt;
   const newRate = supTotal ? +((newCnt/supTotal)*100).toFixed(1) : null;
   const oldRate = supTotal ? +((oldCnt/supTotal)*100).toFixed(1) : null;
-  const priceRate = (pr && pr.price_audit && pr.price_audit.total) ? pr.price_audit.passRate : null;
+  const priceRate = useMonthPr ? (curPr.price_audit.total ? curPr.price_audit.passRate : null)
+                               : (tgtKey ? null : ((pr && pr.price_audit && pr.price_audit.total) ? pr.price_audit.passRate : null));
+  const auditTotal = useMonthPr ? curPr.total : (tgtKey ? null : (pr ? pr.total : null));
 
   // 颜色辅助
   function clr(v, inv){
@@ -2464,13 +2543,13 @@ function renderFlowKPIs(tasks, m){
         {l:'老供应商占比', v:oldRate!=null?oldRate+'%':'—', c:clr(oldRate)},
         {l:'价格审核通过率', v:priceRate!=null?priceRate+'%':'—', c:clr(priceRate)},
         {l:'发布数据', v:m.publishedData?m.publishedData+'条':'—', c:''},
-        {l:'审核总量', v:pr?pr.total.toLocaleString():'—', c:'#3498DB'},
+        {l:'审核总量', v:auditTotal!=null?auditTotal.toLocaleString():'—', c:'#3498DB'},
       ]},
     { name:'结算与成本', sub:'预算管控', color:'#2980B9', icon:'💰',
       items:[
         {l:'总预算', v:'¥'+(budget/10000).toFixed(0)+'万', c:''},
-        {l:'累计执行', v:m.totalCost!=null?'¥'+(+m.totalCost).toFixed(1)+'万':'—', c:m.totalCost!=null?'#2980B9':''},
-        {l:'预算执行率', v:m.budgetRate!=null?m.budgetRate+'%':'—', c:clr(m.budgetRate)},
+        {l: curMonth?'截至'+curMonth+'执行':'累计执行', v:'¥'+totalCostM.toFixed(1)+'万', c:'#2980B9'},
+        {l: curMonth?'截至'+curMonth+'执行率':'预算执行率', v:budRateM!=null?budRateM+'%':'—', c:clr(budRateM)},
       ]},
   ];
 

@@ -1,6 +1,6 @@
 {
   "title": "需求下发登记全链路看板",
-  "updateDate": "2026-08-18",
+  "updateDate": "2026-08-20",
   "months": [
     "03月",
     "04月",
@@ -1616,37 +1616,100 @@
       "1月": {
         "total": 537,
         "passed": 535,
-        "passRate": 99.6
+        "new_enterprise": 206,
+        "old_enterprise": 120,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 99.6,
+        "newRate": 63.2,
+        "oldRate": 36.8
       },
       "2月": {
         "total": 155,
         "passed": 154,
-        "passRate": 99.4
+        "new_enterprise": 45,
+        "old_enterprise": 32,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 99.4,
+        "newRate": 58.4,
+        "oldRate": 41.6
       },
       "3月": {
         "total": 613,
         "passed": 613,
-        "passRate": 100.0
+        "new_enterprise": 200,
+        "old_enterprise": 155,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 100.0,
+        "newRate": 56.3,
+        "oldRate": 43.7
       },
       "4月": {
         "total": 858,
         "passed": 855,
-        "passRate": 99.7
+        "new_enterprise": 308,
+        "old_enterprise": 255,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 99.7,
+        "newRate": 54.7,
+        "oldRate": 45.3
       },
       "5月": {
         "total": 781,
         "passed": 781,
-        "passRate": 100.0
+        "new_enterprise": 281,
+        "old_enterprise": 250,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 100.0,
+        "newRate": 52.9,
+        "oldRate": 47.1
       },
       "6月": {
         "total": 781,
         "passed": 779,
-        "passRate": 99.7
+        "new_enterprise": 255,
+        "old_enterprise": 217,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 99.7,
+        "newRate": 54.0,
+        "oldRate": 46.0
       },
       "7月": {
         "total": 767,
         "passed": 764,
-        "passRate": 99.6
+        "new_enterprise": 220,
+        "old_enterprise": 240,
+        "price_audit": {
+          "total": 0,
+          "passed": 0,
+          "passRate": 0
+        },
+        "passRate": 99.6,
+        "newRate": 47.8,
+        "oldRate": 52.2
       }
     },
     "fail_reasons": {
