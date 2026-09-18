@@ -1,0 +1,14 @@
+# 明文数据与密钥（切勿提交）
+data.json
+.kanban_key
+
+# 数据源文件（含真实业务数据）
+*.xlsx
+~$*
+
+# 本地杂物
+__pycache__/
+*.pyc
+.workbuddy/
+会话.txt
+对话登记_待追加.json
