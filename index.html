@@ -575,9 +575,16 @@ function init(){
   populateSelect("fDemandItem", fi.demandItems);
   populateSelect("fSettleType", fi.settleTypes);
   populateSelect("fMonth", fi.months);
-  // 默认值：月份→06月，需求项→市场价
+  // 默认值：需求项→市场价，月份→数据里最新有任务的月份（每次刷新完打开即见当月变化）
   document.getElementById("fDemandItem").value = "市场价";
-  document.getElementById("fMonth").value = "06月";
+  const _ms = (fi.months || []).filter(m => m !== "全部")
+      .sort((a, b) => (parseInt(a, 10) || 0) - (parseInt(b, 10) || 0));   // 按数值月排序，不依赖数组顺序
+  const _defMonth = _ms.length ? _ms[_ms.length - 1] : "全部";
+  document.getElementById("fMonth").value = _defMonth;
+  // 同步 filters 对象（首次 renderAll 不经 applyFilter，否则会仍按旧默认月过滤）
+  filters.demandItem = "市场价";
+  filters.settleType = "全部";
+  filters.month = _defMonth;
   // Load tasks & settlements from files
   loadTaskData();
 }
